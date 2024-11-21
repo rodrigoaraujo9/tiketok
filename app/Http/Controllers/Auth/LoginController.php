@@ -31,20 +31,29 @@ class LoginController extends Controller
     public function authenticate(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'login' => ['required', 'string'], // can be email or username
             'password' => ['required'],
         ]);
- 
+
+        // detect if login is with email or username
+        $fieldType = filter_var($request->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        $credentials = [
+            $fieldType => $request->input('login'),
+            'password' => $request->input('password'),
+        ];
+
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
- 
+
             return redirect()->intended('/cards');
         }
- 
+
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+            'login' => 'The provided credentials do not match our records.',
+        ])->onlyInput('login');
     }
+
 
     /**
      * Log out the user from application.
