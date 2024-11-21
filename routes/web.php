@@ -19,15 +19,21 @@ use App\Http\Controllers\Auth\RegisterController;
 |
 */
 
-// Home
-Route::redirect('/', '/login');
+// Old Home (preserved but not used in navigation)
+Route::get('/cards', function () {
+    return view('pages.home');
+})->name('old_home');
+
+// New Home
+Route::get('/', function () {
+    return view('pages.tiketok_home');
+})->name('home');
 
 // Cards
 Route::controller(CardController::class)->group(function () {
     Route::get('/cards', 'list')->name('cards');
     Route::get('/cards/{id}', 'show');
 });
-
 
 // API
 Route::controller(CardController::class)->group(function () {
@@ -41,7 +47,6 @@ Route::controller(ItemController::class)->group(function () {
     Route::delete('/api/item/{id}', 'delete');
 });
 
-
 // Authentication
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
@@ -53,3 +58,20 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+
+// TIKETOK pages
+Route::get('/about', function () {
+    return view('pages.about');
+})->name('about');
+
+Route::get('/events', function () {
+    return view('pages.events');
+})->name('events');
+
+Route::get('/faq', function () {
+    return view('pages.faq');
+})->name('faq');
+
+Route::get('/profile', function () {
+    return view('pages.profile');
+})->name('profile');
