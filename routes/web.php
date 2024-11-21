@@ -8,6 +8,8 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
+use App\Http\Controllers\EventController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -53,3 +55,14 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+
+Route::controller(EventController::class)->group(function () {
+    Route::get('/events', 'index')->name('events.index'); // List all events
+    Route::get('/events/{id}', 'show')->name('events.show'); // Show event details
+    Route::get('/events/create', 'create')->middleware('auth')->name('events.create'); // Event creation form
+    Route::post('/events', 'store')->middleware('auth')->name('events.store'); // Store new event
+    Route::get('/events/{id}/edit', 'edit')->middleware('auth')->name('events.edit'); // Event edit form
+    Route::put('/events/{id}', 'update')->middleware('auth')->name('events.update'); // Update event
+    Route::delete('/events/{id}', 'destroy')->middleware('auth')->name('events.destroy'); // Delete event
+});
+

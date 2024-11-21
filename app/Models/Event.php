@@ -5,9 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
 
 class Event extends Model
 {
@@ -15,6 +12,13 @@ class Event extends Model
 
     public $timestamps = false;
 
+    // Specify the custom primary key
+    protected $primaryKey = 'event_id';
+
+    // Ensure Laravel knows it's not an auto-incrementing integer if it's a string
+    protected $keyType = 'int'; 
+
+    // Allow mass assignment for these fields
     protected $fillable = [
         'name',
         'description',
@@ -27,36 +31,19 @@ class Event extends Model
         'organizer_id',
     ];
 
+        /**
+     * The venue associated with the event.
+     */
+    public function venue(): BelongsTo
+    {
+        return $this->belongsTo(Venue::class, 'venue_id');
+    }
+
     /**
      * The organizer of the event.
      */
     public function organizer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'organizer_id');
-    }
-
-    /**
-     * The venue associated with the event.
-     */
-    public function venue(): BelongsTo
-    {
-        return $this->belongsTo(Venue::class);
-    }
-
-    /**
-     * The attendees of the event.
-     */
-    public function attendees(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'attends', 'event_id', 'user_id')
-            ->withTimestamps();
-    }
-
-    /**
-     * Tickets for the event.
-     */
-    public function tickets(): HasMany
-    {
-        return $this->hasMany(Ticket::class);
     }
 }

@@ -11,7 +11,7 @@ SET search_path TO thingy;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS cards CASCADE;
 DROP TABLE IF EXISTS items CASCADE;
-DROP TABLE IF EXISTS Venue CASCADE;
+DROP TABLE IF EXISTS venues CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 
 --
@@ -38,8 +38,8 @@ CREATE TABLE items (
   done BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE Venue (
-    venue_id SERIAL PRIMARY KEY,
+CREATE TABLE venues (
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255) NOT NULL,
     max_capacity INT NOT NULL
@@ -53,7 +53,7 @@ CREATE TABLE events (
     country VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     visibility BOOLEAN NOT NULL,
-    venue_id INT REFERENCES Venue(venue_id) ON DELETE CASCADE,
+    venue_id INT REFERENCES venues(id) ON DELETE CASCADE,
     organizer_id INT REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -77,7 +77,7 @@ INSERT INTO items VALUES (DEFAULT, 2, 'Break a leg');
 INSERT INTO items VALUES (DEFAULT, 2, 'Crash the car');
 
 -- Insert sample venues
-INSERT INTO Venue (name, location, max_capacity)
+INSERT INTO venues (name, location, max_capacity)
 VALUES 
     ('Conference Center', 'Downtown Avenue, City A', 500),
     ('Community Hall', 'Main Street, City B', 200),
@@ -89,4 +89,3 @@ VALUES
     ('Tech Conference 2024', '2024-12-15 10:00:00', '12345', 300, 'Country A', 'Future of Tech', TRUE, 1, 1),
     ('Charity Run', '2024-11-25 08:00:00', '54321', 500, 'Country B', 'Run for Hope', TRUE, 3, 1),
     ('Private Wedding', '2024-06-10 14:00:00', '67890', 150, 'Country C', 'Wedding Celebration', FALSE, 2, 1);
-
