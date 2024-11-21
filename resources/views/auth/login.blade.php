@@ -4,7 +4,7 @@
 <form method="POST" action="{{ route('login') }}">
     {{ csrf_field() }}
 
-    <label for="email">E-mail</label>
+    <label for="email">E-mail or Username</label>
     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
     @if ($errors->has('email'))
         <span class="error">

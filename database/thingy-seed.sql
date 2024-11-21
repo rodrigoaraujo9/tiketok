@@ -17,10 +17,14 @@ DROP TABLE IF EXISTS items CASCADE;
 --
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name VARCHAR NOT NULL,
-  email VARCHAR UNIQUE NOT NULL,
-  password VARCHAR NOT NULL,
-  remember_token VARCHAR
+  username VARCHAR(255) UNIQUE NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(15) CHECK (phone ~ '^[0-9]{9,15}$'),
+  profile_photo VARCHAR(255),
+  password VARCHAR(255) NOT NULL,
+  is_admin BOOLEAN DEFAULT FALSE,
+  is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE cards (
@@ -39,7 +43,7 @@ CREATE TABLE items (
 --
 -- Insert value.
 --
-
+/*
 INSERT INTO users VALUES (
   DEFAULT,
   'John Doe',
@@ -54,3 +58,4 @@ INSERT INTO items VALUES (DEFAULT, 1, 'Walk the dog', true);
 INSERT INTO cards VALUES (DEFAULT, 'Things not to do', 1);
 INSERT INTO items VALUES (DEFAULT, 2, 'Break a leg');
 INSERT INTO items VALUES (DEFAULT, 2, 'Crash the car');
+*/
