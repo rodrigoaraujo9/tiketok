@@ -23,12 +23,16 @@ class Event extends Model
         'name',
         'description',
         'date',
-        'postalCode',
-        'maxEventCapacity',
+        'postal_code',
+        'max_event_capacity',
         'country',
         'visibility',
         'venue_id',
         'organizer_id',
+    ];
+
+    protected $casts = [
+        'visibility' => 'boolean', // Cast to boolean
     ];
 
         /**

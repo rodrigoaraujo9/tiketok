@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->date('date');
-            $table->string('postalCode');
-            $table->unsignedInteger('maxEventCapacity');
+            $table->string('postal_code');
+            $table->unsignedInteger('max_event_capacity');
             $table->string('country');
-            $table->enum('visibility', ['public', 'private']);
+            $table->boolean('visibility');
             $table->foreignId('venue_id')->constrained('venues')->onDelete('cascade');
             $table->foreignId('organizer_id')->constrained('users')->onDelete('cascade');
         });
