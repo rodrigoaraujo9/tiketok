@@ -26,7 +26,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'username',
+        'password', 
+        'phone'
     ];
 
     /**
@@ -56,21 +58,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Card::class);
     }
-        /**
-     * Get events organized by the user.
-     */
-    public function organizedEvents(): HasMany
-    {
-        return $this->hasMany(Event::class, 'organizer_id');
-    }
-
-    /**
-     * Get events the user is attending.
-     */
-    public function attendingEvents(): BelongsToMany
-    {
-        return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id')
-            ->withTimestamps();
-    }
 }
-
