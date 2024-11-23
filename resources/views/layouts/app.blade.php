@@ -23,9 +23,9 @@
     <body>
         <main>
             <header>
-                <h1><a href="{{ url('/cards') }}">Thingy!</a></h1>
+                <h1><a href="{{ route('events.index') }}" class="navbar-brand">Thingy!</a></h1>
                 @if (Auth::check())
-                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
+                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span><a href="{{ route('dashboard') }}" class="navbar-user">{{ Auth::user()->name }}</a></span>
                 @endif
             </header>
             <section id="content">

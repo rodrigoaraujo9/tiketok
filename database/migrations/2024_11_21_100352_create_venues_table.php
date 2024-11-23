@@ -9,19 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        if (!Schema::hasTable('venues')) {
-            Schema::create('venues', function (Blueprint $table) {
-                $table->id('venue_id');
-                $table->string('name', 255);
-                $table->string('location', 255);
-                $table->integer('max_capacity');
-                $table->timestamps();
-            });
-        }
+        Schema::create('venues', function (Blueprint $table) {
+            $table->id('venue_id'); // Primary key
+            $table->string('name')->unique(); // Venue name
+            $table->string('location'); // Venue location
+            $table->integer('max_capacity')->unsigned(); // Maximum capacity of the venue
+        });
     }
-
     
 
     /**

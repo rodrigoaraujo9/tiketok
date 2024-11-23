@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h1>My dashboard</h1>
+    <br>
 
     <div class="container">
     <h2>My Events</h2>
@@ -96,11 +97,10 @@
             </table>
         @endif
 
-        <!-- Botão estilizado para buscar mais eventos -->
-        <form action="{{ route('events.index') }}" method="GET">
-            <button type="submit" class="btn btn-secondary mt-3">Search for Events</button>
-        </form>
+        <!-- Link estilizado para buscar mais eventos -->
+        <a href="{{ route('events.index') }}" class="btn btn-primary mb-3">+ Search for Events</a>
     </div>
+
 
 
 
