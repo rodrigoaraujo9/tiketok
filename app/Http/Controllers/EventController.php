@@ -16,12 +16,12 @@ class EventController extends Controller
      */
     public function index()
     {
-        // Retrieve all events, including related venues and organizers
-        $events = Event::with(['venue', 'organizer'])->get();
+        // only shows public events
+        $events = Event::where('visibility', true)->with(['venue', 'organizer'])->get();
 
-        // Return the view with the events data
         return view('events.index', compact('events'));
     }
+
 
     /**
      * Show details for a specific event.
