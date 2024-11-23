@@ -11,14 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venues', function (Blueprint $table) {
-            $table->id('venue_id'); // Primary key
-            $table->string('name')->unique(); // Unique venue name
-            $table->string('location'); // Location of the venue
-            $table->unsignedInteger('max_capacity')->nullable(); // Optional max capacity
-            $table->timestamps(); // Created at and updated at
-        });
+        // Check if the table doesn't exist before creating it
+        if (!Schema::hasTable('venues')) {
+            Schema::create('venues', function (Blueprint $table) {
+                $table->id('venue_id');
+                $table->string('name')->unique();
+                $table->string('location');
+                $table->unsignedInteger('max_capacity')->nullable();
+                $table->timestamps();
+            });
+        }
     }
+    
 
     /**
      * Reverse the migrations.

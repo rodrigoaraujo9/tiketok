@@ -36,7 +36,6 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate and save the new event
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -44,37 +43,40 @@ class EventController extends Controller
             'postal_code' => 'required|string|max:10',
             'max_event_capacity' => 'required|integer|min:1',
             'country' => 'required|string',
-            'visibility' => 'required|boolean',
-            'venue_id' => 'required|exists:venues,id',
+            'visibility' => 'required|in:public,private', // Ensure enum values
+            'venue_id' => 'required|exists:venues,venue_id',
         ]);
-
+    
         $validated['organizer_id'] = auth()->id();
-
+    
         $event = Event::create($validated);
-
-        // Redirect to the event's detail page
+    
         return redirect()->route('events.show', $event->event_id)
             ->with('success', 'Event created successfully!');
     }
-
+    
     /**
      * Display the form for creating a new event.
      */
- 
-public function create()
-{
-    $venues = Venue::all(); // Retrieve all venues to populate the dropdown
-    return view('events.create', compact('venues'));
-}
+    public function create()
+    {
+        // Fetch all venues to populate the venue dropdown
+        $venues = Venue::all();
+        return view('events.create', compact('venues'));
+    }
 
     /**
      * Display the form for editing an existing event.
      */
     public function edit($event_id)
     {
+        // Fetch the event to edit
         $event = Event::findOrFail($event_id);
 
-        return view('events.edit', compact('event')); // Add a form for event editing
+        // Fetch all venues for the venue dropdown
+        $venues = Venue::all();
+
+        return view('events.edit', compact('event', 'venues'));
     }
 
     /**
@@ -82,6 +84,7 @@ public function create()
      */
     public function update(Request $request, $event_id)
     {
+        // Validate input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -90,9 +93,10 @@ public function create()
             'max_event_capacity' => 'required|integer|min:1',
             'country' => 'required|string',
             'visibility' => 'required|boolean',
-            'venue_id' => 'required|exists:venues,id',
+            'venue_id' => 'required|exists:venues,venue_id', // Corrected column name
         ]);
 
+        // Find and update the event
         $event = Event::findOrFail($event_id);
         $event->update($validated);
 
@@ -105,6 +109,7 @@ public function create()
      */
     public function destroy($event_id)
     {
+        // Find and delete the event
         $event = Event::findOrFail($event_id);
         $event->delete();
 

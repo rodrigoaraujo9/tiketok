@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder
         $path = base_path('database/thingy-seed.sql');
         $sql = file_get_contents($path);
         DB::unprepared($sql);
+        DB::table('roles')->insert([
+            ['name' => 'admin'],
+            ['name' => 'user'],
+        ]);
         $this->command->info('Database seeded!');
     }
 }

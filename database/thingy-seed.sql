@@ -432,3 +432,17 @@ CREATE TRIGGER prevent_duplicate_attendance
 BEFORE INSERT ON attends
 FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_attendance();
+
+-- Populate venues with sample data
+INSERT INTO venues (name, location, max_capacity)
+VALUES 
+    ('Grand Concert Hall', '123 Main St, New York, NY', 1000),
+    ('Sunset Theater', '456 Broadway Ave, Los Angeles, CA', 500),
+    ('Riverfront Pavilion', '789 Riverside Dr, Chicago, IL', 1500),
+    ('Starlight Arena', '101 Ocean View Rd, Miami, FL', 2000),
+    ('Mountain View Amphitheater', '202 Hilltop Ln, Denver, CO', 800),
+    ('Downtown Arts Center', '303 Center St, Austin, TX', 400),
+    ('City Opera House', '404 Lincoln Sq, San Francisco, CA', 700),
+    ('Seaside Auditorium', '505 Coastal Blvd, Seattle, WA', 1200),
+    ('Skyline Plaza', '606 Skyline Dr, Atlanta, GA', 600),
+    ('Historic Music Hall', '707 Heritage Way, Boston, MA', 1100);

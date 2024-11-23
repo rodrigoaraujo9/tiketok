@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
-
 use App\Models\Card;
 
 class CardController extends Controller
@@ -37,7 +35,6 @@ class CardController extends Controller
         if (!Auth::check()) {
             // Not logged in, redirect to login.
             return redirect('/login');
-
         } else {
             // The user is logged in.
 
@@ -69,7 +66,7 @@ class CardController extends Controller
 
         // Set card details.
         $card->name = $request->input('name');
-        $card->user_id = Auth::user()->id;
+        $card->user_user_id = Auth::user()->user_id;
 
         // Save the card and return it as JSON.
         $card->save();

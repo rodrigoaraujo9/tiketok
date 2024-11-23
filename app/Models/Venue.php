@@ -12,6 +12,7 @@ class Venue extends Model
 
     // Disable timestamps for this model
     public $timestamps = false;
+    protected $primaryKey = 'venue_id';
 
     // Define the fillable attributes for mass assignment
     protected $fillable = [

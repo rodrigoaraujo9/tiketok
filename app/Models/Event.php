@@ -35,19 +35,13 @@ class Event extends Model
         'visibility' => 'boolean', // Cast to boolean
     ];
 
-        /**
-     * The venue associated with the event.
-     */
-    public function venue(): BelongsTo
+    public function venue()
     {
-        return $this->belongsTo(Venue::class, 'venue_id');
+        return $this->belongsTo(Venue::class, 'venue_id', 'venue_id');
     }
 
-    /**
-     * The organizer of the event.
-     */
-    public function organizer(): BelongsTo
+    public function organizer()
     {
-        return $this->belongsTo(User::class, 'organizer_id');
+        return $this->belongsTo(User::class, 'organizer_id', 'user_id');
     }
 }

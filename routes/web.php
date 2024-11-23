@@ -31,7 +31,7 @@ Route::controller(CardController::class)->group(function () {
 });
 
 
-// API
+// API (Cards & Items)
 Route::controller(CardController::class)->group(function () {
     Route::put('/api/cards', 'create');
     Route::delete('/api/cards/{card_id}', 'delete');
@@ -42,7 +42,6 @@ Route::controller(ItemController::class)->group(function () {
     Route::post('/api/item/{id}', 'update');
     Route::delete('/api/item/{id}', 'delete');
 });
-
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {
@@ -56,27 +55,26 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
-Route::controller(EventController::class)->group(function () {
-    // Event creation form (must be placed first)
-    Route::get('/events/create', 'create')->middleware('auth')->name('events.create');
+// Events
+Route::controller(EventController::class)->middleware('auth')->group(function () {
+    // Event creation form
+    Route::get('/events/create', 'create')->name('events.create');
 
     // List all events
     Route::get('/events', 'index')->name('events.index');
 
     // Show event details
-    Route::get('/events/{id}', 'show')->name('events.show');
+    Route::get('/events/{event_id}', 'show')->name('events.show');
 
     // Store a new event
-    Route::post('/events', 'store')->middleware('auth')->name('events.store');
+    Route::post('/events', 'store')->name('events.store');
 
     // Edit event form
-    Route::get('/events/{id}/edit', 'edit')->middleware('auth')->name('events.edit');
+    Route::get('/events/{event_id}/edit', 'edit')->name('events.edit');
 
     // Update an event
-    Route::put('/events/{id}', 'update')->middleware('auth')->name('events.update');
+    Route::put('/events/{event_id}', 'update')->name('events.update');
 
     // Delete an event
-    Route::delete('/events/{id}', 'destroy')->middleware('auth')->name('events.destroy');
+    Route::delete('/events/{event_id}', 'destroy')->name('events.destroy');
 });
-
-

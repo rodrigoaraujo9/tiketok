@@ -12,48 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id'); // Primary key
-            $table->string('username', 255)->unique(); // Unique username
-            $table->string('email', 255)->unique(); // Unique email
-            $table->string('name', 255); // User's name
-            $table->string('phone', 15)->nullable(); // Optional phone number
-            $table->string('profile_photo', 255)->nullable(); // Optional profile photo
-            $table->string('password', 255); // User password
-            $table->boolean('is_deleted')->default(false); // Soft delete flag
-            $table->rememberToken(); // For "Remember Me" functionality
-            $table->timestamps(); // Created_at and updated_at
+            $table->id('user_id'); // Ensure this matches the foreign key in `events`
+            $table->string('username')->unique();
+            $table->string('email')->unique();
+            $table->string('name');
+            $table->string('phone', 15)->nullable();
+            $table->string('profile_photo')->nullable();
+            $table->string('password');
+            $table->boolean('is_deleted')->default(false);
+            $table->unsignedBigInteger('role_id')->default(1);
+            $table->foreign('role_id')->references('role_id')->on('roles')->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-/**
- * Reverse the migrations.
- */
-/**
- * Reverse the migrations.
- */
-/**
- * Reverse the migrations.
- */
-/**
- * Reverse the migrations.
- */
-/**
- * Reverse the migrations.
- */
-/**
- * Reverse the migrations.
- */
-public function down(): void
-{
-    // Drop all dependent tables first in the correct order
- 
-
-    // Finally drop the `users` table
-    Schema::dropIfExists('users');
-}
-
 
 };
