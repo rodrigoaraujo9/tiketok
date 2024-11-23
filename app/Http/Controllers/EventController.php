@@ -140,16 +140,29 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($event_id);
 
-        // Verifica se o usuário já está participando
         if ($event->participants->contains(Auth::id())) {
             return redirect()->route('events.show', $event_id)->with('error', 'You are already part of this event.');
         }
 
-        // Adiciona o usuário à lista de participantes
         $event->participants()->attach(Auth::id());
 
         return redirect()->route('events.show', $event_id)->with('success', 'You have joined the event!');
     }
+
+    public function leaveEvent($event_id)
+    {
+        $event = Event::findOrFail($event_id);
+
+        if ($event->participants->contains(Auth::id())) {
+
+            $event->participants()->detach(Auth::id());
+
+            return redirect()->route('dashboard')->with('success', 'You have left the event.');
+        }
+
+        return redirect()->route('dashboard')->with('error', 'You are not a part of this event.');
+    }
+
 
 
 }

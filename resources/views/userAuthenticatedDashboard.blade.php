@@ -58,7 +58,7 @@
     <br>
 
     <div class="container">
-        <h2>Events that I'm a Part Of</h2>
+        <h2>Events Joined By Me</h2>
         
         @if($participatingEvents->isEmpty())
             <p>No events found.</p>
@@ -83,7 +83,12 @@
                             <td>{{ $event->description }}</td>
                             <td>{{ $event->date }}</td>
                             <td>
-                                <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-primary btn-sm">View</a>
+                                <!-- Botão para deixar o evento -->
+                                <form action="{{ route('events.leave', $event->event_id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm">Leave Event</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -96,6 +101,7 @@
             <button type="submit" class="btn btn-secondary mt-3">Search for Events</button>
         </form>
     </div>
+
 
 
 @endsection
