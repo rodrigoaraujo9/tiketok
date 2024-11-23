@@ -64,17 +64,50 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     Route::get('/events', 'index')->name('events.index');
 
     // Show event details
-    Route::get('/events/{event_id}', 'show')->name('events.show');
+    Route::get('/events/{event_id}', 'show')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.show');
 
     // Store a new event
     Route::post('/events', 'store')->name('events.store');
 
     // Edit event form
-    Route::get('/events/{event_id}/edit', 'edit')->name('events.edit');
+    Route::get('/events/{event_id}/edit', 'edit')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.edit');
 
     // Update an event
-    Route::put('/events/{event_id}', 'update')->name('events.update');
+    Route::put('/events/{event_id}', 'update')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.update');
 
     // Delete an event
-    Route::delete('/events/{event_id}', 'destroy')->name('events.destroy');
+    Route::delete('/events/{event_id}', 'destroy')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.destroy');
+
+    // Manage user's events
+    Route::get('/events/manage', 'manage')->name('events.manage');
+
+    // Invitations
+    Route::post('/events/{event_id}/invite', 'invite')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.invite');
+
+    Route::post('/events/{event_id}/accept', 'acceptInvitation')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.accept');
+
+    Route::post('/events/{event_id}/reject', 'rejectInvitation')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.reject');
+
+    // View invitations
+    Route::get('/invitations', 'listInvitations')->name('events.invitations');
+
+    Route::get('/events/attending', [EventController::class, 'attending'])
+    ->middleware('auth')
+    ->name('events.attending');
+
 });
+

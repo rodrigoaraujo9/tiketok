@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -16,7 +15,9 @@ class LoginController extends Controller
     public function showLoginForm(): View
     {
         if (Auth::check()) {
-            return redirect('/cards');
+            // Redirect based on user role
+            $user = Auth::user();
+            return $this->redirectUserBasedOnRole($user);
         }
 
         return view('auth.login');
@@ -45,18 +46,11 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
-            // Redirect based on user role
+            // Get authenticated user
             $user = Auth::user();
-            if ($user->role_id == 1) { // Admin role
-                return redirect()->intended('/admin/dashboard')
-                    ->withSuccess('Welcome back, Admin!');
-            } elseif ($user->role_id == 2) { // User role
-                return redirect()->intended('/cards')
-                    ->withSuccess('Welcome back!');
-            }
 
-            // Default redirection for other roles
-            return redirect()->intended('/home');
+            // Redirect based on user role
+            return $this->redirectUserBasedOnRole($user);
         }
 
         return back()->withErrors([
@@ -75,5 +69,22 @@ class LoginController extends Controller
 
         return redirect()->route('login')
             ->withSuccess('You have logged out successfully!');
+    }
+
+    /**
+     * Redirect user based on role.
+     */
+    private function redirectUserBasedOnRole($user): RedirectResponse
+    {
+        if ($user->role_id == 1) { // Admin role
+            return redirect()->intended('/admin/dashboard')
+                ->withSuccess('Welcome back, Admin!');
+        } elseif ($user->role_id == 2) { // User role
+            return redirect()->intended('/cards')
+                ->withSuccess('Welcome back!');
+        }
+
+        // Default redirection for other roles
+        return redirect()->intended('/home');
     }
 }

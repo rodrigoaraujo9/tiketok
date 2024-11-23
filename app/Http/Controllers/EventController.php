@@ -5,9 +5,118 @@ namespace App\Http\Controllers;
 use App\Models\Venue;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use App\Models\Invite;
+use App\Models\User;
+use Illuminate\Support\Facades\DB; // Import the DB facade
+
 
 class EventController extends Controller
 {
+   /**
+     * Manage events created by the authenticated user.
+     */
+    public function manage()
+    {
+        $events = Event::where('organizer_id', auth()->id())->get();
+        return view('events.manage', compact('events'));
+    }
+
+    /**
+     * Invite a user to an event.
+     */
+    public function invite(Request $request, $event_id)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+    
+        $user = User::where('email', $validated['email'])->firstOrFail();
+    
+        $existingInvite = Invite::where('event_id', $event_id)
+            ->where('user_id', $user->user_id)
+            ->first();
+    
+        if ($existingInvite) {
+            return back()->withErrors(['email' => 'This user has already been invited.']);
+        }
+    
+        // Create the invite
+        Invite::create([
+            'event_id' => $event_id,
+            'user_id' => $user->user_id,
+            'status' => 'pending',
+        ]);
+    
+        return back()->with('success', 'Invitation sent!');
+    }
+    
+
+    /**
+     * Accept an invitation.
+     */
+    public function acceptInvitation($event_id)
+    {
+        // Find the invite
+        $invite = Invite::where('event_id', $event_id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+    
+        // Update invite status
+        $invite->update(['status' => 'accepted']);
+    
+        // Add the user to the attendees
+        DB::table('attends')->insert([
+            'user_id' => auth()->id(),
+            'event_id' => $event_id,
+            'joined_at' => now(),
+        ]);
+    
+        return back()->with('success', 'You have accepted the invitation and are now attending the event.');
+    }
+    
+    
+    
+    public function attending()
+    {
+        $events = auth()->user()->attendingEvents()->with('venue', 'organizer')->get();
+    
+        return view('events.attending', compact('events'));
+    }
+    
+    
+    
+
+
+    /**
+     * Reject an invitation.
+     */
+    public function rejectInvitation($event_id)
+    {
+        // Find the invite using the correct primary key
+        $invite = Invite::where('event_id', $event_id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+    
+        $invite->update(['status' => 'declined']);
+    
+        return back()->with('success', 'You have declined the invitation.');
+    }
+    
+
+    /**
+     * List invitations for the authenticated user.
+     */
+    public function listInvitations()
+    {
+        $invitations = Invite::with('event.organizer')
+            ->where('user_id', auth()->id())
+            ->where('status', 'pending')
+            ->get();
+    
+        return view('events.invitations', compact('invitations'));
+    }
+    
+    
     /**
      * Display a listing of events.
      */
@@ -25,11 +134,17 @@ class EventController extends Controller
      */
     public function show($event_id)
     {
-        // Fetch event by its primary key (event_id)
+        // Validate that the event_id is numeric
+        if (!is_numeric($event_id)) {
+            abort(404, 'Invalid event ID');
+        }
+    
+        // Fetch event by its primary key
         $event = Event::with(['venue', 'organizer'])->findOrFail($event_id);
-
+    
         return view('events.show', compact('event'));
     }
+    
 
     /**
      * Store a newly created event in the database.
@@ -79,6 +194,7 @@ class EventController extends Controller
         return view('events.edit', compact('event', 'venues'));
     }
 
+    
     /**
      * Update an existing event in the database.
      */

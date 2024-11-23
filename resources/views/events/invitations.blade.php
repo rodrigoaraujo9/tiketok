@@ -17,20 +17,20 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($invitations as $event)
+                @foreach ($invitations as $invite)
                     <tr>
-                        <td>{{ $event->name }}</td>
-                        <td>{{ $event->date }}</td>
-                        <td>{{ $event->organizer->name }}</td>
+                        <td>{{ $invite->event->name }}</td>
+                        <td>{{ $invite->event->date }}</td>
+                        <td>{{ $invite->event->organizer->name }}</td>
                         <td>
                             <!-- Accept Invitation -->
-                            <form action="{{ route('events.accept', ['id' => $event->event_id]) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('events.accept', $invite->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-success">Accept</button>
                             </form>
 
                             <!-- Reject Invitation -->
-                            <form action="{{ route('events.reject', ['id' => $event->event_id]) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('events.reject', $invite->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-danger">Decline</button>
                             </form>

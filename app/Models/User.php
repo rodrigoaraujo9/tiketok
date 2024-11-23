@@ -59,4 +59,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Card::class);
     }
+    public function attendingEvents()
+    {
+        return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id')
+            ->withPivot('joined_at');
+    }
+    
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+    
+
 }

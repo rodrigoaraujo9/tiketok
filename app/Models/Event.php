@@ -44,4 +44,11 @@ class Event extends Model
     {
         return $this->belongsTo(User::class, 'organizer_id', 'user_id');
     }
+    public function attendees()
+    {
+        return $this->belongsToMany(User::class, 'attends', 'event_id', 'user_id')
+            ->withPivot('joined_at');
+    }
+    
+
 }

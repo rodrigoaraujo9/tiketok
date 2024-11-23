@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id('tag_id');
             $table->string('name')->unique();
-            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
+            $table->unsignedBigInteger('event_id'); // Use unsignedBigInteger for consistency
+            $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
             $table->timestamps();
         });
     }
+
 };

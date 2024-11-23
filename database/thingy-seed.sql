@@ -42,7 +42,7 @@ CREATE TABLE users (
     profile_photo VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     is_deleted BOOLEAN DEFAULT FALSE,
-    role_id INT REFERENCES roles(role_id) DEFAULT 1
+    role_id INT NOT NULL DEFAULT 2 REFERENCES roles(role_id) ON DELETE CASCADE
 );
 
 CREATE TABLE cards (
@@ -272,26 +272,6 @@ FOR EACH ROW
 EXECUTE FUNCTION enforce_event_capacity();
 
 
--- Trigger 3: Notify Users on Event Cancellation
--- Notifies all attendees when an event is canceled (BR06).
-CREATE OR REPLACE FUNCTION notify_event_cancellation()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.is_deleted = TRUE THEN
-        INSERT INTO notifications (message, date, is_read, user_id)
-        SELECT 'The event "' || OLD.name || '" has been canceled.', CURRENT_TIMESTAMP, FALSE, attends.user_id
-        FROM attends
-        WHERE attends.event_id = OLD.event_id;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER notify_on_event_cancellation
-AFTER UPDATE ON events
-FOR EACH ROW
-WHEN (NEW.is_deleted = TRUE)
-EXECUTE FUNCTION notify_event_cancellation();
 
 
 -- Trigger 4: Cascade Delete User Content
@@ -394,22 +374,6 @@ BEFORE INSERT ON attends
 FOR EACH ROW
 EXECUTE FUNCTION restrict_admin_participation();
 
-
--- Trigger 9: Notify Users on Invitations
--- Notifies users when they are invited to an event (US12).
-CREATE OR REPLACE FUNCTION notify_event_invitations()
-RETURNS TRIGGER AS $$
-BEGIN
-    INSERT INTO notifications (message, date, is_read, user_id)
-    VALUES ('You have been invited to the event: ' || NEW.event_id, CURRENT_TIMESTAMP, FALSE, NEW.user_id);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER notify_event_invitations
-AFTER INSERT ON invites
-FOR EACH ROW
-EXECUTE FUNCTION notify_event_invitations();
 
 
 
