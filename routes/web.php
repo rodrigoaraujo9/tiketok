@@ -30,7 +30,6 @@ Route::controller(CardController::class)->group(function () {
     Route::get('/cards/{id}', 'show');
 });
 
-
 // API
 Route::controller(CardController::class)->group(function () {
     Route::put('/api/cards', 'create');
@@ -42,7 +41,6 @@ Route::controller(ItemController::class)->group(function () {
     Route::post('/api/item/{id}', 'update');
     Route::delete('/api/item/{id}', 'delete');
 });
-
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {
@@ -56,7 +54,11 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
+// Events
 Route::controller(EventController::class)->group(function () {
+    // Dashboard
+    Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware('auth');
+
     // Event creation form (must be placed first)
     Route::get('/events/create', 'create')->middleware('auth')->name('events.create');
 
@@ -78,5 +80,3 @@ Route::controller(EventController::class)->group(function () {
     // Delete an event
     Route::delete('/events/{id}', 'destroy')->middleware('auth')->name('events.destroy');
 });
-
-
