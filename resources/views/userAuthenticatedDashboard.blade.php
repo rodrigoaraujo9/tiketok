@@ -57,19 +57,45 @@
     <br>
     <br>
 
-    <div class="section">
-    <h2>Events that I´m a part of</h2>
-    <ul>
-        @forelse ($participatingEvents as $event)
-            <li>
-                <h3>{{ $event->title }}</h3>
-                <p>{{ $event->description }}</p>
-                <p>Data: {{ $event->date }}</p>
-            </li>
-        @empty
-            <li>Nenhum evento encontrado.</li>
-        @endforelse
-    </ul>
-    </div>     
-</div>
+    <div class="container">
+        <h2>Events that I'm a Part Of</h2>
+        
+        @if($participatingEvents->isEmpty())
+            <p>No events found.</p>
+        @else
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($participatingEvents as $event)
+                        <tr>
+                            <td>
+                                <a href="{{ route('events.show', $event->event_id) }}" class="text-decoration-none">
+                                    {{ $event->name }}
+                                </a>
+                            </td>
+                            <td>{{ $event->description }}</td>
+                            <td>{{ $event->date }}</td>
+                            <td>
+                                <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-primary btn-sm">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+
+        <!-- Botão estilizado para buscar mais eventos -->
+        <form action="{{ route('events.index') }}" method="GET">
+            <button type="submit" class="btn btn-secondary mt-3">Search for Events</button>
+        </form>
+    </div>
+
+
 @endsection

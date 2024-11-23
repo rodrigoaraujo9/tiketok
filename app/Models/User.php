@@ -59,5 +59,11 @@ class User extends Authenticatable
         return $this->hasMany(Card::class);
     }
 
+    public function participatingEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_user', 'user_id', 'event_id');
+    }
+
+
     
 }

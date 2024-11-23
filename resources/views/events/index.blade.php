@@ -2,31 +2,33 @@
 
 @section('content')
 <div class="container">
-    <h1>All Events</h1>
-
-    @if($events->isEmpty())
-        <p>No events found.</p>
+    <h2>All Events</h2>
+    
+    @if ($events->isEmpty())
+        <p>No events available.</p>
     @else
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
+                    <th>Title</th>
                     <th>Date</th>
-                    <th>Venue</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($events as $event)
+                @foreach ($events as $event)
                     <tr>
+                        <!-- Título -->
                         <td>{{ $event->name }}</td>
-                        <td>{{ $event->description }}</td>
-                        <td>{{ $event->date }}</td>
-                        <td>{{ $event->venue->name }}</td>
+                        
+                        <!-- Data -->
+                        <td>{{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}</td>
+                        
+                        <!-- Link "Saber Mais" -->
                         <td>
-                            <!-- Use event_id here -->
-                            <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-primary">View</a>
+                            <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-link text-decoration-none">
+                                Saber Mais →
+                            </a>
                         </td>
                     </tr>
                 @endforeach
@@ -34,4 +36,6 @@
         </table>
     @endif
 </div>
+
+
 @endsection
