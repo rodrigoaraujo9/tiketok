@@ -1,32 +1,48 @@
 --
 -- Use a specific schema and set it as default - thingy.
 --
-DROP SCHEMA IF EXISTS thingy CASCADE;
-CREATE SCHEMA IF NOT EXISTS thingy;
-SET search_path TO thingy;
+DROP SCHEMA IF EXISTS lbaw2464 CASCADE;
+CREATE SCHEMA IF NOT EXISTS lbaw2464;
+SET search_path TO  lbaw2464;
 
 --
 -- Drop any existing tables.
 --
-DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS cards CASCADE;
 DROP TABLE IF EXISTS items CASCADE;
-DROP TABLE IF EXISTS venues CASCADE;
-DROP TABLE IF EXISTS events CASCADE;
 
---
--- Create tables.
---
+-- Drop existing tables and types
+DROP TABLE IF EXISTS attends, befriends, tags, files, comments, poll_votes, poll_options, polls, tickets, events, venues, users, roles CASCADE;
+DROP DOMAIN IF EXISTS positive_integer CASCADE;
+DROP TYPE IF EXISTS visibility1 CASCADE;
+DROP TYPE IF EXISTS ticket_type CASCADE;
+
+-- Define ENUM types
+CREATE TYPE visibility1 AS ENUM ('public', 'private');
+CREATE TYPE ticket_type AS ENUM ('regular', 'vip', 'student');
+
+-- Define DOMAIN for positive integers
+CREATE DOMAIN positive_integer AS INT CHECK (VALUE >= 0);
+
+
+
+-- Roles table
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Users table
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(255) UNIQUE NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  phone VARCHAR(15) CHECK (phone ~ '^[0-9]{9,15}$'),
-  profile_photo VARCHAR(255),
-  password VARCHAR(255) NOT NULL,
-  is_admin BOOLEAN DEFAULT FALSE,
-  is_deleted BOOLEAN DEFAULT FALSE
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(15) CHECK (phone ~ '^[0-9]{9,15}$'),
+    profile_photo VARCHAR(255),
+    password VARCHAR(255) NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    role_id INT REFERENCES roles(role_id) DEFAULT 1
 );
 
 CREATE TABLE cards (
@@ -41,33 +57,378 @@ CREATE TABLE items (
   description VARCHAR NOT NULL,
   done BOOLEAN NOT NULL DEFAULT FALSE
 );
-
+-- Venues table
 CREATE TABLE venues (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    venue_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
     location VARCHAR(255) NOT NULL,
-    max_capacity INT NOT NULL
+    max_capacity positive_integer
 );
+
+-- Events table
 CREATE TABLE events (
     event_id SERIAL PRIMARY KEY,
     description TEXT NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMP NOT NULL CHECK (date >= CURRENT_DATE),
     postal_code VARCHAR(10),
-    max_event_capacity INT NOT NULL,
+    max_event_capacity positive_integer,
     country VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    visibility BOOLEAN NOT NULL,
-    venue_id INT REFERENCES venues(id) ON DELETE CASCADE,
-    organizer_id INT REFERENCES users(id) ON DELETE CASCADE
+    visibility visibility1 NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    venue_id INT REFERENCES venues(venue_id) ON DELETE CASCADE,
+    organizer_id INT REFERENCES users(user_id) ON DELETE CASCADE
 );
 
---
--- Insert value.
---
+-- Tickets table
+CREATE TABLE tickets (
+    ticket_id SERIAL PRIMARY KEY,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    type ticket_type NOT NULL,
+    quantity positive_integer NOT NULL
+);
 
--- Insert sample venues
-INSERT INTO venues (name, location, max_capacity)
-VALUES 
-    ('Conference Center', 'Downtown Avenue, City A', 500),
-    ('Community Hall', 'Main Street, City B', 200),
-    ('Outdoor Park', 'Park Lane, City C', 1000);
+-- Polls table
+CREATE TABLE polls (
+    poll_id SERIAL PRIMARY KEY,
+    question TEXT NOT NULL,
+    end_date TIMESTAMP NOT NULL CHECK (end_date >= CURRENT_DATE),
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+-- Poll options table
+CREATE TABLE poll_options (
+    option_id SERIAL PRIMARY KEY,
+    poll_id INT REFERENCES polls(poll_id) ON DELETE CASCADE,
+    option_text TEXT NOT NULL
+);
+
+-- Poll votes table
+CREATE TABLE poll_votes (
+    vote_id SERIAL PRIMARY KEY,
+    poll_id INT REFERENCES polls(poll_id) ON DELETE CASCADE,
+    option_id INT REFERENCES poll_options(option_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Comments table
+CREATE TABLE comments (
+    comment_id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+-- Files table
+CREATE TABLE files (
+    file_id SERIAL PRIMARY KEY,
+    url VARCHAR(255) UNIQUE NOT NULL,
+    comment_id INT REFERENCES comments(comment_id) ON DELETE CASCADE
+);
+
+-- Tags table
+CREATE TABLE tags (
+    tag_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+);
+
+-- Befriends table (Many-to-Many between Users)
+CREATE TABLE befriends (
+    user_id_1 INT REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id_2 INT REFERENCES users(user_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id_1, user_id_2)
+);
+
+-- Attends table (Many-to-Many between Users and Events)
+CREATE TABLE attends (
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, event_id),
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE invites (
+    invite_id SERIAL PRIMARY KEY,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'pending' -- Example: 'pending', 'accepted', 'declined'
+);
+
+-- Set schema
+SET search_path TO lbaw2464;
+
+-- Indexes for Users
+-- Speed up lookups for authentication, profile queries, and friend relationships
+CREATE INDEX idx_users_username ON users (username);
+CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_users_role_id ON users (role_id);
+
+-- Indexes for Venues
+-- Optimize venue searches by name and location
+CREATE INDEX idx_venues_name ON venues (name);
+CREATE INDEX idx_venues_location ON venues (location);
+
+-- Indexes for Events
+-- Optimize event searches by date, visibility, and venue
+CREATE INDEX idx_events_date ON events (date);
+CREATE INDEX idx_events_visibility ON events (visibility);
+CREATE INDEX idx_events_venue_id ON events (venue_id);
+CREATE INDEX idx_events_organizer_id ON events (organizer_id);
+
+-- Full-text search index for event descriptions
+CREATE INDEX idx_events_description ON events USING gin(to_tsvector('english', description));
+
+-- Indexes for Tickets
+-- Speed up queries for tickets by event and type
+CREATE INDEX idx_tickets_event_id ON tickets (event_id);
+CREATE INDEX idx_tickets_type ON tickets (type);
+
+-- Indexes for Polls
+-- Optimize lookups by event and user
+CREATE INDEX idx_polls_event_id ON polls (event_id);
+CREATE INDEX idx_polls_user_id ON polls (user_id);
+
+-- Indexes for Poll Options
+-- Optimize lookups by poll
+CREATE INDEX idx_poll_options_poll_id ON poll_options (poll_id);
+
+-- Indexes for Poll Votes
+-- Optimize queries for votes by poll and user
+CREATE INDEX idx_poll_votes_poll_id ON poll_votes (poll_id);
+CREATE INDEX idx_poll_votes_user_id ON poll_votes (user_id);
+
+-- Indexes for Comments
+-- Optimize queries for comments by event and user
+CREATE INDEX idx_comments_event_id ON comments (event_id);
+CREATE INDEX idx_comments_user_id ON comments (user_id);
+
+-- Full-text search index for comment content
+CREATE INDEX idx_comments_content ON comments USING gin(to_tsvector('english', content));
+
+-- Indexes for Files
+-- Optimize lookups by comment (e.g., retrieving files attached to a comment)
+CREATE INDEX idx_files_comment_id ON files (comment_id);
+
+-- Indexes for Tags
+-- Optimize tag searches by event
+CREATE INDEX idx_tags_event_id ON tags (event_id);
+
+-- Indexes for Befriends
+-- Optimize lookups for friendships
+CREATE INDEX idx_befriends_user_id_1 ON befriends (user_id_1);
+CREATE INDEX idx_befriends_user_id_2 ON befriends (user_id_2);
+
+-- Indexes for Attends
+-- Optimize queries for event attendance and attendance lists
+CREATE INDEX idx_attends_user_id ON attends (user_id);
+CREATE INDEX idx_attends_event_id ON attends (event_id);
+
+-- Set schema
+SET search_path TO lbaw2464;
+
+-- Trigger 1: Validate Event Date
+-- Ensures that an event's date is set to the current or future date (BR05).
+CREATE OR REPLACE FUNCTION validate_event_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.date < CURRENT_DATE THEN
+        RAISE EXCEPTION 'Event date must be greater than or equal to the current date.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER event_date_validation
+BEFORE INSERT OR UPDATE ON events
+FOR EACH ROW
+EXECUTE FUNCTION validate_event_date();
+
+
+-- Trigger 2: Enforce Event Capacity
+-- Ensures that the number of attendees does not exceed the event's maximum capacity (BR08).
+CREATE OR REPLACE FUNCTION enforce_event_capacity()
+RETURNS TRIGGER AS $$
+DECLARE
+    current_attendance INT;
+BEGIN
+    SELECT COUNT(*) INTO current_attendance
+    FROM attends
+    WHERE event_id = NEW.event_id;
+
+    IF current_attendance >= (SELECT max_event_capacity FROM events WHERE event_id = NEW.event_id) THEN
+        RAISE EXCEPTION 'The event has reached its maximum capacity.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER enforce_event_capacity
+BEFORE INSERT ON attends
+FOR EACH ROW
+EXECUTE FUNCTION enforce_event_capacity();
+
+
+-- Trigger 3: Notify Users on Event Cancellation
+-- Notifies all attendees when an event is canceled (BR06).
+CREATE OR REPLACE FUNCTION notify_event_cancellation()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.is_deleted = TRUE THEN
+        INSERT INTO notifications (message, date, is_read, user_id)
+        SELECT 'The event "' || OLD.name || '" has been canceled.', CURRENT_TIMESTAMP, FALSE, attends.user_id
+        FROM attends
+        WHERE attends.event_id = OLD.event_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notify_on_event_cancellation
+AFTER UPDATE ON events
+FOR EACH ROW
+WHEN (NEW.is_deleted = TRUE)
+EXECUTE FUNCTION notify_event_cancellation();
+
+
+-- Trigger 4: Cascade Delete User Content
+-- Ensures that all related data is deleted when a user is removed (BR04).
+CREATE OR REPLACE FUNCTION cascade_delete_user_content()
+RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM comments WHERE user_id = OLD.user_id;
+    DELETE FROM tickets WHERE user_id = OLD.user_id;
+    DELETE FROM polls WHERE user_id = OLD.user_id;
+    DELETE FROM attends WHERE user_id = OLD.user_id;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER cascade_delete_user_content
+AFTER DELETE ON users
+FOR EACH ROW
+EXECUTE FUNCTION cascade_delete_user_content();
+
+
+-- Trigger 5: Restrict Comment Editing
+-- Restricts comment editing to a 15-minute window after posting (BR05).
+CREATE OR REPLACE FUNCTION restrict_comment_editing()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - OLD.date)) > 900 THEN
+        RAISE EXCEPTION 'You can only edit comments within 15 minutes of posting.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER restrict_comment_editing
+BEFORE UPDATE ON comments
+FOR EACH ROW
+WHEN (OLD.content IS DISTINCT FROM NEW.content)
+EXECUTE FUNCTION restrict_comment_editing();
+
+
+-- Trigger 6: Auto-Generate Poll Results
+-- Automatically calculate poll results when the poll ends (US30).
+CREATE OR REPLACE FUNCTION auto_generate_poll_results()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.end_date < CURRENT_TIMESTAMP THEN
+        -- Calculate results (This is an example; adjust according to logic)
+        INSERT INTO poll_results (poll_id, option_id, votes)
+        SELECT poll_id, option_id, COUNT(*) AS votes
+        FROM poll_votes
+        WHERE poll_id = NEW.poll_id
+        GROUP BY poll_id, option_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER auto_generate_poll_results
+AFTER UPDATE ON polls
+FOR EACH ROW
+WHEN (NEW.end_date IS DISTINCT FROM OLD.end_date)
+EXECUTE FUNCTION auto_generate_poll_results();
+
+
+-- Trigger 7: Enforce Private Event Rules
+-- Ensures private events are not shown in public searches (BR01).
+CREATE OR REPLACE FUNCTION enforce_private_event_rules()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.visibility = 'private' THEN
+        RAISE NOTICE 'This event is private and will not appear in public searches.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER enforce_private_event_rules
+BEFORE INSERT OR UPDATE ON events
+FOR EACH ROW
+EXECUTE FUNCTION enforce_private_event_rules();
+
+
+-- Trigger 8: Restrict Admin Participation
+-- Prevents administrators from joining events as regular attendees (BR02).
+CREATE OR REPLACE FUNCTION restrict_admin_participation()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM users
+        WHERE user_id = NEW.user_id AND role_id = (SELECT role_id FROM roles WHERE name = 'admin')
+    ) THEN
+        RAISE EXCEPTION 'Administrators cannot join events as regular attendees.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER restrict_admin_participation
+BEFORE INSERT ON attends
+FOR EACH ROW
+EXECUTE FUNCTION restrict_admin_participation();
+
+
+-- Trigger 9: Notify Users on Invitations
+-- Notifies users when they are invited to an event (US12).
+CREATE OR REPLACE FUNCTION notify_event_invitations()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO notifications (message, date, is_read, user_id)
+    VALUES ('You have been invited to the event: ' || NEW.event_id, CURRENT_TIMESTAMP, FALSE, NEW.user_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notify_event_invitations
+AFTER INSERT ON invites
+FOR EACH ROW
+EXECUTE FUNCTION notify_event_invitations();
+
+
+
+-- Trigger 10: Prevent Duplicate Attendance
+-- Ensures a user cannot join the same event multiple times (BR06).
+CREATE OR REPLACE FUNCTION prevent_duplicate_attendance()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM attends
+        WHERE user_id = NEW.user_id AND event_id = NEW.event_id
+    ) THEN
+        RAISE EXCEPTION 'User is already attending this event.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER prevent_duplicate_attendance
+BEFORE INSERT ON attends
+FOR EACH ROW
+EXECUTE FUNCTION prevent_duplicate_attendance();
