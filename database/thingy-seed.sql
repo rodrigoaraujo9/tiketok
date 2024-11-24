@@ -158,8 +158,24 @@ CREATE TABLE invites (
     status VARCHAR(50) DEFAULT 'pending' -- Example: 'pending', 'accepted', 'declined'
 );
 
+-- Reports table
+CREATE TABLE reports (
+    report_id SERIAL PRIMARY KEY, -- Unique identifier for each report
+    event_id INT NOT NULL REFERENCES events(event_id) ON DELETE CASCADE, -- Links report to an event
+    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE, -- User who submitted the report
+    reason TEXT NOT NULL, -- Reason for the report
+    r_status VARCHAR(50) DEFAULT 'pending', -- Status of the report: pending, reviewed, resolved
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the report was created
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- When the report was last updated
+);
+
+
 -- Set schema
 SET search_path TO lbaw2464;
+
+CREATE INDEX idx_reports_event_id ON reports (event_id);
+CREATE INDEX idx_reports_user_id ON reports (user_id);
+CREATE INDEX idx_reports_r_status ON reports (r_status);
 
 -- Indexes for Users
 -- Speed up lookups for authentication, profile queries, and friend relationships
@@ -396,6 +412,21 @@ CREATE TRIGGER prevent_duplicate_attendance
 BEFORE INSERT ON attends
 FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_attendance();
+
+CREATE OR REPLACE FUNCTION update_report_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_report_timestamp
+BEFORE UPDATE ON reports
+FOR EACH ROW
+EXECUTE FUNCTION update_report_timestamp();
+
+
 
 -- Populate venues with sample data
 INSERT INTO venues (name, location, max_capacity)

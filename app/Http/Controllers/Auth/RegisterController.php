@@ -46,7 +46,7 @@ class RegisterController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('cards')
+        return redirect()->route('events.index')
             ->withSuccess('You have successfully registered & logged in!');
     }
 }

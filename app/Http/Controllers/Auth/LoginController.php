@@ -80,7 +80,7 @@ class LoginController extends Controller
             return redirect()->intended('/admin/dashboard')
                 ->withSuccess('Welcome back, Admin!');
         } elseif ($user->role_id == 2) { // User role
-            return redirect()->intended('/cards')
+            return redirect()->intended('/dashboard')
                 ->withSuccess('Welcome back!');
         }
 
