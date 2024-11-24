@@ -29,22 +29,19 @@ class EventController extends Controller
 
     public function joinEvent($event_id)
     {
-        $event = Event::findOrFail($event_id);
-
+        $event = Event::with('attendees')->findOrFail($event_id);
+    
+        // Check if the user is already attending
         if ($event->attendees->contains(Auth::id())) {
-            return redirect()->route('events.show', $event_id)
-                ->with('error', 'You are already part of this event.');
+            return redirect()->route('events.show', $event_id)->with('error', 'You are already part of this event.');
         }
-
-        DB::table('attends')->insert([
-            'user_id' => Auth::id(),
-            'event_id' => $event_id,
-            'joined_at' => now(),
-        ]);
-
-        return redirect()->route('events.show', $event_id)
-            ->with('success', 'You have joined the event!');
+    
+        // Add the user to the attendees
+        $event->attendees()->attach(Auth::id(), ['joined_at' => now()]);
+    
+        return redirect()->route('events.show', $event_id)->with('success', 'You have joined the event!');
     }
+    
 
     public function leaveEvent($event_id)
     {
