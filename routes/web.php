@@ -1,13 +1,7 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\CardController;
-use App\Http\Controllers\ItemController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-
 use App\Http\Controllers\EventController;
 
 /*
@@ -15,114 +9,75 @@ use App\Http\Controllers\EventController;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| Define all routes for public and authenticated pages, ensuring proper 
+| redirection and authentication middleware where necessary.
 |
 */
 
-// Home
-Route::redirect('/', '/login');
-
-// Cards
-Route::controller(CardController::class)->group(function () {
-    Route::get('/cards', 'list')->name('cards');
-    Route::get('/cards/{id}', 'show');
+// Public Routes
+Route::get('/', function () {
+    return redirect()->route('events.index'); // Default route redirects to events list
 });
 
-
-// API (Cards & Items)
-Route::controller(CardController::class)->group(function () {
-    Route::put('/api/cards', 'create');
-    Route::delete('/api/cards/{card_id}', 'delete');
-});
-
-Route::controller(ItemController::class)->group(function () {
-    Route::put('/api/cards/{card_id}', 'create');
-    Route::post('/api/item/{id}', 'update');
-    Route::delete('/api/item/{id}', 'delete');
+Route::controller(EventController::class)->group(function () {
+    // Publicly accessible event pages
+    Route::get('/events', 'index')->name('events.index'); // List all events
+    Route::get('/events/{event_id}', 'show')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.show'); // Show event details
 });
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {
-    Route::get('/login', 'showLoginForm')->name('login');
-    Route::post('/login', 'authenticate');
-    Route::get('/logout', 'logout')->name('logout');
+    Route::get('/login', 'showLoginForm')->name('login'); // Login form
+    Route::post('/login', 'authenticate'); // Handle login
+    Route::get('/logout', 'logout')->name('logout'); // Logout
 });
 
 Route::controller(RegisterController::class)->group(function () {
-    Route::get('/register', 'showRegistrationForm')->name('register');
-    Route::post('/register', 'register');
+    Route::get('/register', 'showRegistrationForm')->name('register'); // Registration form
+    Route::post('/register', 'register'); // Handle registration
 });
 
-// Events
+// Authenticated Routes
 Route::controller(EventController::class)->middleware('auth')->group(function () {
-    // Event creation form
-    Route::get('/events/create', 'create')->name('events.create');
-
-    // List all events
-    Route::get('/events', 'index')->name('events.index');
-
-    // Show event details
-    Route::get('/events/{event_id}', 'show')
-        ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.show');
-
-    // Store a new event
-    Route::post('/events', 'store')->name('events.store');
-
-    // Edit event form
+    // Event creation, management, and actions
+    Route::get('/events/create', 'create')->name('events.create'); // Create event form
+    Route::post('/events', 'store')->name('events.store'); // Store new event
     Route::get('/events/{event_id}/edit', 'edit')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.edit');
-
-    // Update an event
+        ->name('events.edit'); // Edit event form
     Route::put('/events/{event_id}', 'update')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.update');
-
-    // Delete an event
+        ->name('events.update'); // Update event
     Route::delete('/events/{event_id}', 'destroy')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.destroy');
+        ->name('events.destroy'); // Delete event
 
-    // Manage user's events
-    Route::get('/events/manage', 'manage')->name('events.manage');
+    // Event management
+    Route::get('/events/manage', 'manage')->name('events.manage'); // Manage user's events
 
     // Invitations
     Route::post('/events/{event_id}/invite', 'invite')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.invite');
-
+        ->name('events.invite'); // Invite to event
+    Route::get('/invitations', 'listInvitations')->name('events.invitations'); // List all invitations
     Route::post('/events/{event_id}/accept', 'acceptInvitation')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.accept');
-
+        ->name('events.accept'); // Accept invitation
     Route::post('/events/{event_id}/reject', 'rejectInvitation')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
-        ->name('events.reject');
+        ->name('events.reject'); // Reject invitation
 
-    // View invitations
-    Route::get('/invitations', 'listInvitations')->name('events.invitations');
+    // Join and leave events
+    Route::post('/events/{event_id}/join', 'joinEvent')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.join'); // Join an event
+    Route::delete('/events/{event_id}/leave', 'leaveEvent')
+        ->where('event_id', '[0-9]+') // Only allow numeric event_id
+        ->name('events.leave'); // Leave an event
 
-    Route::get('/events/attending', [EventController::class, 'attending'])
-    ->middleware('auth')
-    ->name('events.attending');
-
-    Route::get('/dashboard', 'dashboard')
-    ->middleware('auth')
-    ->name('dashboard');
-    
-    Route::post('/events/{event_id}/join', [EventController::class, 'joinEvent'])
-    ->where('event_id', '[0-9]+') // Only allow numeric event_id
-    ->name('events.join');
-
-
-    Route::delete('/events/{event_id}/leave', [EventController::class, 'leaveEvent'])
-    ->where('event_id', '[0-9]+') // Ensure event_id is numeric
-    ->middleware('auth')          // Require authentication
-    ->name('events.leave');
-
-
+    // User-specific views
+    Route::get('/events/attending', 'attending')->name('events.attending'); // Events user is attending
+    Route::get('/dashboard', 'dashboard')->name('dashboard'); // User dashboard
 });
-
