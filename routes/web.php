@@ -109,5 +109,15 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     ->middleware('auth')
     ->name('events.attending');
 
+    Route::get('/dashboard', 'dashboard')
+    ->middleware('auth')
+    ->name('dashboard');
+
+    Route::delete('/events/{event_id}/leave', [EventController::class, 'leaveEvent'])
+    ->where('event_id', '[0-9]+') // Ensure event_id is numeric
+    ->middleware('auth')          // Require authentication
+    ->name('events.leave');
+
+
 });
 

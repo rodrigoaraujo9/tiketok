@@ -7,11 +7,61 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth; // Correctly importing Auth facade
 use Illuminate\Support\Facades\DB; // Import the DB facade
 
 
 class EventController extends Controller
 {
+
+    public function dashboard()
+    {
+        $user = Auth::user();
+
+        $myEvents = Event::where('organizer_id', $user->user_id)->get();
+        $participatingEvents = $user->attendingEvents()->with('venue', 'organizer')->get();
+
+        return view('/dashboard/userAuthenticatedDashboard', [
+            'myEvents' => $myEvents,
+            'participatingEvents' => $participatingEvents,
+        ]);
+    }
+
+    public function joinEvent($event_id)
+    {
+        $event = Event::findOrFail($event_id);
+
+        if ($event->attendees->contains(Auth::id())) {
+            return redirect()->route('events.show', $event_id)
+                ->with('error', 'You are already part of this event.');
+        }
+
+        DB::table('attends')->insert([
+            'user_id' => Auth::id(),
+            'event_id' => $event_id,
+            'joined_at' => now(),
+        ]);
+
+        return redirect()->route('events.show', $event_id)
+            ->with('success', 'You have joined the event!');
+    }
+
+    public function leaveEvent($event_id)
+    {
+        $event = Event::findOrFail($event_id);
+
+        if (!$event->attendees->contains(Auth::id())) {
+            return redirect()->route('dashboard')->with('error', 'You are not part of this event.');
+        }
+
+        DB::table('attends')
+            ->where('user_id', Auth::id())
+            ->where('event_id', $event_id)
+            ->delete();
+
+        return redirect()->route('dashboard')->with('success', 'You have left the event.');
+    }
+
    /**
      * Manage events created by the authenticated user.
      */
