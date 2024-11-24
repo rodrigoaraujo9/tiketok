@@ -3,63 +3,64 @@
 @section('content')
 <div class="container">
     <h1>{{ $event->name }}</h1>
-    
+
     <p><strong>Event ID:</strong> {{ $event->event_id }}</p>
     <p><strong>Description:</strong> {{ $event->description }}</p>
     <p><strong>Date:</strong> {{ $event->date }}</p>
     <p><strong>Venue:</strong> {{ $event->venue->name }}</p>
     <p><strong>Organizer:</strong> {{ $event->organizer->name }}</p>
+    
+    
+    <a href="{{ route('events.edit', $event->event_id) }}" class="btn btn-warning">Edit Event</a>
+    
+    
+
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
 
-    <!-- Check if the user is part of the attendees -->
-    @if (!$event->attendees->contains(Auth::id()))
-    <form action="{{ route('events.join', $event->event_id) }}" method="POST">
-        @csrf
-        <button class="btn btn-primary">Join Event</button>
-    </form>
-    @else
-        <p class="text-success">You are already part of this event.</p>
-    @endif
-
-    <!-- Comments Section -->
+    <!-- Comentários -->
     <h2>Comments</h2>
-
-    <!-- Display existing comments -->
-    @forelse ($event->comments as $comment)
+    @foreach ($event->comments as $comment)
         <div class="card mb-2">
             <div class="card-body">
-                <p>{{ $comment->content }}</p>
-                <p class="text-muted">By {{ $comment->user->name }} on 
-                    {{ $comment->created_at ? $comment->created_at->format('d/m/Y H:i') : 'Date not available' }}</p>
+                <p id="comment-{{ $comment->comment_id }}" class="comment-content">{{ $comment->content }}</p>
+                <p class="text-muted">By {{ $comment->user->name }} on {{ $comment->created_at->format('d/m/Y H:i') }}</p>
 
+                <!-- Editar comentário (visível apenas para o autor) -->
                 @if ($comment->user_id === Auth::id())
-                    <!-- Edit Comment -->
-                    <form action="{{ route('comments.edit', $comment->comment_id) }}" method="POST" class="d-inline">
+                    <button class="btn btn-warning btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Edit</button>
+
+                    <form action="{{ route('comments.edit', $comment->comment_id) }}" method="POST" id="edit-form-{{ $comment->comment_id }}" class="edit-form" style="display: none;">
                         @csrf
                         @method('PUT')
-                        <input type="text" name="content" value="{{ $comment->content }}" required>
-                        <button type="submit" class="btn btn-warning btn-sm">Edit</button>
-                    </form>
-
-                    <!-- Delete Comment -->
-                    <form action="{{ route('comments.delete', $comment->comment_id) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <textarea name="content" class="form-control mb-2" rows="3" required>{{ $comment->content }}</textarea>
+                        <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Cancel</button>
                     </form>
                 @endif
             </div>
         </div>
-    @empty
-        <p>No comments yet.</p>
-    @endforelse
+    @endforeach
 
-    <!-- Add new comment -->
     <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
         @csrf
         <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
         <button type="submit" class="btn btn-primary">Add Comment</button>
     </form>
-
 </div>
+
+<script>
+    function toggleEditForm(commentId) {
+        var contentElement = document.getElementById('comment-' + commentId);
+        var editForm = document.getElementById('edit-form-' + commentId);
+        
+        if (editForm.style.display === 'none') {
+            editForm.style.display = 'block';
+            contentElement.style.display = 'none';
+        } else {
+            editForm.style.display = 'none';
+            contentElement.style.display = 'block';
+        }
+    }
+</script>
+
 @endsection
