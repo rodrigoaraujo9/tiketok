@@ -9,6 +9,8 @@ use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth; // Correctly importing Auth facade
 use Illuminate\Support\Facades\DB; // Import the DB facade
+use App\Models\Comment;
+
 
 
 class EventController extends Controller
@@ -278,5 +280,56 @@ class EventController extends Controller
 
         return redirect()->route('events.index')
             ->with('success', 'Event deleted successfully!');
+    }
+
+    public function addComment(Request $request, $event_id)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        Comment::create([
+            'content' => $validated['content'],
+            'date' => now(),
+            'event_id' => $event_id,
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('events.show', $event_id)
+            ->with('success', 'Comment added successfully!');
+    }
+
+    public function editComment(Request $request, $comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+
+        // Ensure only the author can edit the comment
+        if ($comment->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $comment->update(['content' => $validated['content']]);
+
+        return redirect()->route('events.show', $comment->event_id)
+            ->with('success', 'Comment updated successfully!');
+    }
+
+    public function deleteComment($comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+
+        // Ensure only the author can delete the comment
+        if ($comment->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $comment->delete();
+
+        return redirect()->route('events.show', $comment->event_id)
+            ->with('success', 'Comment deleted successfully!');
     }
 }

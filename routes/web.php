@@ -81,3 +81,12 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     Route::get('/events/attending', 'attending')->name('events.attending'); // Events user is attending
     Route::get('/dashboard', 'dashboard')->name('dashboard'); // User dashboard
 });
+
+    // Add Comment
+Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
+
+// Edit Comment
+Route::put('/comments/{comment_id}', [EventController::class, 'editComment'])->name('comments.edit');
+
+// Delete Comment
+Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'])->name('comments.delete');
