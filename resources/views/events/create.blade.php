@@ -68,9 +68,11 @@
                     </option>
                 @endforeach
             </select>
+            
         </div>
 
         <button type="submit" class="btn btn-primary">Create Event</button>
+        
     </form>
 </div>
 @endsection

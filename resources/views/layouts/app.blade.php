@@ -23,10 +23,24 @@
     <body>
         <main>
             <header>
-                <h1><a href="{{ url('/cards') }}">Thingy!</a></h1>
-                @if (Auth::check())
-                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
-                @endif
+                <h1><a href="{{ url('/events') }}" style="text-decoration: none;">Thingy!</a></h1>
+                <nav style="display: flex; gap: 1rem; align-items: center; justify-content: center; margin-top: 1rem;">
+                    <a href="{{ route('events.index') }}" style="text-decoration: none;">Browse Events</a>
+                    <a href="{{ route('events.create') }}" style="text-decoration: none;">Create Event</a>
+                    <a href="{{ route('events.manage') }}" style="text-decoration: none;">Manage My Events</a>
+                    <a href="{{ route('events.attending') }}" style="text-decoration: none;">My Events</a>
+                    <a href="{{ route('events.invitations') }}" style="text-decoration: none;">Invitations</a>
+                    @if (Auth::check())
+                        <form action="{{ route('logout') }}" method="GET" style="display: inline;">
+                            @csrf
+                            <button type="submit" style="background: none; border: none; color: red; cursor: pointer;">Logout</button>
+                        </form>
+                        <span style="font-weight: bold;">Welcome, {{ Auth::user()->name }}</span>
+                    @else
+                        <a href="{{ route('login') }}" style="text-decoration: none;">Login</a>
+                        <a href="{{ route('register') }}" style="text-decoration: none;">Register</a>
+                    @endif
+                </nav>
             </header>
             <section id="content">
                 @yield('content')

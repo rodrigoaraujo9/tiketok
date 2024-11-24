@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h1>All Events</h1>
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
 
     @if($events->isEmpty())
         <p>No events found.</p>
