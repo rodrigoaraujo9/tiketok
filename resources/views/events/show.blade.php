@@ -13,7 +13,7 @@
     
     <a href="{{ route('events.edit', $event->event_id) }}" class="btn btn-warning">Edit Event</a>
     
-    
+    <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
 
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
 

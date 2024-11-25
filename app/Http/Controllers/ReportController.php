@@ -41,28 +41,21 @@ class ReportController extends Controller
         }
     }
 
-    public function createReport(Request $request) 
+    public function createReportForm($event_id)
     {
-        $u_id = $request->input('user_id');
-        $e_id = $request->input('event_id');
+        $event = Event::findOrFail($event_id);
+        return view('user.newReport', compact('event'));
+    }
 
-        $exist = DB::table('reports')->where('user_id', $u_id)->where('event_id', $e_id)->get();
-        if(count($exist) >= 1) {
-            return 2; 
-        }
+    public function createReport(Request $request)
+    {
+        $report = new Report();
+        $report->event_id = $request->input('event_id');
+        $report->user_id = $request->input('user_id');
+        $report->reason = $request->input('reason');
+        $report->save();
 
-        $rep = new Report();
-
-        $recent = DB::table('reports')->max('report_id');
-        $rep_id = $recent + 1;
-
-        $rep->report_id = $rep_id;
-        $rep->event_id = $e_id;
-        $rep->user_id = $u_id;
-        $rep->reason = $request->input('report_description');
-        $rep->save();
-
-        return 1;
+        return redirect()->route('userReports')->with('success', 'Report created successfully.');
     }
 
     public function updateReport(Request $request, $report_id)

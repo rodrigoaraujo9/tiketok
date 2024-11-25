@@ -95,6 +95,7 @@ Route::controller(ReportController::class)->group(function () {
 
     //Users
     Route::get('user/userReports/{user_id?}', 'userReports')->name('userReports');
+    Route::get('user/newReport/{event_id}', 'createReportForm')->name('createReportForm');
     Route::post('user/newReport', 'createReport')->name('createReport');
     Route::put('user/editReport/{report_id}', 'updateReport')->name('updateReport');   
     Route::post('deleteReport', 'deleteReport')->name('deleteReport');
