@@ -12,7 +12,13 @@
         <p><strong>Status:</strong> {{ $report->r_status}}</p>
         <p><strong>Created at:</strong> {{ $report->created_at }}</p>
         <p><strong>Updated at:</strong> {{ $report->updated_at }}</p>
-        <a href="{{ route('updateReport', $report->report_id) }}" class="btn btn-warning">Edit Report</a>
+        <a href="{{ route('updateReportForm', $report->report_id) }}" class="btn btn-warning">Edit Report</a>
+
+        <form action="{{ route('deleteReport', $report->report_id) }}" method="POST" class="d-inline">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">Delete Report</button>
+    </form>
 
         <a href="{{ route('allReports') }}" class="btn btn-secondary">Back to Reports</a>
     </div>

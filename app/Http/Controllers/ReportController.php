@@ -58,26 +58,39 @@ class ReportController extends Controller
         return redirect()->route('userReports')->with('success', 'Report created successfully.');
     }
 
+    public function updateReportForm($report_id)
+    {
+        $report = Report::findOrFail($report_id);
+        $event = Event::findOrFail($report->event_id);
+        return view('user.editReport', compact('report', 'event'));
+    }
+
     public function updateReport(Request $request, $report_id)
     {
         $rep = Report::findOrFail($report_id);
 
-        if ($rep->user_id !== Auth::id()) {
+        if ($rep->user_id !== Auth::id() || !Auth::user()->isAdmin()) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
-        $rep->reason = $request->input('report_description');
-        $rep->r_status = $request->status;
+        if(Auth::user()->isAdmin()) {
+            $rep->reason = $request->input('reason');
+            $rep->r_status = $request->status->input('status');
+        } else {
+            $rep->reason = $request->input('reason');
+        }
+
         $rep->save();
 
-        return redirect()->back()->with('success', 'Report status updated successfully');
+        return redirect()->back()->with('success', 'Report updated successfully');
     } 
 
-    public function deleteReport(Request $request)
+    public function deleteReport($report_id)
     {
-        Report::destroy($request->input('report_id'));
+        $report = Report::findOrFail($report_id);
+        $report->delete();
 
-        return $request->input('report_id');
+        return redirect()->route('userReports')->with('success', 'Report deleted successfully.');
     }
 
     public function userReports()

@@ -48,13 +48,11 @@
                         </a>
                     </li>
                 @endif
-                @if (Auth::check() && !Auth::user()->isAdmin())
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('userReports') ? 'active' : '' }}" href="{{ route('userReports') }}">
                             My Reports
                         </a>
                     </li>
-                @endif
             </ul>
             <!-- User Options -->
             <div class="nav-item">
