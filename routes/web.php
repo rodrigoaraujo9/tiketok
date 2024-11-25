@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,4 +81,14 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     // User-specific views
     Route::get('/events/attending', 'attending')->name('events.attending'); // Events user is attending
     Route::get('/dashboard', 'dashboard')->name('dashboard'); // User dashboard
+
+    // Admin
+    Route::post('adminDestroy', 'adminDestroy')->name('destroyAdmin');
+});
+
+// Admin Routes
+Route::controller(ReportController::class)->group(function () {
+    Route::get('admin/reports', 'allReports')->name('allReports');
+    Route::get('admin/report/{id}', 'showReport')->name('showReport');
+    Route::get('admin/{id}/events', 'eventReports')->name('eventReports');
 });
