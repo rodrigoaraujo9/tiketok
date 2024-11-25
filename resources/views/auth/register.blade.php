@@ -5,8 +5,8 @@
     {{ csrf_field() }}
 
     <!-- Name -->
-    <label for="name">Name</label>
-    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus>
+    <label for="name"style="font-weight:500">Name</label>
+    <input id="name" type="text" name="name" value="{{ old('name') }}" style="font-weight:200" required autofocus>
     @if ($errors->has('name'))
       <span class="error">
           {{ $errors->first('name') }}
@@ -14,8 +14,8 @@
     @endif
 
     <!-- Email -->
-    <label for="email">E-Mail Address</label>
-    <input id="email" type="email" name="email" value="{{ old('email') }}" required>
+    <label for="email" style="font-weight:500">E-Mail Address</label>
+    <input id="email" type="email" name="email" value="{{ old('email') }}" style="font-weight:200" required>
     @if ($errors->has('email'))
       <span class="error">
           {{ $errors->first('email') }}
@@ -23,8 +23,8 @@
     @endif
 
     <!-- Username -->
-    <label for="username">Username</label>
-    <input id="username" type="text" name="username" value="{{ old('username') }}" required>
+    <label for="username" style="font-weight:500">Username</label>
+    <input id="username" type="text" name="username" value="{{ old('username') }}"  style="font-weight:200" required>
     @if ($errors->has('username'))
       <span class="error">
           {{ $errors->first('username') }}
@@ -32,8 +32,8 @@
     @endif
 
     <!-- Phone -->
-    <label for="phone">Phone (optional)</label>
-    <input id="phone" type="text" name="phone" value="{{ old('phone') }}">
+    <label for="phone" style="font-weight:500">Phone (optional)</label>
+    <input id="phone" type="text" name="phone" value="{{ old('phone') }}" style="font-weight:200">
     @if ($errors->has('phone'))
       <span class="error">
           {{ $errors->first('phone') }}
@@ -41,8 +41,8 @@
     @endif
 
     <!-- Password -->
-    <label for="password">Password</label>
-    <input id="password" type="password" name="password" required>
+    <label for="password" style="font-weight:500">Password</label>
+    <input id="password" type="password" name="password" style="font-weight:200" required>
     @if ($errors->has('password'))
       <span class="error">
           {{ $errors->first('password') }}
@@ -50,8 +50,8 @@
     @endif
 
     <!-- Confirm Password -->
-    <label for="password-confirm">Confirm Password</label>
-    <input id="password-confirm" type="password" name="password_confirmation" required>
+    <label for="password-confirm" style="font-weight:500">Confirm Password</label>
+    <input id="password-confirm" type="password" name="password_confirmation" style="font-weight:200" required>
 
     <!-- Submit -->
     <button type="submit">

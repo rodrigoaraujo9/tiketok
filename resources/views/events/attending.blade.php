@@ -27,13 +27,13 @@
                         <td>{{ $event->date }}</td>
                         <td>{{ $event->venue->name }}</td>
                         <td>{{ $event->organizer->name }}</td>
-                        <td>
-                            <form action="{{ route('events.leave', $event->event_id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger btn-sm">Leave Event</button>
-                            </form>
-                        </td>
+                        <td style="vertical-align: middle;">
+                    <form action="{{ route('events.leave', $event->event_id) }}" method="POST" style="display: inline-block; margin: 0; padding: 0;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="delete btn btn-danger btn-sm">Leave</button>
+                    </form>
+                </td>
                     </tr>
                 @endforeach
             </tbody>

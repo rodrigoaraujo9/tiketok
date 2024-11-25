@@ -1,7 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow mb-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow mb-4" style="padding-bottom: 4rem;">
     <div class="container">
-        <!-- Brand -->
-        <a class="navbar-brand fw-bold text-primary" href="{{ route('dashboard') }}">EventApp</a>
 
 
         <!-- Collapsible Content -->
@@ -36,10 +34,7 @@
             </ul>
             <!-- User Options -->
             <div class="nav-item">
-                    <form action="{{ route('logout') }}" method="GET" class="d-inline">
-                        @csrf
-                        <button class="btn btn-link nav-link text-danger p-0 fw-bold" type="submit">Logout</button>
-                    </form>
+
 </div>
         </div>
     </div>

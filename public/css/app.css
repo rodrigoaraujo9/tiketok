@@ -1,162 +1,310 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&display=swap');
+
+/* Global Styles */
 body {
+    font-family: 'Geist Mono', sans-serif;
+    background-color: #f9fafb; /* Neutral light gray */
+    color: #747474; /* Neutral dark gray */
+    margin: 0;
+    padding: 0;
+    padding-bottom: 4rem;
+    line-height: 1.8;
+    font-size: 1.5rem; /* Base font size for easy scaling */
+    
+}
+
+h1{color:#3f3f3f;}
+a {
+    font-weight: 200;
+    color: #696969; /* Neutral blue */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #1a73e8; /* Hover blue */
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 1.5rem;
+    color: #212121; /* Text color */
+}
+
+button, a.button {
+  background-color: #e0f3ff; /* Light blue background */
+  color: #005bb5; /* Darker blue text */
+  border: 1px solid #b3d9ff; /* Subtle border for definition */
+  border-radius: 6px; /* Slightly rounded corners */
+  padding: 0.6em 1.2em; /* Spacing for better touch targets */
+  font-size: 1.2rem; /* Slightly larger text for readability */
+  font-weight: 500; /* Slightly bold for readability */
+  cursor: pointer;
+  box-shadow: none; /* Minimal design, no shadow */
+  margin: 0; /* Remove any default margin */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: none; /* Disable transitions */
+}
+
+button:hover, a.button:hover,
+button:active, a.button:active {
+  background-color: #d0e9ff; 
+  color: #005bb5; /* Keep the same text color */
+  border: 1px solid #b3d9ff; /* No border change */
+  box-shadow: none; /* No shadow change */
+  transform: none; /* Disable transform effects */
+}
+
+
+
+
+/* Header Styles */
+main > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff; /* White */
+    padding: 1.5em 2em;
+    border-bottom: 1px solid #e0e0e0; /* Light gray */
+    margin-bottom: 5rem;
+   
+}
+
+main > header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212121;
+}
+
+main > header span {
+    margin-left: 1em;
+    font-size: 1rem;
+    color: #616161; /* Muted gray */
+}
+
+/* Cards Section */
+#cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5em;
+    padding: 2em;
+}
+
+#cards article.card {
+    background-color: #ffffff; /* White */
+    border: 1px solid #e0e0e0; /* Light gray */
+    border-radius: 8px;
+    padding: 1.5em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#cards article.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#cards article.card header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+#cards article.card header h2 {
+    flex-grow: 1;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #212121;
+}
+
+#cards article.card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#cards article.card ul li {
+    padding: 0.75em 0;
+    border-bottom: 1px solid #e0e0e0; /* Light gray */
+}
+
+#cards article.card ul li:last-child {
+    border-bottom: none;
+}
+
+/* Forms */
+#content > form {
+    margin: 2em auto;
+    padding: 2em;
+    max-width: 500px;
+    background-color: #ffffff; /* White */
+    border: 1px solid #e0e0e0; /* Light gray */
+    border-radius: 8px;
+}
+
+#content > form label {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    color: #3e3e3e; /* Dark gray */
+}
+
+#content > form input, #content > form select, #content > form textarea {
+    width: 100%;
+    padding: 0.8em;
+    margin-bottom: 1.2em;
+    border: 1px solid #e0e0e0; /* Light gray */
+    border-radius: 6px;
     background-color: #ffffff;
-    color: #9b4dca;
-  }
-  main > header {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    background-color: #d2afe7;
-    padding: 1em;
-    margin: 1em;
-  }
-  main > header h1 {
-    margin: 0;
-  }
-  main > header a.button {
-    margin: 1em;
-    justify-self: center;
-  }
-  main > header span {
-    margin: 1em;
-    justify-self: center;
-  }
-  #cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  #cards article.card {
-    display: flex;
-    flex-direction: column;
-    background-color: #d3edc3;
-    padding: 1em;
-    margin: 1em;
-  }
-  #cards article.card header {
-    display: flex;
-    align-items: center;
-  }
-  #cards article.card header h2 {
-    flex-grow: 1;
-  }
-  #cards article.card header a.delete {
-    display: none;
-    font-size: 2.6rem;
-    margin-top: .5rem;
-    margin-bottom: 2.5rem;
-    line-height: 1.25;
-  }
-  #cards article.card header:hover a.delete {
-    display: inline;
-  }
-  #cards article.card li {
-    list-style-type: none;
-  }
-  #cards article.card li label {
-    display: flex;
-    align-items: baseline;
-  }
-  #cards article.card li label span {
-    margin-left: .5em;
-    flex-grow: 1;
-  }
-  #cards article.card li label a {
-    display: none;
-  }
-  #cards article.card li label:hover a {
-    display: inline;
-  }
-  #cards article.card input:checked + span {
-    text-decoration: var(--primary-color) solid line-through;
-  }
-  #cards article.card ul {
-    margin: 0;
-  }
-  #cards article.card form {
-    margin: 0;
-  }
-  #cards article.card input[type=text] {
-    background-color: white;
-    margin: 0;
-  }
-  #content label {
-    font-weight: normal;
-  }
-  #content > form {
-    margin: 0 auto;
-    padding: 1em;
-    max-width: 20em;
-    border: 1px solid #d2afe7;
-  }
-  #content > form .error {
-    font-weight: bold;
-    color: #ff3333;
-  }
-  #content > form .success {
-    font-weight: bold;
-    color: #106af1;
-  }
-  #content > form input {
-    background-color: white;
-  }
-  @media (max-width: 70em) {
+}
+
+#content > form input:focus, #content > form select:focus, #content > form textarea:focus {
+    border-color: #1a73e8; /* Neutral blue */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.3);
+}
+
+#content > form .error {
+    font-size: 0.9rem;
+    color: #d32f2f; /* Red for errors */
+}
+
+#content > form .success {
+    font-size: 0.9rem;
+    color: #388e3c; /* Green for success */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
     #cards {
-      grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
     }
+
     main > header {
-      display: grid;
-      grid-template-columns: 1fr auto;
+        flex-direction: column;
+        text-align: center;
     }
+
     main > header h1 {
-      grid-row-end: span 2;
+        font-size: 1.75rem;
     }
-  }
-  @media (max-width: 40em) {
-    #cards {
-      grid-template-columns: 1fr;
-    }
-  }
-  @media (max-width: 25em) {
+}
+
+@media (max-width: 480px) {
     body {
-      margin: 0;
+        font-size: 0.95rem;
     }
-    main > header {
-      margin: 0;
-      padding: 0.5em;
+
+    main > header h1 {
+        font-size: 1.5rem;
     }
-    main > header span {
-      margin: 0;
-    }
-    #content form {
-      margin: 0;
-      max-width: 25em;
-    }
-    article.card {
-      margin: 0;
-      border-bottom: 1px solid rgba(96, 108, 118, 0.4);
-    }
-  }
-  /**
-   * Override milligram colors
-   * Some styles might be missing
-   **/
-  button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
-  }
-  a.button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
-  }
-  a.button.button-outline {
-    color: #9b4dca;
-  }
-  a {
-    color: #9b4dca;
-  }
-  input[type=text]:focus,
-  input[type=email]:focus,
-  input[type=password]:focus {
-    border-color: #9b4dca;
-  }
-  
+}
+
+
+/* General Outline Button Styles */
+button.button-outline, a.button-outline {
+  background-color: transparent; /* Transparent background */
+  color: #005bb5; /* Dark blue text */
+  border: 1px solid #b3d9ff; /* Light blue border */
+  border-radius: 6px; /* Rounded corners */
+  padding: 0.6em 1.2em; /* Consistent spacing */
+  font-size: 1.2rem; /* Larger text size */
+  font-weight: 500; /* Slightly bold text */
+  cursor: pointer;
+  box-shadow: none; /* No shadow for minimal design */
+  margin: 0; /* Remove any default margins */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Remove underline from links */
+  transition: none; /* No hover or active transitions */
+}
+
+button.button-outline:hover, a.button-outline:hover {
+  background-color: transparent; /* Keep the background transparent */
+  color: #005bb5; /* No color change */
+  border: 1px solid #b3d9ff; /* No border change */
+}
+
+button.button-outline:focus, a.button-outline:focus {
+  outline: 2px solid #b3d9ff; /* Add focus outline for accessibility */
+  outline-offset: 2px;
+}
+
+button[type="submit"] {
+  margin-top: 1.5rem;
+}
+
+button.delete, a.button.delete {
+  background-color: #ffe0e0; /* Light red background */
+  color: #b50000; /* Dark red text */
+  border: 1px solid #ffb3b3; /* Subtle red border */
+  border-radius: 6px; /* Slightly rounded corners */
+  padding: 0.6em 1.2em; /* Consistent spacing */
+  font-size: 1.2rem; /* Same readable text size */
+  font-weight: 500; /* Bold for emphasis */
+  cursor: pointer;
+  box-shadow: none; /* No shadow */
+  margin: 0; /* No default margin */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: none; /* No hover animations */
+}
+
+button.delete:hover, a.button.delete:hover,
+button.delete:active, a.button.delete:active {
+  background-color: #ffd6d6; /* Slightly darker red hover background */
+  color: #a00000; /* Darker red for hover text */
+  border: 1px solid #ff9e9e; /* Subtle hover border color change */
+  box-shadow: none; /* Keep it minimal */
+  transform: none; /* No transformation */
+}
+
+/* Error Message */
+.error {
+  font-size: 1.5rem; /* Set font size */
+  color: red; /* Red color for errors */
+  font-weight: lighter; /* Emphasize error messages */
+  margin-top: 0.5rem; /* Add spacing above the message */
+}
+
+/* Success Message */
+.success {
+  font-size: 1.5rem; /* Set font size */
+  color: blue; /* Blue color for success messages */
+  font-weight: lighter; /* Emphasize success messages */
+  margin-top: 0.5rem; 
+}
+
+button.logout-button {
+    color: #2b2b2b; /* Darker pink text */
+    border: 1px solid #6e6e6e;/* Subtle pink border */
+    border-radius: 6px; /* Slightly rounded corners */
+    padding: 0.6em 1.2em; /* Spacing for better touch targets */
+    font-size: 1.2rem; /* Standard text size */
+    font-weight: 500; /* Slightly bold for readability */
+    cursor: pointer;
+    box-shadow: none; /* Minimal design, no shadow */
+    transition: none; /* No hover or active transitions */
+    background-color: transparent;
+    margin: 0;
+}
+
+button.logout-button:hover {
+    background-color: transparent; /* Same background on hover */
+    color: #5b5b5b; /* Same text color */
+    border: 1px solid #8c8c8c;/* Same border color */
+}
+
+button.logout-button:focus {
+    outline: 2px solid #f5b3cf; /* Focus outline for accessibility */
+    outline-offset: 2px;
+}

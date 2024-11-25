@@ -26,13 +26,13 @@
                             <!-- Accept Invitation -->
                             <form action="{{ route('events.accept', $invite->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                <button type="submit" class="btn btn-success">Accept</button>
+                                <button class="btn btn-success">Accept</button>
                             </form>
 
                             <!-- Reject Invitation -->
                             <form action="{{ route('events.reject', $invite->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                <button type="submit" class="btn btn-danger">Decline</button>
+                                <button class="delete btn btn-danger">Decline</button>
                             </form>
                         </td>
                     </tr>

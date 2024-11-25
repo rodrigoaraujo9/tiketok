@@ -50,5 +50,9 @@ class Event extends Model
             ->withPivot('joined_at');
     }
     
+    public function getVisibilityAttribute($value)
+{
+    return ucfirst($value); // Converts 'public' to 'Public'
+}
 
 }
