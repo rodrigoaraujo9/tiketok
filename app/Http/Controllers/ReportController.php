@@ -67,7 +67,12 @@ class ReportController extends Controller
 
     public function updateReport(Request $request, $report_id)
     {
-        $rep= Report::findOrFail($report_id);
+        $rep = Report::findOrFail($report_id);
+
+        if ($rep->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
         $rep->reason = $request->input('report_description');
         $rep->r_status = $request->status;
         $rep->save();
@@ -80,5 +85,14 @@ class ReportController extends Controller
         Report::destroy($request->input('report_id'));
 
         return $request->input('report_id');
+    }
+
+    public function userReports()
+    {
+        if (!Auth::check()) return redirect('/login');
+
+        $user = Auth::user();
+        $reports = Report::where('user_id', $user->user_id)->with('event')->get();
+        return view('user.userReports', compact('reports'));
     }
 }

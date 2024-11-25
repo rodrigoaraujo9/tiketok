@@ -86,11 +86,18 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     Route::post('adminDestroy', 'adminDestroy')->name('destroyAdmin');
 });
 
-// Admin Routes
+// Reports
 Route::controller(ReportController::class)->group(function () {
+    //Admin
     Route::get('admin/reports', 'allReports')->name('allReports');
     Route::get('admin/report/{id}', 'showReport')->name('showReport');
     Route::get('admin/{id}/events', 'eventReports')->name('eventReports');
+
+    //Users
+    Route::get('user/userReports/{user_id?}', 'userReports')->name('userReports');
+    Route::post('user/newReport', 'createReport')->name('createReport');
+    Route::put('user/editReport/{report_id}', 'updateReport')->name('updateReport');   
+    Route::post('deleteReport', 'deleteReport')->name('deleteReport');
 });
 
     // Add Comment
@@ -104,3 +111,4 @@ Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'
 
 Route::get('/events/{event_id}/edit', [EventController::class, 'edit'])->name('events.edit');
 Route::put('/events/{event_id}', [EventController::class, 'update'])->name('events.update');
+
