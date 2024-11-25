@@ -25,10 +25,9 @@
                 </select>
             </div>
         @endif
-
+        
         <button type="submit" class="btn btn-danger">Update Report</button>
     </form>
-
-    <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-secondary">Back to Report</a>
+        <a href="{{ route('showReport', $report->report_id) }}" class="btn btn-secondary">Back to Report</a>
 </div>
 @endsection

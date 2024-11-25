@@ -15,12 +15,16 @@
         <a href="{{ route('updateReportForm', $report->report_id) }}" class="btn btn-warning">Edit Report</a>
 
         <form action="{{ route('deleteReport', $report->report_id) }}" method="POST" class="d-inline">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">Delete Report</button>
-    </form>
-
-        <a href="{{ route('allReports') }}" class="btn btn-secondary">Back to Reports</a>
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Delete Report</button>
+        </form>
+        @if (Auth::user()->isAdmin())
+            <a href="{{ route('allReports') }}" class="btn btn-secondary">Back to Reports</a>
+        @endif
+        @if (!Auth::user()->isAdmin())    
+            <a href="{{ route('userReports') }}" class="btn btn-secondary">Back to Reports</a>
+        @endif
     </div>
 @endsection
 
