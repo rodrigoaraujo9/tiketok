@@ -10,7 +10,7 @@ class Event extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    public $timestamps = false; 
 
     // Specify the custom primary key
     protected $primaryKey = 'event_id';

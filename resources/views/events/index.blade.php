@@ -3,8 +3,23 @@
 @section('content')
 <div class="container">
     <h1>All Events</h1>
+    <form action="{{ route('events.search') }}" method="GET" class="mb-3">
+    <div class="input-group">
+        <input 
+            type="text" 
+            name="search" 
+            class="form-control" 
+            placeholder="Search events by name" 
+            value="{{ request('search') }}"
+        >
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+    
     <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
 
+    
     @if($events->isEmpty())
         <p>No events found.</p>
     @else
@@ -26,7 +41,6 @@
                         <td>{{ $event->date }}</td>
                         <td>{{ $event->venue->name }}</td>
                         <td>
-                            <!-- Use event_id here -->
                             <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-primary">View</a>
                         </td>
                     </tr>

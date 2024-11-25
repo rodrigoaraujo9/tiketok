@@ -8,11 +8,11 @@
     @include('partials.nav')
 
     <!-- My Events Section -->
-    <h2 class="mt-4 text-secondary">My Events</h2>
+    <h2 class="mt-4 text-secondary ">My Events</h2>
     @if($myEvents->isEmpty())
         <p>You have no events.</p>
     @else
-        <table class="table table-striped">
+        <table class="table table-striped" style="padding-bottom: 4rem;">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -30,7 +30,7 @@
                             <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm">Delete</button>
+                                <button class="delete btn btn-danger btn-sm">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -61,7 +61,7 @@
                             <form action="{{ route('events.leave', $event->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm">Leave</button>
+                                <button class="delete btn btn-danger btn-sm">Leave</button>
                             </form>
                         </td>
                     </tr>

@@ -235,11 +235,12 @@ class EventController extends Controller
      * Display the form for editing an existing event.
      */
     public function edit($event_id)
-    {
+    {   
+        
         $event = Event::findOrFail($event_id);
-        $event->date = Carbon::parse($event->date); // Converte para um objeto Carbon (se necessário)
+        $event->date = Carbon::parse($event->date); 
     
-        $venues = Venue::all(); // Supondo que você tenha locais disponíveis para selecionar
+        $venues = Venue::all(); 
         return view('events.edit', compact('event', 'venues'));
     }
 
@@ -332,7 +333,19 @@ class EventController extends Controller
             ->with('success', 'Comment deleted successfully!');
     }
 
+    public function search(Request $request)
+    {
+        $query = Event::query();
 
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $events = $query->with('venue')->get();
+
+        return view('events.index', compact('events'));
+    }
     
 }
 

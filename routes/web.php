@@ -91,5 +91,9 @@ Route::put('/comments/{comment_id}', [EventController::class, 'editComment'])->n
 // Delete Comment
 Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'])->name('comments.delete');
 
+//Edit Event
 Route::get('/events/{event_id}/edit', [EventController::class, 'edit'])->name('events.edit');
 Route::put('/events/{event_id}', [EventController::class, 'update'])->name('events.update');
+
+//Search Events by Name
+Route::get('/events/search', [EventController::class, 'search'])->name('events.search');
