@@ -9,10 +9,14 @@ use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth; // Correctly importing Auth facade
 use Illuminate\Support\Facades\DB; // Import the DB facade
+use App\Models\Comment;
+use Carbon\Carbon;
 
 
 class EventController extends Controller
 {
+
+    
 
     public function dashboard()
     {
@@ -232,12 +236,10 @@ class EventController extends Controller
      */
     public function edit($event_id)
     {
-        // Fetch the event to edit
         $event = Event::findOrFail($event_id);
-
-        // Fetch all venues for the venue dropdown
-        $venues = Venue::all();
-
+        $event->date = Carbon::parse($event->date); // Converte para um objeto Carbon (se necessário)
+    
+        $venues = Venue::all(); // Supondo que você tenha locais disponíveis para selecionar
         return view('events.edit', compact('event', 'venues'));
     }
 
@@ -246,26 +248,25 @@ class EventController extends Controller
      * Update an existing event in the database.
      */
     public function update(Request $request, $event_id)
-    {
-        // Validate input
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'date' => 'required|date|after_or_equal:today',
-            'postal_code' => 'required|string|max:10',
-            'max_event_capacity' => 'required|integer|min:1',
-            'country' => 'required|string',
-            'visibility' => 'required|boolean',
-            'venue_id' => 'required|exists:venues,venue_id', // Corrected column name
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'date' => 'required|date',
+        'postal_code' => 'required|string|max:10',
+        'max_event_capacity' => 'required|integer|min:1',
+        'country' => 'required|string|max:255',
+        'visibility' => 'required|string|in:public,private',
+        'venue_id' => 'required|exists:venues,venue_id',
+    ]);
 
-        // Find and update the event
-        $event = Event::findOrFail($event_id);
-        $event->update($validated);
+    $event = Event::findOrFail($event_id);
+    $event->update($validated);
 
-        return redirect()->route('events.show', $event->event_id)
-            ->with('success', 'Event updated successfully!');
-    }
+    // Redireciona para a página do evento atualizado
+    return redirect()->route('events.show', $event_id)
+        ->with('success', 'Event updated successfully.');
+}
 
     /**
      * Delete an event from the database.
@@ -278,6 +279,57 @@ class EventController extends Controller
 
         return redirect()->route('events.index')
             ->with('success', 'Event deleted successfully!');
+    }
+
+    public function addComment(Request $request, $event_id)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        Comment::create([
+            'content' => $validated['content'],
+            'date' => now(),
+            'event_id' => $event_id,
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('events.show', $event_id)
+            ->with('success', 'Comment added successfully!');
+    }
+
+    public function editComment(Request $request, $comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+
+        // Ensure only the author can edit the comment
+        if ($comment->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $comment->update(['content' => $validated['content']]);
+
+        return redirect()->route('events.show', $comment->event_id)
+            ->with('success', 'Comment updated successfully!');
+    }
+
+    public function deleteComment($comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+
+        // Ensure only the author can delete the comment
+        if ($comment->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $comment->delete();
+
+        return redirect()->route('events.show', $comment->event_id)
+            ->with('success', 'Comment deleted successfully!');
     }
 
     public function adminDestroy($event_id)
@@ -295,4 +347,9 @@ class EventController extends Controller
                 ->with('success', 'Event deleted successfully!');
         }
     }
+    
 }
+
+
+
+

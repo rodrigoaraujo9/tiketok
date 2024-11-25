@@ -92,3 +92,15 @@ Route::controller(ReportController::class)->group(function () {
     Route::get('admin/report/{id}', 'showReport')->name('showReport');
     Route::get('admin/{id}/events', 'eventReports')->name('eventReports');
 });
+
+    // Add Comment
+Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
+
+// Edit Comment
+Route::put('/comments/{comment_id}', [EventController::class, 'editComment'])->name('comments.edit');
+
+// Delete Comment
+Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'])->name('comments.delete');
+
+Route::get('/events/{event_id}/edit', [EventController::class, 'edit'])->name('events.edit');
+Route::put('/events/{event_id}', [EventController::class, 'update'])->name('events.update');

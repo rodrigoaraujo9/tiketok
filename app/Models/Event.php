@@ -50,5 +50,10 @@ class Event extends Model
             ->withPivot('joined_at');
     }
     
+    public function comments()
+{
+    return $this->hasMany(Comment::class, 'event_id', 'event_id');
+}
+
 
 }
