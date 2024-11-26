@@ -288,12 +288,16 @@ class EventController extends Controller
             'content' => 'required|string|max:1000',
         ]);
 
-        Comment::create([
+        $comment = Comment::create([
             'content' => $validated['content'],
             'date' => now(),
             'event_id' => $event_id,
             'user_id' => Auth::id(),
         ]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Comment added successfully!', 'comment' => $comment]);
+        }
 
         return redirect()->route('events.show', $event_id)
             ->with('success', 'Comment added successfully!');
@@ -305,6 +309,9 @@ class EventController extends Controller
 
         // Ensure only the author can edit the comment
         if ($comment->user_id !== Auth::id()) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Unauthorized action.'], 403);
+            }
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
@@ -314,20 +321,31 @@ class EventController extends Controller
 
         $comment->update(['content' => $validated['content']]);
 
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Comment updated successfully!', 'comment' => $comment]);
+        }
+
         return redirect()->route('events.show', $comment->event_id)
             ->with('success', 'Comment updated successfully!');
     }
 
-    public function deleteComment($comment_id)
+    public function deleteComment(Request $request, $comment_id)
     {
         $comment = Comment::findOrFail($comment_id);
 
         // Ensure only the author can delete the comment
         if ($comment->user_id !== Auth::id()) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Unauthorized action.'], 403);
+            }
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
         $comment->delete();
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Comment deleted successfully!', 'comment_id' => $comment_id]);
+        }
 
         return redirect()->route('events.show', $comment->event_id)
             ->with('success', 'Comment deleted successfully!');
