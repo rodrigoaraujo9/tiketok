@@ -18,10 +18,11 @@
         <a href="{{ route('events.edit', $event->event_id) }}" class="btn btn-warning">Edit Event</a>
     @endif
     <br>
-    
+    @if (!Auth::user()->isAdmin())
     <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
+    @endif
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
-   
+    <br>
     <!-- Join Event (moved below Report and Back buttons) -->
      @if (!$event->attendees->contains(Auth::id()))
         @if ($event->attendees->count() < $event->max_event_capacity)
@@ -37,42 +38,6 @@
     @else
         <p class="text-success" style="margin-top:2rem;">You are already part of this event.</p>
     @endif
-
-    <!-- Comments Section -->
-    <h2>Comments</h2>
-    @foreach ($event->comments as $comment)
-        <div class="card mb-2">
-            <div class="card-body">
-                <p id="comment-{{ $comment->comment_id }}" class="comment-content">{{ $comment->content }}</p>
-                <p class="text-muted">By {{ $comment->user->name }} on {{ $comment->date }}</p>
-
-                <!-- Edit comment (visible only to the author) -->
-                @if ($comment->user_id === Auth::id())
-                    <button class="btn btn-warning btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Edit</button>
-
-                    <form action="{{ route('comments.edit', $comment->comment_id) }}" method="POST" id="edit-form-{{ $comment->comment_id }}" class="edit-form" style="display: none;">
-                        @csrf
-                        @method('PUT')
-                        <textarea name="content" class="form-control mb-2" rows="3" required>{{ $comment->content }}</textarea>
-                        <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Cancel</button>
-                    </form>
-                @endif
-                <!-- Delete comment -->
-                @if (Auth::id() === $comment->user_id) 
-                    <form action="{{ route('comments.delete', $comment->comment_id) }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this comment?')">
-                            Delete
-                        </button>
-                    </form>
-                @endif
-            </div>
-        </div>
-        <br>
-        <br>
-    @endforeach
     
     <h2>Comments</h2>
     @foreach ($event->comments as $comment)
@@ -111,11 +76,13 @@
     @guest
         <p class="text-info">You need to <a href="{{ route('login') }}">log in</a> to add a comment.</p>
     @else
+    @if (!Auth::user()->isAdmin())
         <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
             @csrf
             <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
             <button type="submit" class="btn btn-primary">Add Comment</button>
         </form>
+    @endif
     @endguest
 
 
