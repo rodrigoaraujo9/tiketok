@@ -182,13 +182,15 @@ class EventController extends Controller
      */
     public function index()
     {
-        // Retrieve all events, including related venues and organizers
-        $events = Event::with(['venue', 'organizer'])->get();
-
-        // Return the view with the events data
+        // Retrieve only public events, including related venues and organizers
+        $events = Event::with(['venue', 'organizer'])
+            ->where('visibility', 'public') // Filter to only public events
+            ->get();
+    
+        // Return the view with the filtered events data
         return view('events.index', compact('events'));
     }
-
+    
     /**
      * Show details for a specific event.
      */
@@ -218,7 +220,7 @@ class EventController extends Controller
             'postal_code' => 'required|string|max:10',
             'max_event_capacity' => 'required|integer|min:1',
             'country' => 'required|string',
-            'visibility' => 'required|in:public,private', // Ensure valid visibility
+            'visibility' => 'required|in:public,private', // Validate visibility
             'venue_id' => 'required|exists:venues,venue_id',
         ]);
     
@@ -228,6 +230,26 @@ class EventController extends Controller
     
         return redirect()->route('events.index')->with('success', 'Event created successfully!');
     }
+    
+    public function update(Request $request, $event_id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'postal_code' => 'required|string|max:10',
+            'max_event_capacity' => 'required|integer|min:1',
+            'country' => 'required|string',
+            'visibility' => 'required|in:public,private', // Validate visibility
+            'venue_id' => 'required|exists:venues,venue_id',
+        ]);
+    
+        $event = Event::findOrFail($event_id);
+        $event->update($validated);
+    
+        return redirect()->route('events.show', $event_id)->with('success', 'Event updated successfully!');
+    }
+    
     
     
     /**
@@ -253,29 +275,6 @@ class EventController extends Controller
         return view('events.edit', compact('event', 'venues'));
     }
 
-    
-    /**
-     * Update an existing event in the database.
-     */
-    public function update(Request $request, $event_id)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'date' => 'required|date',
-            'postal_code' => 'required|string|max:10',
-            'max_event_capacity' => 'required|integer|min:1',
-            'country' => 'required|string|max:255',
-            'visibility' => 'required|in:public,private', // Ensure valid visibility
-            'venue_id' => 'required|exists:venues,venue_id',
-        ]);
-    
-        $event = Event::findOrFail($event_id);
-        $event->update($validated);
-    
-        return redirect()->route('events.show', $event_id)->with('success', 'Event updated successfully!');
-    }
-    
 
     /**
      * Delete an event from the database.

@@ -1,0 +1,403 @@
+openapi: 3.0.0
+
+info:
+  version: '1.0'
+  title: 'TIKETOK Web API'
+  description: 'Web Resources Specification for TIKETOK'
+
+servers:
+  - url: http://localhost:8000/
+    description: lbaw2464
+
+tags:
+  - name: 'Authentication and User Profiles'
+    description: 'Authentication and profile management resources.'
+  - name: 'Events'
+    description: 'Resources for event management and interactions.'
+  - name: 'Comments'
+    description: 'Resources for managing comments on events.'
+  - name: 'Reports'
+    description: 'Resources for event reporting.'
+  - name: 'Admin'
+    description: 'Administrative functionalities for event and user management.'
+
+paths:
+
+  # Authentication and User Profiles
+  /login:
+    get:
+      operationId: getLoginForm
+      summary: 'Login Form'
+      description: 'Provides a login form for users.'
+      tags:
+        - 'Authentication and User Profiles'
+      responses:
+        '200':
+          description: 'Login form displayed successfully.'
+
+    post:
+      operationId: loginUser
+      summary: 'Login User'
+      description: 'Authenticates a user using email and password.'
+      tags:
+        - 'Authentication and User Profiles'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: 'The user email.'
+                password:
+                  type: string
+                  format: password
+                  description: 'The user password.'
+              required:
+                - email
+                - password
+      responses:
+        '302':
+          description: 'Redirect to user dashboard on successful login.'
+
+  /logout:
+    get:
+      operationId: logoutUser
+      summary: 'Logout User'
+      description: 'Logs out the currently authenticated user.'
+      tags:
+        - 'Authentication and User Profiles'
+      responses:
+        '302':
+          description: 'Redirect to login page after logout.'
+
+  /register:
+    get:
+      operationId: getRegisterForm
+      summary: 'Registration Form'
+      description: 'Provides a registration form for new users.'
+      tags:
+        - 'Authentication and User Profiles'
+      responses:
+        '200':
+          description: 'Registration form displayed successfully.'
+
+    post:
+      operationId: registerUser
+      summary: 'Register User'
+      description: 'Registers a new user with the provided information.'
+      tags:
+        - 'Authentication and User Profiles'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Full name of the user.'
+                email:
+                  type: string
+                  format: email
+                  description: 'The user email.'
+                password:
+                  type: string
+                  format: password
+                  description: 'The user password.'
+                picture:
+                  type: string
+                  format: binary
+                  description: 'Profile picture of the user.'
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '302':
+          description: 'Redirect to user dashboard on successful registration.'
+
+  /users/{id}:
+    get:
+      operationId: viewUserProfile
+      summary: 'View User Profile'
+      description: 'Fetches details of the user profile by ID.'
+      tags:
+        - 'Authentication and User Profiles'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'User ID.'
+      responses:
+        '200':
+          description: 'User profile retrieved successfully.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # Event Management
+  /events:
+    get:
+      operationId: listEvents
+      summary: 'List All Events'
+      description: 'Fetches a list of all available events.'
+      tags:
+        - 'Events'
+      responses:
+        '200':
+          description: 'List of events retrieved successfully.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+
+    post:
+      operationId: createEvent
+      summary: 'Create New Event'
+      description: 'Allows authenticated users to create a new event.'
+      tags:
+        - 'Events'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventInput'
+      responses:
+        '201':
+          description: 'Event created successfully.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+
+  /events/{event_id}:
+    get:
+      operationId: getEvent
+      summary: 'View Event Details'
+      description: 'Fetches detailed information about a specific event.'
+      tags:
+        - 'Events'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the event.'
+      responses:
+        '200':
+          description: 'Event details retrieved successfully.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+
+    put:
+      operationId: updateEvent
+      summary: 'Update Event Details'
+      description: 'Allows authenticated users to update an event they own.'
+      tags:
+        - 'Events'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the event.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventInput'
+      responses:
+        '200':
+          description: 'Event updated successfully.'
+
+    delete:
+      operationId: deleteEvent
+      summary: 'Delete Event'
+      description: 'Allows authenticated users to delete an event they own.'
+      tags:
+        - 'Events'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the event.'
+      responses:
+        '204':
+          description: 'Event deleted successfully.'
+
+  /events/{event_id}/join:
+    post:
+      operationId: joinEvent
+      summary: 'Join an Event'
+      description: 'Allows a user to join an event if it has available capacity.'
+      tags:
+        - 'Events'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the event.'
+      responses:
+        '200':
+          description: 'Successfully joined the event.'
+        '400':
+          description: 'Event is at full capacity or user is already attending.'
+
+  /events/{event_id}/leave:
+    delete:
+      operationId: leaveEvent
+      summary: 'Leave an Event'
+      description: 'Allows a user to leave an event they previously joined.'
+      tags:
+        - 'Events'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the event.'
+      responses:
+        '200':
+          description: 'Successfully left the event.'
+        '400':
+          description: 'User is not part of this event.'
+
+  # Comments
+  /events/{event_id}/comments:
+    post:
+      operationId: addComment
+      summary: 'Add Comment to Event'
+      description: 'Allows users to add a comment to an event.'
+      tags:
+        - 'Comments'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the event.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+      responses:
+        '201':
+          description: 'Comment added successfully.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+    delete:
+      operationId: deleteComment
+      summary: 'Delete Comment'
+      description: 'Allows a user to delete their comment from an event.'
+      tags:
+        - 'Comments'
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: 'Unique identifier of the comment.'
+      responses:
+        '204':
+          description: 'Comment deleted successfully.'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'User ID'
+        name:
+          type: string
+        email:
+          type: string
+        isAdmin:
+          type: boolean
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+        visibility:
+          type: string
+          enum:
+            - public
+            - private
+        max_event_capacity:
+          type: integer
+
+    EventInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - private
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        user_id:
+          type: integer
+        event_id:
+          type: integer
+
+    CommentInput:
+      type: object
+      properties:
+        content:
+          type: string

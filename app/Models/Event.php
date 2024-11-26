@@ -32,7 +32,7 @@ class Event extends Model
     ];
 
     protected $casts = [
-        'visibility' => 'boolean', // Cast to boolean
+        'visibility' => 'string', // Cast to boolean
     ];
 
     public function venue()

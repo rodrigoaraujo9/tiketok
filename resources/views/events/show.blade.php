@@ -3,13 +3,6 @@
 @section('content')
 <div class="container">
     <h1>{{ $event->name }}</h1>
-    @if (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $event->organizer_id))
-    <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
-        @csrf
-        @method('DELETE')
-        <button class="delete btn btn-danger btn-sm">Delete</button>
-    </form>
-    @endif
     <p><strong>Visibility:</strong> {{ $event->visibility }}</p>
 
     <!-- Display visibility instead of Event ID -->
@@ -44,6 +37,14 @@
         @endif
     @else
         <p class="text-success" style="margin-top:2rem;">You are already part of this event.</p>
+    @endif
+
+    @if (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $event->organizer_id))
+    <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
+        @csrf
+        @method('DELETE')
+        <button class="delete btn btn-danger btn-sm" style="margin-bottom:2rem;">Delete</button>
+    </form>
     @endif
     
     <h2>Comments</h2>
