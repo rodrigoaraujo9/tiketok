@@ -97,3 +97,7 @@ Route::put('/events/{event_id}', [EventController::class, 'update'])->name('even
 
 //Search Events by Name
 Route::get('/events/search', [EventController::class, 'search'])->name('events.search');
+
+//managing attendees
+Route::get('/events/{event}/attendees', [EventController::class, 'attendees'])->name('events.attendees');
+Route::post('/events/{event}/attendees/remove', [EventController::class, 'removeAttendee'])->name('events.attendees.remove');

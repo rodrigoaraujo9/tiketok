@@ -5,7 +5,7 @@
     <h1>{{ $event->name }}</h1>
     
     <!-- Display visibility instead of Event ID -->
-    <p><strong>EventId:</strong> {{ ucfirst($event->event_id) }}</p>
+    <p><strong>Country:</strong> {{ ucfirst($event->country) }}</p>
 
     <p><strong>Description:</strong> {{ $event->description }}</p>
     <p><strong>Date:</strong> {{ $event->date }}</p>

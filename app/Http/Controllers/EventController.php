@@ -347,6 +347,30 @@ class EventController extends Controller
         return view('events.index', compact('events'));
     }
     
+    public function attendees($eventId)
+    {
+        $event = Event::with('attendees')->findOrFail($eventId);
+        if (auth()->id() !== $event->organizer_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('events.attendees', compact('event'));
+    }
+
+    public function removeAttendee(Request $request, $eventId)
+    {
+        $event = Event::findOrFail($eventId);
+
+        if (auth()->id() !== $event->organizer_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate(['user_id' => 'required|exists:users,user_id',]);
+
+        DB::table('attends')->where('event_id', $eventId)->where('user_id', $request->user_id)->delete();
+
+        return redirect()->route('events.attendees', $eventId)->with('success', 'User removed successfully.');
+    }
 }
 
 

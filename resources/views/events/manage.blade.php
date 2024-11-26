@@ -27,6 +27,9 @@
                                 @csrf
                                 <input type="email" name="email" class="form-control" placeholder="Invite user by email" required>
                                 <button class="btn btn-primary mt-2">Send Invite</button>
+                                <a href="{{ route('events.attendees', $event->event_id) }}" class="button" style="background-color:#ffcccb;text-decoration: none;border: 1px solid #b3d9ff"
+                                onmouseover="this.style.textDecoration='none'; this.style.backgroundColor='#ff9a98';"
+                                onmouseout="this.style.backgroundColor='#ffcccb';"></style>Manage Users</a>
                             </form>
                         </td>
                     </tr>

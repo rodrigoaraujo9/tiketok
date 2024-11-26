@@ -64,7 +64,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id')
             ->withPivot('joined_at');
     }
-    
+    public function attendees()
+    {
+        return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id')
+            ->withPivot('joined_at');
+    }
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
