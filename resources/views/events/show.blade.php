@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1>{{ $event->name }}</h1>
-    @if (Auth::user()->isAdmin())
+    @if (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $event->organizer_id))
     <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
         @csrf
         @method('DELETE')
@@ -25,7 +25,7 @@
         <a href="{{ route('events.edit', $event->event_id) }}" class="btn btn-warning">Edit Event</a>
     @endif
     <br>
-    @if (!Auth::user()->isAdmin())
+    @if (Auth::check() && (!Auth::user()->isAdmin() || !Auth::id() === $event->organizer_id))
     <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
     @endif
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
@@ -35,7 +35,7 @@
         @if ($event->attendees->count() < $event->max_event_capacity)
             <form action="{{ route('events.join', $event->event_id) }}" method="POST" style="margin-top: 1rem;">
                 @csrf
-                @if (!Auth::user()->isAdmin())
+                @if (Auth::check() && (!Auth::user()->isAdmin() || !Auth::id() === $event->organizer_id))
             <button type="submit" class="btn btn-primary">Join Event</button>
                 @endif
         </form>
