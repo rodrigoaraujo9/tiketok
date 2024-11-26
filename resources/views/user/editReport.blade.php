@@ -6,9 +6,9 @@
 
     <form action="{{ route('updateReport', $report->report_id) }}" method="POST">
         @csrf
+        @method('PUT')
         <input type="hidden" name="event_id" value="{{ $event->event_id }}">
-        <input type="hidden" name="user_id" value="{{ Auth::id() }}">
-
+        
         <div class="form-group">
             <label for="reason">Reason</label>
             <input type="text" id="reason" name="reason" value="{{ old('reason', $report->reason) }}" required>
@@ -25,9 +25,10 @@
                 </select>
             </div>
         @endif
-        
+
         <button type="submit" class="btn btn-danger">Update Report</button>
     </form>
-        <a href="{{ route('showReport', $report->report_id) }}" class="btn btn-secondary">Back to Report</a>
+
+    <a href="{{ route('showReport', $report->report_id) }}" class="btn btn-secondary">Back to Report</a>
 </div>
 @endsection

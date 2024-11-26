@@ -98,11 +98,11 @@ Route::controller(ReportController::class)->group(function () {
     Route::get('user/newReport/{event_id}', 'createReportForm')->name('createReportForm');
     Route::post('user/newReport', 'createReport')->name('createReport');
     Route::get('user/editReport/{report_id}', 'updateReportForm')->name('updateReportForm');
-    Route::post('user/editReport/{report_id}', 'updateReport')->name('updateReport');
+    Route::put('user/editReport/{report_id}', 'updateReport')->name('updateReport');
     Route::delete('admin/report/{id}', 'deleteReport')->name('deleteReport');
 });
 
-    // Add Comment
+// Add Comment
 Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
 
 // Edit Comment

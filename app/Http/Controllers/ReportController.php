@@ -69,16 +69,14 @@ class ReportController extends Controller
     {
         $rep = Report::findOrFail($report_id);
 
-        if ($rep->user_id !== Auth::id() || !Auth::user()->isAdmin()) {
+        // Allow admins to edit any report
+        if ($rep->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
         $rep->reason = $request->input('reason');
         if(Auth::user()->isAdmin()) {
-            $rep->reason = $request->input('reason');
             $rep->r_status = $request->input('status');
-        } else {
-            $rep->reason = $request->input('reason');
         }
 
         $rep->save();
@@ -89,9 +87,14 @@ class ReportController extends Controller
     public function deleteReport($report_id)
     {
         $report = Report::findOrFail($report_id);
+
         $report->delete();
 
-        return redirect()->route('userReports')->with('success', 'Report deleted successfully.');
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('allReports')->with('success', 'Report deleted successfully.');
+        } else {
+            return redirect()->route('userReports')->with('success', 'Report deleted successfully.');
+        }
     }
 
     public function userReports()
