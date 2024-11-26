@@ -3,6 +3,13 @@
 @section('content')
 <div class="container">
     <h1>{{ $event->name }}</h1>
+    @if (Auth::user()->isAdmin())
+    <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
+        @csrf
+        @method('DELETE')
+        <button class="delete btn btn-danger btn-sm">Delete</button>
+    </form>
+    @endif
     <p><strong>Visibility:</strong> {{ $event->visibility }}</p>
 
     <!-- Display visibility instead of Event ID -->
