@@ -17,6 +17,13 @@ class EventController extends Controller
 {
 
     
+    protected static function booted()
+{
+    static::addGlobalScope('exclude_deleted', function ($query) {
+        $query->where('is_deleted', false);
+    });
+}
+
 
     public function dashboard()
     {
@@ -77,10 +84,13 @@ class EventController extends Controller
      */
     public function manage()
     {
-        $events = Event::where('organizer_id', auth()->id())->get();
+        $events = Event::where('organizer_id', auth()->id())
+                       ->where('is_deleted', false) // Exclude deleted events
+                       ->get();
+    
         return view('events.manage', compact('events'));
     }
-
+    
     /**
      * Invite a user to an event.
      */
