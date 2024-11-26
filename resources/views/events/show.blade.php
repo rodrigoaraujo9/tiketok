@@ -18,13 +18,12 @@
     @endif
     <br>
     
-    <a href="{{ route('events.edit', $event->event_id) }}" class="btn btn-warning">Edit Event</a>
+    
     
     <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
 
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
 
-    <!-- Join Event -->
     @if (!$event->attendees->contains(Auth::id()))
         <form action="{{ route('events.join', $event->event_id) }}" method="POST">
             @csrf
@@ -34,7 +33,6 @@
         <p class="text-success" style="margin-top:2rem;">You are already part of this event.</p>
     @endif
 
-    <!-- Comments Section -->
     <h2>Comments</h2>
     @foreach ($event->comments as $comment)
         <div class="card mb-2">
@@ -42,7 +40,6 @@
                 <p id="comment-{{ $comment->comment_id }}" class="comment-content">{{ $comment->content }}</p>
                 <p class="text-muted">By {{ $comment->user->name }} on {{ $comment->date }}</p>
 
-                <!-- Edit comment (visible only to the author) -->
                 @if ($comment->user_id === Auth::id())
                     <button class="btn btn-warning btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Edit</button>
 
@@ -70,13 +67,16 @@
         <br>
     @endforeach
 
-    <!-- Add Comment -->
-    <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
-        @csrf
-        <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
-        <button type="submit" class="btn btn-primary">Add Comment</button>
-    </form>
-</div>
+    @guest
+        <p class="text-info">You need to <a href="{{ route('login') }}">log in</a> to add a comment.</p>
+    @else
+        <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
+            @csrf
+            <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+    @endguest
+
 
 <script>
     function toggleEditForm(commentId) {
