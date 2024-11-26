@@ -23,11 +23,13 @@
     <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
     @endif
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
-
-    @if (!$event->attendees->contains(Auth::id()))
+   
+     @if (!$event->attendees->contains(Auth::id()))
         <form action="{{ route('events.join', $event->event_id) }}" method="POST">
             @csrf
+            @if (!Auth::user()->isAdmin())
             <button type="submit" class="btn btn-primary">Join Event</button>
+            @endif
         </form>
     @else
         <p class="text-success" style="margin-top:2rem;">You are already part of this event.</p>
