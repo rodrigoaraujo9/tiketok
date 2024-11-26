@@ -21,14 +21,14 @@
                 @if (Auth::check() && !Auth::user()->isAdmin())
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('events.manage') ? 'active' : '' }}" href="{{ route('events.manage') }}">
-                        Manage My Events
+                        Manage
                     </a>
                 </li>
                 @endif
                 @if (Auth::check() && !Auth::user()->isAdmin())
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('events.attending') ? 'active' : '' }}" href="{{ route('events.attending') }}">
-                        My Events
+                        Attending
                     </a>
                 </li>
                 @endif

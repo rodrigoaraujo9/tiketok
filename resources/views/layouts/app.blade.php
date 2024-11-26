@@ -28,8 +28,8 @@
                     <a href="{{ route('events.index') }}" style="text-decoration: none;">Browse Events</a>
                     @if (Auth::check() && !Auth::user()->isAdmin())
                     <a href="{{ route('events.create') }}" style="text-decoration: none;">Create Event</a>
-                    <a href="{{ route('events.manage') }}" style="text-decoration: none;">Manage My Events</a>
-                    <a href="{{ route('events.attending') }}" style="text-decoration: none;">My Events</a>
+                    <a href="{{ route('events.manage') }}" style="text-decoration: none;">Manage</a>
+                    <a href="{{ route('events.attending') }}" style="text-decoration: none;">Attending</a>
                     <a href="{{ route('dashboard') }}" style="text-decoration: none;">Dashboard</a>
                     <a href="{{ route('events.invitations') }}" style="text-decoration: none;">Invitations</a>
                     @endif
