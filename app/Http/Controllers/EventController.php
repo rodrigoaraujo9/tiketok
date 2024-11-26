@@ -218,17 +218,17 @@ class EventController extends Controller
             'postal_code' => 'required|string|max:10',
             'max_event_capacity' => 'required|integer|min:1',
             'country' => 'required|string',
-            'visibility' => 'required|in:public,private', // Ensure enum values
+            'visibility' => 'required|in:public,private', // Ensure valid visibility
             'venue_id' => 'required|exists:venues,venue_id',
         ]);
     
         $validated['organizer_id'] = auth()->id();
     
-        $event = Event::create($validated);
+        Event::create($validated);
     
-        return redirect()->route('events.show', $event->event_id)
-            ->with('success', 'Event created successfully!');
+        return redirect()->route('events.index')->with('success', 'Event created successfully!');
     }
+    
     
     /**
      * Display the form for creating a new event.
@@ -258,25 +258,24 @@ class EventController extends Controller
      * Update an existing event in the database.
      */
     public function update(Request $request, $event_id)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'date' => 'required|date',
-        'postal_code' => 'required|string|max:10',
-        'max_event_capacity' => 'required|integer|min:1',
-        'country' => 'required|string|max:255',
-        'visibility' => 'required|string|in:public,private',
-        'venue_id' => 'required|exists:venues,venue_id',
-    ]);
-
-    $event = Event::findOrFail($event_id);
-    $event->update($validated);
-
-    // Redireciona para a página do evento atualizado
-    return redirect()->route('events.show', $event_id)
-        ->with('success', 'Event updated successfully.');
-}
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'postal_code' => 'required|string|max:10',
+            'max_event_capacity' => 'required|integer|min:1',
+            'country' => 'required|string|max:255',
+            'visibility' => 'required|in:public,private', // Ensure valid visibility
+            'venue_id' => 'required|exists:venues,venue_id',
+        ]);
+    
+        $event = Event::findOrFail($event_id);
+        $event->update($validated);
+    
+        return redirect()->route('events.show', $event_id)->with('success', 'Event updated successfully!');
+    }
+    
 
     /**
      * Delete an event from the database.
