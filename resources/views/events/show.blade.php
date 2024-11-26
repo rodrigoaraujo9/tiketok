@@ -19,9 +19,9 @@
     <br>
     
     
-    
+    @if ($event->attendees->contains(Auth::id()))
     <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
-
+    @endif
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
 
     @if (!$event->attendees->contains(Auth::id()))
