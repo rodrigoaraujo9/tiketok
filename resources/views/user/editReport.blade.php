@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Edit Report: {{ $report->report_id }}</h1>
 
-    <form action="{{ route('createReport') }}" method="POST">
+    <form action="{{ route('updateReport', $report->report_id) }}" method="POST">
         @csrf
         <input type="hidden" name="event_id" value="{{ $event->event_id }}">
         <input type="hidden" name="user_id" value="{{ Auth::id() }}">

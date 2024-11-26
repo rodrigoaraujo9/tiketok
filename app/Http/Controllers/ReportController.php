@@ -73,16 +73,17 @@ class ReportController extends Controller
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
+        $rep->reason = $request->input('reason');
         if(Auth::user()->isAdmin()) {
             $rep->reason = $request->input('reason');
-            $rep->r_status = $request->status->input('status');
+            $rep->r_status = $request->input('status');
         } else {
             $rep->reason = $request->input('reason');
         }
 
         $rep->save();
 
-        return redirect()->back()->with('success', 'Report updated successfully');
+        return redirect()->route('showReport', $report_id)->with('success', 'Report updated successfully.');
     } 
 
     public function deleteReport($report_id)
