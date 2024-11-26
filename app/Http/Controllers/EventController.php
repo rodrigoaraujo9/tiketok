@@ -332,7 +332,21 @@ class EventController extends Controller
             ->with('success', 'Comment deleted successfully!');
     }
 
+    public function adminDestroy($event_id)
+    {
+        {
+            $event = Event::findOrFail($event_id);
 
+            $delete_reports = DB::table('reports')->where('event_id', $event_id)->get();
+            foreach ($delete_reports as $delete_report) {
+                Report::destroy($delete_report->report_id);
+            }
+            $event->delete();
+    
+            return redirect()->route('events.index')
+                ->with('success', 'Event deleted successfully!');
+        }
+    }
     
 }
 

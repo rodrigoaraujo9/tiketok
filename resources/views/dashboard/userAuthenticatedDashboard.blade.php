@@ -8,6 +8,7 @@
     @include('partials.nav')
 
     <!-- My Events Section -->
+    @if (Auth::check() && !Auth::user()->isAdmin())
     <h2 class="mt-4 text-secondary">My Events</h2>
     @if($myEvents->isEmpty())
         <p>You have no events.</p>
@@ -68,6 +69,7 @@
                 @endforeach
             </tbody>
         </table>
+    @endif
     @endif
 </div>
 @endsection

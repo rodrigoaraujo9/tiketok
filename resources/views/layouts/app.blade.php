@@ -26,10 +26,15 @@
                 <h1><a href="{{ url('/events') }}" style="text-decoration: none;">Thingy!</a></h1>
                 <nav style="display: flex; gap: 1rem; align-items: center; justify-content: center; margin-top: 1rem;">
                     <a href="{{ route('events.index') }}" style="text-decoration: none;">Browse Events</a>
+                    @if (Auth::check() && !Auth::user()->isAdmin())
                     <a href="{{ route('events.create') }}" style="text-decoration: none;">Create Event</a>
                     <a href="{{ route('events.manage') }}" style="text-decoration: none;">Manage My Events</a>
                     <a href="{{ route('events.attending') }}" style="text-decoration: none;">My Events</a>
                     <a href="{{ route('events.invitations') }}" style="text-decoration: none;">Invitations</a>
+                    @endif
+                    @if (Auth::check() && Auth::user()->isAdmin())
+                    <a href="{{ route('allReports') }}" style="text-decoration: none;">Admin Reports</a>
+                    @endif
                     @if (Auth::check())
                         <form action="{{ route('logout') }}" method="GET" style="display: inline;">
                             @csrf

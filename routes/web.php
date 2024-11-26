@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,9 +81,28 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     // User-specific views
     Route::get('/events/attending', 'attending')->name('events.attending'); // Events user is attending
     Route::get('/dashboard', 'dashboard')->name('dashboard'); // User dashboard
+
+    // Admin
+    Route::post('adminDestroy', 'adminDestroy')->name('destroyAdmin');
 });
 
-    // Add Comment
+// Reports
+Route::controller(ReportController::class)->group(function () {
+    //Admin
+    Route::get('admin/reports', 'allReports')->name('allReports');
+    Route::get('admin/report/{id}', 'showReport')->name('showReport');
+    Route::get('admin/{id}/events', 'eventReports')->name('eventReports');
+
+    //Users
+    Route::get('user/userReports/{user_id?}', 'userReports')->name('userReports');
+    Route::get('user/newReport/{event_id}', 'createReportForm')->name('createReportForm');
+    Route::post('user/newReport', 'createReport')->name('createReport');
+    Route::get('user/editReport/{report_id}', 'updateReportForm')->name('updateReportForm');
+    Route::put('user/editReport/{report_id}', 'updateReport')->name('updateReport');
+    Route::delete('admin/report/{id}', 'deleteReport')->name('deleteReport');
+});
+
+// Add Comment
 Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
 
 // Edit Comment
@@ -93,3 +113,4 @@ Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'
 
 Route::get('/events/{event_id}/edit', [EventController::class, 'edit'])->name('events.edit');
 Route::put('/events/{event_id}', [EventController::class, 'update'])->name('events.update');
+
