@@ -406,7 +406,3 @@ class EventController extends Controller
         return redirect()->route('events.attendees', $eventId)->with('success', 'User removed successfully.');
     }
 }
-
-
-
-
