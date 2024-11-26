@@ -441,3 +441,34 @@ VALUES
     ('Seaside Auditorium', '505 Coastal Blvd, Seattle, WA', 1200),
     ('Skyline Plaza', '606 Skyline Dr, Atlanta, GA', 600),
     ('Historic Music Hall', '707 Heritage Way, Boston, MA', 1100);
+
+
+-- Insert roles into the roles table if they do not already exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM roles WHERE name = 'Admin') THEN
+        INSERT INTO roles (role_id, name) VALUES (1, 'Admin');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM roles WHERE name = 'User') THEN
+        INSERT INTO roles (role_id, name) VALUES (2, 'User');
+    END IF;
+END $$;
+
+-- Insert an admin user with a hashed password
+INSERT INTO users (username, email, name, phone, profile_photo, password, is_deleted, role_id) 
+VALUES ('admin', 'admin@example.com', 'admin', '1234567890', 'admin_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 1),
+       ('user1', 'user1@example.com', 'User1', '1234567891', 'user1_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2);
+
+-- Insert 3 events from user1
+INSERT INTO events (description, date, postal_code, max_event_capacity, country, name, visibility, is_deleted, venue_id, organizer_id)
+VALUES 
+    ('Event 1 Description', '2025-12-01 10:00:00', '12345', 100, 'USA', 'Event 1', 'public', FALSE, 1, 2),
+    ('Event 2 Description', '2025-12-02 11:00:00', '12345', 200, 'USA', 'Event 2', 'public', FALSE, 2, 2),
+    ('Event 3 Description', '2025-12-03 12:00:00', '12345', 300, 'USA', 'Event 3', 'public', FALSE, 3, 2);
+
+
+INSERT INTO reports (event_id, user_id, reason, r_status)
+VALUES 
+    (1, 2, 'Reason for report 1', 'pending'),
+    (2, 2, 'Reason for report 2', 'pending'),
+    (3, 2, 'Reason for report 3', 'pending');

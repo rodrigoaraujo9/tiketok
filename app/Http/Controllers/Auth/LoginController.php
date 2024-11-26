@@ -77,7 +77,7 @@ class LoginController extends Controller
     private function redirectUserBasedOnRole($user): RedirectResponse
     {
         if ($user->role_id == 1) { // Admin role
-            return redirect()->intended('/admin/dashboard')
+            return redirect()->intended('/dashboard')
                 ->withSuccess('Welcome back, Admin!');
         } elseif ($user->role_id == 2) { // User role
             return redirect()->intended('/dashboard')
