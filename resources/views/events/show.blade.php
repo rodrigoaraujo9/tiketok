@@ -21,14 +21,16 @@
     
     <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
-
+   
     <!-- Join Event (moved below Report and Back buttons) -->
-    @if (!$event->attendees->contains(Auth::id()))
+     @if (!$event->attendees->contains(Auth::id()))
         @if ($event->attendees->count() < $event->max_event_capacity)
             <form action="{{ route('events.join', $event->event_id) }}" method="POST" style="margin-top: 1rem;">
                 @csrf
-                <button type="submit" class="btn btn-primary">Join Event</button>
-            </form>
+                @if (!Auth::user()->isAdmin())
+            <button type="submit" class="btn btn-primary">Join Event</button>
+                @endif
+        </form>
         @else
             <button class="logout-button" style="margin-top: 1rem;" disabled>AT FULL CAPACITY</button>
         @endif
