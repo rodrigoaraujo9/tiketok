@@ -49,11 +49,12 @@
 
     @if ($hasJoined)
         <a href="{{ route('events.attendees.list', $event->event_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
-            Ver Participantes
+            See other attendees :)
         </a>
     @endif
 
-    
+    <br>
+    <br>
     <h2>Comments</h2>
     @foreach ($event->comments as $comment)
         <div class="card mb-2">

@@ -25,5 +25,14 @@
             </tbody>
         </table>
     @endif
+
+    <!-- Botão para sair do evento (apenas para o próprio utilizador) -->
+    @if ($event->attendees->contains(auth()->id()))
+        <form action="{{ route('events.leave', $event->event_id) }}" method="POST" class="mt-3">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-warning">Leave Event</button>
+        </form>
+    @endif
 </div>
 @endsection
