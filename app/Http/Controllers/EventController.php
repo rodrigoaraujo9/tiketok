@@ -206,17 +206,19 @@ class EventController extends Controller
      */
     public function show($event_id)
     {
-        // Validate that the event_id is numeric
+        // checks if id is valid
         if (!is_numeric($event_id)) {
             abort(404, 'Invalid event ID');
         }
-    
-        // Fetch event by its primary key
-        $event = Event::with(['venue', 'organizer'])->findOrFail($event_id);
-    
-        return view('events.show', compact('event'));
+
+        $event = Event::with(['venue', 'organizer', 'attendees', 'comments.user'])->findOrFail($event_id);
+
+        // checks if user is an attendee
+        $hasJoined = auth()->check() && $event->attendees->contains(auth()->id());
+
+        return view('events.show', compact('event', 'hasJoined'));
     }
-    
+
 
     /**
      * Store a newly created event in the database.
@@ -422,4 +424,20 @@ class EventController extends Controller
 
         return redirect()->route('events.attendees', $eventId)->with('success', 'User removed successfully.');
     }
+
+    public function getAttendees($id)
+    {
+        // get event + its attendees
+        $event = Event::with(['attendees'])->findOrFail($id);
+
+        if (!$event->attendees->contains(auth()->id())) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // select names
+        $attendees = $event->attendees()->select('name')->get();
+
+        return response()->json($attendees);
+    }
+
 }

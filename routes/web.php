@@ -124,3 +124,6 @@ Route::get('/events/{event}/attendees', [EventController::class, 'attendees'])->
 Route::post('/events/{event}/attendees/remove', [EventController::class, 'removeAttendee'])->name('events.attendees.remove');
 
 //admin delete event
+
+Route::get('/events/{id}/attendees', [EventController::class, 'getAttendees']);
+

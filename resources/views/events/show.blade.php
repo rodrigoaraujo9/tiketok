@@ -46,6 +46,13 @@
         <button class="delete btn btn-danger btn-sm" style="margin-bottom:2rem;">Delete</button>
     </form>
     @endif
+
+    @if ($hasJoined)
+        <a href="{{ route('events.attendees', $event->event_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
+            Ver Participantes
+        </a>
+    @endif
+
     
     <h2>Comments</h2>
     @foreach ($event->comments as $comment)
