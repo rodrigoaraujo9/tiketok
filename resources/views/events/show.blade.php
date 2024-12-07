@@ -48,7 +48,7 @@
     @endif
 
     @if ($hasJoined)
-        <a href="{{ route('events.attendees', $event->event_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
+        <a href="{{ route('events.attendees.list', $event->event_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
             Ver Participantes
         </a>
     @endif

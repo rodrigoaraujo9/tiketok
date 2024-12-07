@@ -206,21 +206,19 @@ class EventController extends Controller
      */
     public function show($event_id)
     {
-        // Validar se o event_id é numérico
+        // Validar o ID do evento
         if (!is_numeric($event_id)) {
             abort(404, 'Invalid event ID');
         }
 
-        // Buscar o evento e carregar as relações necessárias
-        $event = Event::with(['venue', 'organizer', 'attendees', 'comments.user'])->findOrFail($event_id);
+        // Buscar o evento com os attendees
+        $event = Event::with(['venue', 'organizer', 'attendees'])->findOrFail($event_id);
 
         // Verificar se o utilizador autenticado está na lista de attendees
         $hasJoined = auth()->check() && $event->attendees->contains(auth()->id());
 
-        // Retornar a view com os dados do evento e se o utilizador está na lista de attendees
         return view('events.show', compact('event', 'hasJoined'));
     }
-
 
 
     /**
@@ -405,17 +403,13 @@ class EventController extends Controller
     
     public function attendees($eventId)
     {
-        // Buscar o evento e carregar os participantes
         $event = Event::with('attendees')->findOrFail($eventId);
-
-        // Permitir que o organizador ou qualquer participante do evento veja a lista de attendees
-        if (!auth()->check() || (!$event->attendees->contains(auth()->id()) && auth()->id() !== $event->organizer_id)) {
+        if (auth()->id() !== $event->organizer_id) {
             abort(403, 'Unauthorized action.');
         }
 
         return view('events.attendees', compact('event'));
     }
-
 
     public function removeAttendee(Request $request, $eventId)
     {
@@ -432,19 +426,16 @@ class EventController extends Controller
         return redirect()->route('events.attendees', $eventId)->with('success', 'User removed successfully.');
     }
 
-    public function getAttendees($id)
+    public function viewAttendeesList($event_id)
     {
-        // get event + its attendees
-        $event = Event::with(['attendees'])->findOrFail($id);
+        $event = Event::with('attendees')->findOrFail($event_id);
 
-        if (!$event->attendees->contains(auth()->id())) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        // Verificar se o utilizador é participante ou organizador
+        if (!auth()->check() || (!$event->attendees->contains(auth()->id()) && auth()->id() !== $event->organizer_id)) {
+            abort(403, 'Unauthorized action.');
         }
 
-        // select names
-        $attendees = $event->attendees()->select('name')->get();
-
-        return response()->json($attendees);
+        return view('events.attendees_list', compact('event'));
     }
 
 }

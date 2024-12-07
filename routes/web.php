@@ -125,5 +125,7 @@ Route::post('/events/{event}/attendees/remove', [EventController::class, 'remove
 
 //admin delete event
 
-Route::get('/events/{id}/attendees', [EventController::class, 'getAttendees']);
-
+// attendees list
+Route::get('/events/{event_id}/attendees/list', [EventController::class, 'viewAttendeesList'])
+    ->where('event_id', '[0-9]+') // Apenas IDs numéricos
+    ->name('events.attendees.list');
