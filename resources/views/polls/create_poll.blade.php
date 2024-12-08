@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Create a Poll for {{ $event->name }}</h1>
 
-    <form action="{{ route('polls.store', $event->id) }}" method="POST">
+    <form action="{{ route('polls.store', $event->event_id) }}" method="POST">
         @csrf
         <div class="form-group">
             <label for="question">Poll Question</label>

@@ -18,7 +18,7 @@ class PollController extends Controller
     public function create($event_id)
     {
         $event = Event::findOrFail($event_id);
-        return view('polls.create', compact('event'));
+        return view('polls.create_poll', compact('event'));
     }
 
     public function store(Request $request, $event_id)

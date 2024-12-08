@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PollController;
+
 
 /*
 |--------------------------------------------------------------------------
