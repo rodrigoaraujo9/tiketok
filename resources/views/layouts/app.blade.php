@@ -32,21 +32,24 @@
                     <a href="{{ route('events.attending') }}" style="text-decoration: none;">Attending</a>
                     <a href="{{ route('dashboard') }}" style="text-decoration: none;">Dashboard</a>
                     <a href="{{ route('events.invitations') }}" style="text-decoration: none;">Invitations</a>
+                    <a href="{{ route('about') }}" style="text-decoration: none;">About Us</a>
                     @endif
                     @if (Auth::check() && Auth::user()->isAdmin())
                     <a href="{{ route('allReports') }}" style="text-decoration: none;">Admin Reports</a>
                     @endif
                     @if (Auth::check())
-                    <span style="color:#949494;  font-size: 1.5rem;font-weight: light;">Welcome, {{ Auth::user()->name }}</span>
+                    <span style="color:#949494; font-size: 1.5rem; font-weight: light;">Welcome, {{ Auth::user()->name }}</span>
                         <form action="{{ route('logout') }}" method="GET" style="display: inline; margin:0;">
                             @csrf
                             <button class="logout-button">Logout</button>
                         </form>
                         
                     @else
+                        <a href="{{ route('about') }}" style="text-decoration: none;">About Us</a>
                         <a href="{{ route('login') }}" style="text-decoration: none;">Login</a>
                         <a href="{{ route('register') }}" style="text-decoration: none;">Register</a>
                     @endif
+                    
                 </nav>
             </header>
             <section id="content">
@@ -55,4 +58,3 @@
         </main>
     </body>
 </html>
-
