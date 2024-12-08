@@ -51,9 +51,15 @@ class Event extends Model
     }
     
     public function comments()
-{
-    return $this->hasMany(Comment::class, 'event_id', 'event_id');
-}
+    {
+        return $this->hasMany(Comment::class, 'event_id', 'event_id');
+    }
+
+    public function polls()
+    {
+        return $this->hasMany(Poll::class, 'event_id', 'event_id');
+    }
+
 
 
 }
