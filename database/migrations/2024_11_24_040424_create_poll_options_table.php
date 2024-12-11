@@ -8,13 +8,15 @@ class CreatePollOptionsTable extends Migration
 {
     public function up()
     {
-        Schema::create('poll_options', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('poll_id')->constrained('polls')->onDelete('cascade');
-            $table->string('option');
-            $table->unsignedInteger('votes')->default(0);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('poll_options')) {
+            Schema::create('poll_options', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('poll_id')->constrained('polls')->onDelete('cascade');
+                $table->string('option');
+                $table->unsignedInteger('votes')->default(0);
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()

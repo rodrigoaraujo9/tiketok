@@ -8,12 +8,15 @@ class CreatePollsTable extends Migration
 {
     public function up()
     {
-        Schema::create('polls', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
-            $table->string('question');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('polls')) {
+            Schema::create('polls', function (Blueprint $table) {
+                $table->id('poll_id');
+                $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
+                $table->string('question');
+                $table->timestamp('end_date')->nullable(); 
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()
@@ -21,4 +24,5 @@ class CreatePollsTable extends Migration
         Schema::dropIfExists('polls');
     }
 }
+
 

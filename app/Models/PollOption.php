@@ -8,10 +8,14 @@ class PollOption extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['poll_id', 'option', 'votes'];
+    protected $primaryKey = 'option_id';
+
+    protected $fillable = ['poll_id', 'option_text', 'votes'];
+
+    public $timestamps = true;
 
     public function poll()
     {
-        return $this->belongsTo(Poll::class);
+        return $this->belongsTo(Poll::class, 'poll_id');
     }
 }

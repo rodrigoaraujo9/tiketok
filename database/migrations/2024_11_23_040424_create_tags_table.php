@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id('tag_id');
-            $table->string('name')->unique();
-            $table->unsignedBigInteger('event_id'); // Use unsignedBigInteger for consistency
-            $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tags')) {
+            Schema::create('tags', function (Blueprint $table) {
+                $table->id('tag_id');
+                $table->string('name')->unique();
+                $table->unsignedBigInteger('event_id'); // Use unsignedBigInteger for consistency
+                $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
 };

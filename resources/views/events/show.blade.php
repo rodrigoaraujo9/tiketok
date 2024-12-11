@@ -98,34 +98,9 @@
     <br><br>
     <h2>Polls</h2>
 
-    <!-- Mostrar Polls Existentes -->
-    @if ($event->polls->isEmpty())
-        <p>No polls have been created for this event.</p>
-    @else
-        @foreach ($event->polls as $poll)
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h4>{{ $poll->question }}</h4>
-                </div>
-                <div class="card-body">
-                    @foreach ($poll->options as $option)
-                        <form action="{{ route('polls.vote', [$event->id, $poll->id]) }}" method="POST" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="option_id" value="{{ $option->id }}">
-                            <button class="btn btn-primary btn-sm">
-                                {{ $option->option }} ({{ $option->votes }} votes)
-                            </button>
-                        </form>
-                    @endforeach
-                </div>
-            </div>
-        @endforeach
-    @endif
+    <a href="{{ route('polls.index', $event->event_id) }}" class="btn btn-info">Check polls for {{ $event->name }} →</a>
 
-    <!-- Botão para Criar Poll -->
-    @if (Auth::id() === $event->organizer_id)
-        <a href="{{ route('polls.create', $event->event_id) }}" class="btn btn-success mt-3">Create a Poll</a>
-    @endif
+
 
 
 </div>

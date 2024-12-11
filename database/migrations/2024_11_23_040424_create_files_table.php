@@ -8,13 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('files', function (Blueprint $table) {
-            $table->id('file_id');
-            $table->string('url', 255)->unique();
-            $table->unsignedBigInteger('comment_id');
-            $table->timestamps();
+        if (!Schema::hasTable('files')) {
+            Schema::create('files', function (Blueprint $table) {
+                $table->id('file_id');
+                $table->string('url', 255)->unique();
+                $table->unsignedBigInteger('comment_id');
+                $table->timestamps();
 
-            $table->foreign('comment_id')->references('comment_id')->on('comments')->cascadeOnDelete();
-        });
+                $table->foreign('comment_id')->references('comment_id')->on('comments')->cascadeOnDelete();
+            });
+        }
     }
 };

@@ -8,14 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tickets', function (Blueprint $table) {
-            $table->id('ticket_id');
-            $table->unsignedBigInteger('event_id');
-            $table->enum('type', ['regular', 'vip', 'student']);
-            $table->unsignedInteger('quantity');
-            $table->timestamps();
+        if (!Schema::hasTable('tickets')) {
+            Schema::create('tickets', function (Blueprint $table) {
+                $table->id('ticket_id');
+                $table->unsignedBigInteger('event_id');
+                $table->enum('type', ['regular', 'vip', 'student']);
+                $table->unsignedInteger('quantity');
+                $table->timestamps();
 
-            $table->foreign('event_id')->references('event_id')->on('events')->cascadeOnDelete();
-        });
+                $table->foreign('event_id')->references('event_id')->on('events')->cascadeOnDelete();
+            });
+        }
     }
 };

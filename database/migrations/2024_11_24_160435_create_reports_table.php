@@ -11,18 +11,20 @@ class CreateReportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('reports', function (Blueprint $table) {
-            $table->id('report_id');
-            $table->unsignedBigInteger('event_id');
-            $table->unsignedBigInteger('user_id');
-            $table->text('reason');
-            $table->string('r_status')->default('pending'); // Status: pending, reviewed, resolved
-            $table->timestamps();
+        if (!Schema::hasTable('reports')) {
+            Schema::create('reports', function (Blueprint $table) {
+                $table->id('report_id');
+                $table->unsignedBigInteger('event_id');
+                $table->unsignedBigInteger('user_id');
+                $table->text('reason');
+                $table->string('r_status')->default('pending'); // Status: pending, reviewed, resolved
+                $table->timestamps();
 
-            // Foreign keys
-            $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-        });
+                // Foreign keys
+                $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
+                $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     /**

@@ -35,7 +35,7 @@ class PollController extends Controller
         ]);
 
         foreach ($request->options as $option) {
-            $poll->options()->create(['option' => $option]);
+            $poll->options()->create(['option_text' => $option]);
         }
 
         return redirect()->route('polls.index', $event_id)->with('success', 'Poll created successfully.');
