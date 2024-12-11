@@ -440,7 +440,30 @@ VALUES
     ('City Opera House', '404 Lincoln Sq, San Francisco, CA', 700),
     ('Seaside Auditorium', '505 Coastal Blvd, Seattle, WA', 1200),
     ('Skyline Plaza', '606 Skyline Dr, Atlanta, GA', 600),
-    ('Historic Music Hall', '707 Heritage Way, Boston, MA', 1100);
+    ('Historic Music Hall', '707 Heritage Way, Boston, MA', 1100),  
+    ('Altice Arena', 'Lisbon', 20000),
+    ('Coliseu dos Recreios', 'Lisbon', 4000),
+    ('Casa da Música', 'Porto', 1300),
+    ('Teatro Nacional São João', 'Porto', 750),
+('Centro Cultural de Belém', 'Lisbon', 1500),
+('Pavilhão Rosa Mota', 'Porto', 8000),
+('Estádio da Luz', 'Lisbon', 65000),
+('Estádio do Dragão', 'Porto', 52000),
+('Campo Pequeno', 'Lisbon', 9000),
+('Teatro Municipal Rivoli', 'Porto', 1200),
+('Super Bock Arena', 'Porto', 8000),
+('Fórum Braga', 'Braga', 3000),
+('Teatro Garcia de Resende', 'Évora', 700),
+('Centro de Artes e Espetáculos', 'Figueira da Foz', 800),
+('Coliseu do Porto', 'Porto', 3500),
+('Altice Forum Braga', 'Braga', 4000),
+('Auditório Pedro Almodóvar', 'Lisbon', 1500),
+('Praça de Touros', 'Lisbon', 10000),
+('Lagoa Municipal Auditorium', 'Lagoa', 1200),
+('Casino Estoril', 'Estoril', 1500),
+('Porto Palácio Congress Hotel', 'Porto', 1200);
+
+
 
 
 -- Insert roles into the roles table if they do not already exist
@@ -457,18 +480,91 @@ END $$;
 -- Insert an admin user with a hashed password
 INSERT INTO users (username, email, name, phone, profile_photo, password, is_deleted, role_id) 
 VALUES ('admin', 'admin@example.com', 'admin', '1234567890', 'admin_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 1),
-       ('user1', 'user1@example.com', 'User1', '1234567891', 'user1_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2);
+       ('user1', 'user1@example.com', 'User1', '1234567891', 'user1_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+       ('user2', 'user2@example.com', 'Maria Santos', '912345672', 'user2_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user3', 'user3@example.com', 'João Oliveira', '912345673', 'user3_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user4', 'user4@example.com', 'Ana Martins', '912345674', 'user4_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user5', 'user5@example.com', 'Pedro Silva', '912345675', 'user5_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user6', 'user6@example.com', 'Rita Costa', '912345676', 'user6_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user7', 'user7@example.com', 'Carlos Gonçalves', '912345677', 'user7_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user8', 'user8@example.com', 'Paula Almeida', '912345678', 'user8_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user9', 'user9@example.com', 'Miguel Fernandes', '912345679', 'user9_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user10', 'user10@example.com', 'Inês Correia', '912345680', 'user10_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user11', 'user11@example.com', 'André Rodrigues', '912345681', 'user11_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user12', 'user12@example.com', 'Cláudia Sousa', '912345682', 'user12_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user13', 'user13@example.com', 'Tiago Pinto', '912345683', 'user13_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user14', 'user14@example.com', 'Sara Melo', '912345684', 'user14_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user15', 'user15@example.com', 'José Neves', '912345685', 'user15_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user16', 'user16@example.com', 'Sofia Nunes', '912345686', 'user16_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user17', 'user17@example.com', 'Luís Carvalho', '912345687', 'user17_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user18', 'user18@example.com', 'Joana Moreira', '912345688', 'user18_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user19', 'user19@example.com', 'Manuel Teixeira', '912345689', 'user19_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user20', 'user20@example.com', 'Beatriz Figueiredo', '912345690', 'user20_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user21', 'user21@example.com', 'Ricardo Antunes', '912345691', 'user21_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user22', 'user22@example.com', 'Patrícia Araújo', '912345692', 'user22_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user23', 'user23@example.com', 'Hugo Ribeiro', '912345693', 'user23_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user24', 'user24@example.com', 'Carolina Mendes', '912345694', 'user24_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
+('user25', 'user25@example.com', 'Filipe Pires', '912345695', 'user25_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2);
 
 -- Insert 3 events from user1
+-- Events with future dates
+-- Insert events into the events table using only existing venues
 INSERT INTO events (description, date, postal_code, max_event_capacity, country, name, visibility, is_deleted, venue_id, organizer_id)
 VALUES 
-    ('Event 1 Description', '2025-12-01 10:00:00', '12345', 100, 'USA', 'Event 1', 'public', FALSE, 1, 2),
-    ('Event 2 Description', '2025-12-02 11:00:00', '12345', 200, 'USA', 'Event 2', 'public', FALSE, 2, 2),
-    ('Event 3 Description', '2025-12-03 12:00:00', '12345', 300, 'USA', 'Event 3', 'public', FALSE, 3, 2);
+    ('Event 1 Description', '2030-12-01 10:00:00', '12345', 100, 'USA', 'Event 1', 'public', FALSE, 1, 2),
+    ('Event 2 Description', '2030-12-02 11:00:00', '12345', 200, 'USA', 'Event 2', 'public', FALSE, 2, 2),
+    ('Event 3 Description', '2030-12-03 12:00:00', '12345', 300, 'USA', 'Event 3', 'public', FALSE, 3, 2),
+    ('Concert at Altice Arena', '2030-12-30 20:00:00', '1990-001', 20000, 'Portugal', 'Rock Night', 'public', FALSE, 11, 2),
+    ('Art Exhibition at Casa da Música', '2030-11-25 15:00:00', '4099-002', 1300, 'Portugal', 'Abstract World', 'private', FALSE, 13, 2),
+    ('Stand-up Comedy Show at Coliseu dos Recreios', '2030-12-15 18:30:00', '1000-078', 4000, 'Portugal', 'Laugh Out Loud', 'public', FALSE, 12, 3),
+    ('Jazz Night at Pavilhão Rosa Mota', '2030-12-20 21:00:00', '4050-234', 8000, 'Portugal', 'Smooth Jazz Evening', 'public', FALSE, 16, 4),
+    ('Tech Conference at Fórum Braga', '2031-01-15 10:00:00', '4700-340', 3000, 'Portugal', 'Future of AI', 'public', FALSE, 22, 5),
+    ('Food Festival at Campo Pequeno', '2031-03-20 12:00:00', '1049-063', 9000, 'Portugal', 'Taste of Lisbon', 'public', FALSE, 19, 6),
+    ('Music Festival at Estádio da Luz', '2031-06-25 19:00:00', '1500-311', 65000, 'Portugal', 'Summer Vibes Festival', 'public', FALSE, 17, 2),
+    ('Book Fair at Centro Cultural de Belém', '2031-04-12 09:00:00', '1449-003', 1500, 'Portugal', 'Books and Beyond', 'public', FALSE, 15, 3),
+    ('Charity Gala at Estádio do Dragão', '2031-05-01 19:30:00', '4350-415', 52000, 'Portugal', 'Hope for Tomorrow', 'private', FALSE, 18, 4),
+    ('Sports Event at Pavilhão Rosa Mota', '2031-02-10 15:00:00', '4050-234', 8000, 'Portugal', 'Championship Finals', 'public', FALSE, 16, 5),
+    ('Theater Play at Teatro Nacional São João', '2031-01-18 20:00:00', '4000-295', 750, 'Portugal', 'Shakespeare Reimagined', 'public', FALSE, 14, 2),
+    ('Art Workshop at Centro de Artes e Espetáculos', '2031-02-22 14:00:00', '3080-073', 800, 'Portugal', 'Creative Minds', 'private', FALSE, 24, 6),
+    ('Film Screening at Teatro Municipal Rivoli', '2031-03-14 17:00:00', '4000-420', 1200, 'Portugal', 'Cinema Classics Night', 'public', FALSE, 20, 4),
+    ('Pop Concert at Super Bock Arena', '2031-07-10 20:00:00', '4050-378', 8000, 'Portugal', 'Pop Explosion', 'public', FALSE, 21, 3),
+    ('Jazz Evening at Casa da Música', '2031-05-05 21:00:00', '4099-002', 1300, 'Portugal', 'Night of Jazz', 'public', FALSE, 13, 5),
+    ('Dance Festival at Estádio da Luz', '2031-08-15 16:00:00', '8005-226', 30000, 'Portugal', 'Dance the Night Away', 'public', FALSE, 17, 6),
+    ('Wine Tasting Event at Casino Estoril', '2031-03-22 18:00:00', '2765-190', 1500, 'Portugal', 'A Taste of Excellence', 'private', FALSE, 30, 2),
+    ('Rock Concert at Coliseu do Porto', '2031-04-14 19:30:00', '4000-161', 3500, 'Portugal', 'Rock Legends', 'public', FALSE, 26, 4),
+    ('Charity Run at Altice Arena', '2031-09-20 09:00:00', '4700-035', 20000, 'Portugal', 'Run for a Cause', 'public', FALSE, 11, 3),
+    ('Historical Play at Coliseu dos Recreios', '2031-03-10 20:00:00', '4000-450', 1000, 'Portugal', 'History Comes Alive', 'private', FALSE, 12, 5);
+
+-- Comments with future dates
+INSERT INTO comments (content, date, user_id, event_id) 
+VALUES 
+    ('Amazing concert! Loved every moment.', '2030-12-31 10:00:00', 2, 1),
+    ('The event was well organized.', '2030-12-31 11:00:00', 3, 2),
+    ('Great atmosphere and friendly people.', '2031-01-01 14:00:00', 4, 3),
+    ('Looking forward to the next event.', '2031-01-02 16:00:00', 5, 4),
+    ('Not happy with the event, could be better.', '2031-01-03 18:00:00', 6, 5),
+    ('Loved the food and entertainment!', '2031-01-04 20:00:00', 7, 6),
+    ('The venue was fantastic.', '2031-01-05 12:00:00', 8, 7),
+    ('The event exceeded my expectations.', '2031-01-06 15:00:00', 9, 8),
+    ('The music was too loud for me.', '2031-01-07 17:00:00', 10, 9),
+    ('Incredible performance by the band!', '2031-01-08 19:00:00', 11, 10);
 
 
 INSERT INTO reports (event_id, user_id, reason, r_status)
 VALUES 
     (1, 2, 'Reason for report 1', 'pending'),
     (2, 2, 'Reason for report 2', 'pending'),
-    (3, 2, 'Reason for report 3', 'pending');
+    (3, 2, 'Reason for report 3', 'pending'),
+    (1, 3, 'The music was too loud.', 'pending'),
+    (2, 4, 'Overcrowded venue.', 'pending'),
+    (3, 5, 'Unprofessional event staff.', 'reviewed'),
+    (4, 6, 'Food was not up to standard.', 'resolved'),
+    (5, 7, 'Late start to the event.', 'pending'),
+    (6, 8, 'Insufficient parking space.', 'reviewed'),
+    (7, 9, 'Technical issues with sound.', 'resolved'),
+    (8, 10, 'The event was poorly advertised.', 'pending'),
+    (9, 11, 'Inappropriate behavior from attendees.', 'pending'),
+    (10, 12, 'Event cancellation without notice.', 'reviewed');
+-- Insert valid invitations aligned with the users provided
+
+-- Insert sample data into invites table MISSING
