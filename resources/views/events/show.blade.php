@@ -4,10 +4,7 @@
 <div class="container">
     <h1>{{ $event->name }}</h1>
     <p><strong>Visibility:</strong> {{ $event->visibility }}</p>
-
-    <!-- Display visibility instead of Event ID -->
     <p><strong>Country:</strong> {{ ucfirst($event->country) }}</p>
-
     <p><strong>Description:</strong> {{ $event->description }}</p>
     <p><strong>Date:</strong> {{ $event->date }}</p>
     <p><strong>Venue:</strong> {{ $event->venue->name }}</p>
@@ -19,19 +16,19 @@
     @endif
     <br>
     @if (Auth::check() && (!Auth::user()->isAdmin() || !Auth::id() === $event->organizer_id))
-    <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
+        <a href="{{ route('createReportForm', ['event_id' => $event->event_id]) }}" class="btn btn-danger">Report Event</a>
     @endif
     <a href="{{ route('events.index') }}" class="btn btn-secondary">Back to Events</a>
     <br>
-    <!-- Join Event (moved below Report and Back buttons) -->
-     @if (!$event->attendees->contains(Auth::id()))
+    <!-- Join Event -->
+    @if (!$event->attendees->contains(Auth::id()))
         @if ($event->attendees->count() < $event->max_event_capacity)
             <form action="{{ route('events.join', $event->event_id) }}" method="POST" style="margin-top: 1rem;">
                 @csrf
                 @if (Auth::check() && (!Auth::user()->isAdmin() || !Auth::id() === $event->organizer_id))
-            <button type="submit" class="btn btn-primary">Join Event</button>
+                    <button type="submit" class="btn btn-primary">Join Event</button>
                 @endif
-        </form>
+            </form>
         @else
             <button class="logout-button" style="margin-top: 1rem;" disabled>AT FULL CAPACITY</button>
         @endif
@@ -40,11 +37,11 @@
     @endif
 
     @if (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $event->organizer_id))
-    <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
-        @csrf
-        @method('DELETE')
-        <button class="delete btn btn-danger btn-sm" style="margin-bottom:2rem;">Delete</button>
-    </form>
+        <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button class="delete btn btn-danger btn-sm" style="margin-bottom:2rem;">Delete</button>
+        </form>
     @endif
 
     @if ($hasJoined)
@@ -53,8 +50,7 @@
         </a>
     @endif
 
-    <br>
-    <br>
+    <br><br>
     <h2>Comments</h2>
     @foreach ($event->comments as $comment)
         <div class="card mb-2">
@@ -73,7 +69,6 @@
                         <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Cancel</button>
                     </form>
                 @endif
-                <!-- Delete comment -->
                 @if (Auth::id() === $comment->user_id) 
                     <form action="{{ route('comments.delete', $comment->comment_id) }}" method="POST" style="display: inline;">
                         @csrf
@@ -85,36 +80,28 @@
                 @endif
             </div>
         </div>
-        <br>
-        <br>
+        <br><br>
     @endforeach
 
     @guest
         <p class="text-info">You need to <a href="{{ route('login') }}">log in</a> to add a comment.</p>
     @else
-    @if (!Auth::user()->isAdmin())
-        <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
-            @csrf
-            <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
-            <button type="submit" class="btn btn-primary">Add Comment</button>
-        </form>
-    @endif
+        @if (!Auth::user()->isAdmin())
+            <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
+                @csrf
+                <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
+                <button type="submit" class="btn btn-primary">Add Comment</button>
+            </form>
+        @endif
     @endguest
 
+    <br><br>
+    <h2>Polls</h2>
 
-<script>
-    function toggleEditForm(commentId) {
-        var contentElement = document.getElementById('comment-' + commentId);
-        var editForm = document.getElementById('edit-form-' + commentId);
-        
-        if (editForm.style.display === 'none') {
-            editForm.style.display = 'block';
-            contentElement.style.display = 'none';
-        } else {
-            editForm.style.display = 'none';
-            contentElement.style.display = 'block';
-        }
-    }
-</script>
+    <a href="{{ route('polls.index', $event->event_id) }}" class="btn btn-info">Check polls for {{ $event->name }} →</a>
 
+
+
+
+</div>
 @endsection

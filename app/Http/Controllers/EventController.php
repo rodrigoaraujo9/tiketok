@@ -211,8 +211,13 @@ class EventController extends Controller
             abort(404, 'Invalid event ID');
         }
 
-        // Buscar o evento com os attendees
-        $event = Event::with(['venue', 'organizer', 'attendees'])->findOrFail($event_id);
+        // Buscar o evento com os attendees e polls
+        $event = Event::with([
+            'venue',
+            'organizer',
+            'attendees',
+            'polls.options' // Carregar as polls e as suas opções associadas
+        ])->findOrFail($event_id);
 
         // Verificar se o utilizador autenticado está na lista de attendees
         $hasJoined = auth()->check() && $event->attendees->contains(auth()->id());

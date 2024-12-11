@@ -4,17 +4,24 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePollOptionsTable extends Migration
 {
-    public function up(): void
+    public function up()
     {
-        Schema::create('poll_options', function (Blueprint $table) {
-            $table->id('option_id');
-            $table->unsignedBigInteger('poll_id');
-            $table->text('option_text');
-            $table->timestamps();
-
-            $table->foreign('poll_id')->references('poll_id')->on('polls')->cascadeOnDelete();
-        });
+        if (!Schema::hasTable('poll_options')) {
+            Schema::create('poll_options', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('poll_id')->constrained('polls')->onDelete('cascade');
+                $table->string('option');
+                $table->unsignedInteger('votes')->default(0);
+                $table->timestamps();
+            });
+        }
     }
-};
+
+    public function down()
+    {
+        Schema::dropIfExists('poll_options');
+    }
+}
+

@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PollController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -133,3 +135,11 @@ Route::get('/events/{event_id}/attendees/list', [EventController::class, 'viewAt
 // about us
 Route::get('/about', function () {
     return view('about_us');})->name('about');
+
+// polls
+Route::middleware(['auth'])->prefix('events/{event_id}/polls')->group(function () {
+    Route::get('/', [PollController::class, 'index'])->name('polls.index');
+    Route::get('/create', [PollController::class, 'create'])->name('polls.create');
+    Route::post('/', [PollController::class, 'store'])->name('polls.store');
+    Route::post('/{poll_id}/vote', [PollController::class, 'vote'])->name('polls.vote');
+});

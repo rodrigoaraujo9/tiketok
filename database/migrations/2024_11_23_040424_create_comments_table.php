@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('events')) {
+        if (Schema::hasTable('events') && !Schema::hasTable('comments')) {
             Schema::create('comments', function (Blueprint $table) {
                 $table->id('comment_id');
                 $table->text('content');
@@ -20,14 +20,12 @@ return new class extends Migration
                 $table->unsignedBigInteger('event_id');
                 $table->timestamps();
 
-                // Foreign keys
                 $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
                 $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
             });
-        } else {
-            echo "Events table does not exist. Cannot create comments table.\n";
         }
     }
+
 
     /**
      * Reverse the migrations.

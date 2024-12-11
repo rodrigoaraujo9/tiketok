@@ -11,25 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id('event_id');
-            $table->text('description');
-            $table->timestamp('date')->notNull()->check('date >= CURRENT_DATE');
-            $table->string('postal_code', 10)->nullable();
-            $table->unsignedInteger('max_event_capacity')->nullable();
-            $table->string('country');
-            $table->string('name');
-            $table->enum('visibility', ['public', 'private']);
-            $table->boolean('is_deleted')->default(false);
-            $table->unsignedBigInteger('venue_id');
-            $table->unsignedBigInteger('organizer_id');
-            $table->timestamps();
+        if (!Schema::hasTable('events')) {
+            Schema::create('events', function (Blueprint $table) {
+                $table->id('event_id'); // Primary key
+                $table->text('description');
+                $table->timestamp('date')->notNull()->check('date >= CURRENT_DATE');
+                $table->string('postal_code', 10)->nullable();
+                $table->unsignedInteger('max_event_capacity')->nullable();
+                $table->string('country');
+                $table->string('name');
+                $table->enum('visibility', ['public', 'private']);
+                $table->boolean('is_deleted')->default(false);
+                $table->unsignedBigInteger('venue_id');
+                $table->unsignedBigInteger('organizer_id');
+                $table->timestamps();
 
-            // Foreign keys
-            $table->foreign('venue_id')->references('venue_id')->on('venues')->onDelete('cascade');
-            $table->foreign('organizer_id')->references('user_id')->on('users')->onDelete('cascade'); // Correct column
-        });
+                // Foreign keys
+                $table->foreign('venue_id')->references('venue_id')->on('venues')->onDelete('cascade');
+                $table->foreign('organizer_id')->references('user_id')->on('users')->onDelete('cascade'); // Correct column
+            });
+        }
     }
+
 
     /**
      * Reverse the migrations.
