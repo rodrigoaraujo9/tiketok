@@ -32,6 +32,7 @@
                     <a href="{{ route('events.attending') }}" style="text-decoration: none;">Attending</a>
                     <a href="{{ route('dashboard') }}" style="text-decoration: none;">Dashboard</a>
                     <a href="{{ route('events.invitations') }}" style="text-decoration: none;">Invitations</a>
+                    <a href="{{ route('profile.show') }}" style="text-decoration: none;">Profile</a>
                     <a href="{{ route('about') }}" style="text-decoration: none;">About Us</a>
                     @endif
                     @if (Auth::check() && Auth::user()->isAdmin())
