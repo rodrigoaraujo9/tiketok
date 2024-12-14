@@ -34,7 +34,6 @@ class ProfileController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
         
-
         $user->name = $request->input('name');
         $user->username = $request->input('username');
         $user->email = $request->input('email');
@@ -51,6 +50,6 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return redirect()->route('profile.show')->with('sucess', 'Profile updated successfully!');
+        return redirect()->route('profile.show')->withSuccess('Profile updated successfully!');
     }
 }
