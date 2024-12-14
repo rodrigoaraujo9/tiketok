@@ -142,4 +142,6 @@ Route::middleware(['auth'])->prefix('events/{event_id}/polls')->group(function (
     Route::get('/create', [PollController::class, 'create'])->name('polls.create');
     Route::post('/', [PollController::class, 'store'])->name('polls.store');
     Route::post('/{poll_id}/vote', [PollController::class, 'vote'])->name('polls.vote');
+    Route::delete('/{poll_id}', [PollController::class, 'destroy'])->name('polls.destroy'); // Removido duplicação no caminho
 });
+
