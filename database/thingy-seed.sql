@@ -92,8 +92,10 @@ CREATE TABLE tickets (
 CREATE TABLE polls (
     poll_id SERIAL PRIMARY KEY,
     question TEXT NOT NULL,
-    end_date TIMESTAMP NOT NULL CHECK (end_date >= CURRENT_DATE),
+    end_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP + interval '30 days',
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the report was created
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
     event_id INT REFERENCES events(event_id) ON DELETE CASCADE
 );
 
@@ -101,8 +103,11 @@ CREATE TABLE polls (
 CREATE TABLE poll_options (
     option_id SERIAL PRIMARY KEY,
     poll_id INT REFERENCES polls(poll_id) ON DELETE CASCADE,
-    option_text TEXT NOT NULL
+    option_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Poll votes table
 CREATE TABLE poll_votes (

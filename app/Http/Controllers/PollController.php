@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Event;
 use App\Models\Poll;
 use App\Models\PollOption;
@@ -32,6 +34,7 @@ class PollController extends Controller
         $poll = Poll::create([
             'event_id' => $event_id,
             'question' => $request->question,
+            'end_date' => now()->addDays(30),
         ]);
 
         foreach ($request->options as $option) {
@@ -50,4 +53,20 @@ class PollController extends Controller
 
         return back()->with('success', 'Your vote has been recorded.');
     }
+
+    public function destroy($event_id, $poll_id)
+    {
+        $poll = Poll::findOrFail($poll_id);
+
+        if (Auth::id() !== $poll->event->organizer_id) {
+            return redirect()->route('polls.index', $event_id)
+                ->with('error', 'You are not authorized to delete this poll.');
+        }
+
+        $poll->delete();
+
+        return redirect()->route('polls.index', $event_id)
+            ->with('success', 'Poll deleted successfully.');
+    }
+
 }
