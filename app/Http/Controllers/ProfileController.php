@@ -25,10 +25,18 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        // Check for unique username
+        if (User::where('username', $request->username)->where('user_id', '!=', $user->user_id)->exists()) {
+            return back()->withErrors(['username' => 'The username has already been taken.']);
+        }
+
+        // Check for unique email
+        if (User::where('email', $request->email)->where('user_id', '!=', $user->user_id)->exists()) {
+            return back()->withErrors(['email' => 'The email has already been taken.']);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
-            //'username' => 'required|string|max:255|unique:users,username,' . $user->user_id,
-            //'email' => 'required|string|email|max:255|unique:users,email,' . $user->user_id,
             'phone' => 'nullable|string|max:15',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|string|min:8|confirmed',
