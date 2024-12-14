@@ -18,10 +18,19 @@
                             <li>{{ $option->option_text }} ({{ $option->votes }} votes)</li>
                         @endforeach
                     </ul>
+                    @if (Auth::id() === $event->organizer_id)
+                    <form action="{{ route('polls.destroy', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm mt-2">Delete Poll</button>
+                    </form>
+                    @endif
                 </div>
             </div>
         @endforeach
     @endif
+
+    <br>
 
     @if (Auth::id() === $event->organizer_id)
         <a href="{{ route('polls.create', $event->event_id) }}" class="btn btn-success mt-3">Create a Poll</a>
