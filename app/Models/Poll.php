@@ -27,8 +27,11 @@ class Poll extends Model
 
     public function userHasVoted($userId)
     {
-        return $this->votes()->where('user_id', $userId)->exists();
+        return PollVote::where('poll_id', $this->poll_id)
+            ->where('user_id', $userId)
+            ->exists();
     }
+
 
     public function votes()
     {

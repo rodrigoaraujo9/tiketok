@@ -105,7 +105,8 @@ CREATE TABLE poll_options (
     poll_id INT REFERENCES polls(poll_id) ON DELETE CASCADE,
     option_text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    votes INT DEFAULT 0
 );
 
 

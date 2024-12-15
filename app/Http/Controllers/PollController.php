@@ -51,37 +51,45 @@ class PollController extends Controller
         $request->validate([
             'option_id' => 'required|exists:poll_options,option_id',
         ]);
-    
-        $poll = Poll::findOrFail($poll_id);
-    
+
+        $poll = Poll::where('poll_id', $poll_id)
+            ->where('event_id', $event_id)
+            ->firstOrFail(); // Garante que a poll pertence ao evento
+
+        // Verifica se o usuário já votou
         $alreadyVoted = PollVote::where('poll_id', $poll_id)
             ->where('user_id', Auth::id())
             ->exists();
-    
+
         if ($alreadyVoted) {
             return redirect()->back()->with('error', 'You have already voted in this poll.');
         }
-    
-        // Check if the selected option belongs to the poll
+
+        // Verifica se a opção pertence à poll
         $option = PollOption::where('poll_id', $poll_id)
             ->where('option_id', $request->option_id)
             ->first();
-    
+
         if (!$option) {
             return redirect()->back()->with('error', 'Invalid poll option selected.');
         }
-    
+
+        // Registra o voto
         PollVote::create([
             'poll_id' => $poll_id,
-            'option_id' => $request->option_id,
+            'option_id' => $option->option_id,
             'user_id' => Auth::id(),
         ]);
-    
-        // Increment the vote count for the selected option
+
+        // Incrementa os votos para a opção
         $option->increment('votes');
-    
-        return redirect()->back()->with('success', 'Your vote has been recorded.');
+
+        // Redireciona para a página de polls
+        return redirect()->route('polls.index', ['event_id' => $event_id])
+            ->with('success', 'Your vote has been recorded.');
     }
+
+
     
 
 

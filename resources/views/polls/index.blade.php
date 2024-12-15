@@ -45,7 +45,9 @@
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm mt-2">Delete Poll</button>
                         </form>
+                        <br>
                     @endif
+                    <br>
                 </div>
             </div>
         @endforeach
