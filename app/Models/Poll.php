@@ -25,5 +25,16 @@ class Poll extends Model
         return $this->belongsTo(Event::class, 'event_id');
     }
 
+    public function userHasVoted($userId)
+    {
+        return $this->votes()->where('user_id', $userId)->exists();
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(PollVote::class, 'poll_id', 'poll_id');
+    }
+
+
 }
 
