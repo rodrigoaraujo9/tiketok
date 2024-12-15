@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
 use App\Models\Poll;
 use App\Models\PollOption;
+use App\Models\PollVote;
+
 use Illuminate\Http\Request;
 
 class PollController extends Controller
@@ -46,13 +48,52 @@ class PollController extends Controller
 
     public function vote(Request $request, $event_id, $poll_id)
     {
-        $request->validate(['option_id' => 'required|exists:poll_options,id']);
+        $request->validate([
+            'option_id' => 'required|exists:poll_options,option_id',
+        ]);
 
-        $option = PollOption::findOrFail($request->option_id);
+        $poll = Poll::where('poll_id', $poll_id)
+            ->where('event_id', $event_id)
+            ->firstOrFail(); // Garante que a poll pertence ao evento
+
+        // Verifica se o usuário já votou
+        $alreadyVoted = PollVote::where('poll_id', $poll_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        if ($alreadyVoted) {
+            return redirect()->back()->with('error', 'You have already voted in this poll.');
+        }
+
+        // Verifica se a opção pertence à poll
+        $option = PollOption::where('poll_id', $poll_id)
+            ->where('option_id', $request->option_id)
+            ->first();
+
+        if (!$option) {
+            return redirect()->back()->with('error', 'Invalid poll option selected.');
+        }
+
+        // Registra o voto
+        PollVote::create([
+            'poll_id' => $poll_id,
+            'option_id' => $option->option_id,
+            'user_id' => Auth::id(),
+        ]);
+
+        // Incrementa os votos para a opção
         $option->increment('votes');
 
-        return back()->with('success', 'Your vote has been recorded.');
+        // Redireciona para a página de polls
+        return redirect()->route('polls.index', ['event_id' => $event_id])
+            ->with('success', 'Your vote has been recorded.');
     }
+
+
+    
+
+
+
 
     public function destroy($event_id, $poll_id)
     {

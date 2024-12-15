@@ -16,10 +16,18 @@ return new class extends Migration
                 $table->unsignedBigInteger('user_id');
                 $table->timestamps();
 
+                // Foreign keys
                 $table->foreign('poll_id')->references('poll_id')->on('polls')->cascadeOnDelete();
                 $table->foreign('option_id')->references('option_id')->on('poll_options')->cascadeOnDelete();
                 $table->foreign('user_id')->references('user_id')->on('users')->cascadeOnDelete();
+
+                $table->unique(['poll_id', 'user_id'], 'unique_user_vote_per_poll');
             });
         }
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('poll_votes');
     }
 };

@@ -105,7 +105,8 @@ CREATE TABLE poll_options (
     poll_id INT REFERENCES polls(poll_id) ON DELETE CASCADE,
     option_text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    votes INT DEFAULT 0
 );
 
 
@@ -114,8 +115,10 @@ CREATE TABLE poll_votes (
     vote_id SERIAL PRIMARY KEY,
     poll_id INT REFERENCES polls(poll_id) ON DELETE CASCADE,
     option_id INT REFERENCES poll_options(option_id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_vote_per_poll UNIQUE (poll_id, user_id) -- Garante que um usuário só pode votar uma vez por enquete
 );
+
 
 -- Comments table
 CREATE TABLE comments (
