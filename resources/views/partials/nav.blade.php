@@ -6,11 +6,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <!-- Core Navigation -->
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('events.index') ? 'active' : '' }}" href="{{ route('events.index') }}">
-                        Browse Events
-                    </a>
-                </li>
+
                 @if (Auth::check() && !Auth::user()->isAdmin())
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('events.create') ? 'active' : '' }}" href="{{ route('events.create') }}">

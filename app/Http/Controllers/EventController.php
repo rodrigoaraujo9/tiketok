@@ -24,19 +24,42 @@ class EventController extends Controller
     });
 }
 
+public function dashboard()
+{
+    $user = Auth::user();
 
-    public function dashboard()
-    {
-        $user = Auth::user();
+    // Fetch all events organized by the user
+    $myEvents = Event::where('organizer_id', $user->user_id)->get();
 
-        $myEvents = Event::where('organizer_id', $user->user_id)->get();
-        $participatingEvents = $user->attendingEvents()->with('venue', 'organizer')->get();
+    // Get the 5 busiest events (assuming a `participants_count` attribute)
+    $busiestEvents = $myEvents->sortByDesc(function ($event) {
+        return $event->participants_count ?? 0; // Replace with actual participant count logic
+    })->take(5);
 
-        return view('/dashboard/userAuthenticatedDashboard', [
-            'myEvents' => $myEvents,
-            'participatingEvents' => $participatingEvents,
-        ]);
-    }
+    // Get the 5 closest-to-happening events by date
+    $closestEvents = $myEvents->sortBy('date')->take(5);
+
+    // Fetch events the user is attending (Ensure this relationship is defined in the User model)
+    $participatingEvents = $user->attendingEvents()->with('venue', 'organizer')->get();
+
+    // Get the 5 busiest events the user is attending
+    $busiestAttendingEvents = $participatingEvents->sortByDesc(function ($event) {
+        return $event->participants_count ?? 0;
+    })->take(5);
+
+    // Get the 5 closest-to-happening events the user is attending
+    $closestAttendingEvents = $participatingEvents->sortBy('date')->take(5);
+
+    // Pass all required variables to the view
+    return view('/dashboard/userAuthenticatedDashboard', [
+        'busiestEvents' => $busiestEvents,
+        'closestEvents' => $closestEvents,
+        'busiestAttendingEvents' => $busiestAttendingEvents,
+        'closestAttendingEvents' => $closestAttendingEvents,
+    ]);
+}
+
+
 
     public function joinEvent($event_id)
     {
