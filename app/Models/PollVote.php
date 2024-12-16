@@ -19,4 +19,9 @@ class PollVote extends Model
     ];
 
     public $timestamps = false;
+
+    public function option()
+    {
+        return $this->belongsTo(PollOption::class, 'option_id', 'option_id');
+    }
 }

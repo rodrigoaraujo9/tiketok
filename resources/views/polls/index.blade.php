@@ -2,62 +2,77 @@
 
 @section('content')
 <div class="container">
-    <h1>Polls for {{ $event->name }}</h1>
+    <h1 class="mb-4">Polls for {{ $event->name }}</h1>
 
     @if ($event->polls->isEmpty())
         <p>No polls have been created for this event.</p>
     @else
-        <br>
         @foreach ($event->polls as $poll)
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h4>{{ $poll->question }}</h4>
-                </div>
-                <div class="card-body">
-                    <ul>
+            <div class="mb-5">
+                <br>
+                <h3 class="fw-bold">{{ $loop->iteration }}. {{ $poll->question }}</h3>
+
+                <table class="table table-bordered text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Option</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $userVote = $poll->votes()->where('user_id', Auth::id())->first();
+                        @endphp
+
                         @foreach ($poll->options as $option)
-                            <li>
-                                {{ $option->option_text }} ({{ $option->votes }} votes)
-                                
-                                <!-- Verifica se o usuário já votou -->
-                                @if (!$poll->userHasVoted(Auth::id()))
-                                    <!-- Formulário para votar -->
-                                    <form action="{{ route('polls.vote', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="option_id" value="{{ $option->option_id }}">
-                                        <button type="submit" class="btn btn-primary btn-sm">Vote</button>
-                                    </form>
+                            <tr>
+                                <td class="text-start fs-4 fw-bold">
+                                    {{ $option->option_text }}
+                                    <span class="text-muted fs-5">({{ $option->votes }} votes)</span>
+                                </td>
 
-                                @endif
-                            </li>
+                                <td>
+                                    @if (!$userVote)
+                                        <form action="{{ route('polls.vote', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <input type="hidden" name="option_id" value="{{ $option->option_id }}">
+                                            <button type="submit" class="btn btn-primary btn-sm">Vote</button>
+                                        </form>
+                                    @elseif ($userVote->option_id == $option->option_id)
+                                        <form action="{{ route('polls.deleteVote', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Remove Vote</button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
                         @endforeach
-                    </ul>
+                    </tbody>
+                </table>
 
-                    <!-- Mensagem de feedback se o usuário já votou -->
-                    @if ($poll->userHasVoted(Auth::id()))
-                        <p class="text-success mt-3">You already voted in this poll.</p>
-                    @endif
+                @if ($userVote)
+                    <div class="alert alert-info text-center mt-3">
+                        <h4 class="fw-bold">Your Vote: <span class="text-primary">{{ $userVote->option->option_text }}</span></h4>
+                    </div>
+                @endif
 
-                    <!-- Botão de excluir (somente para o organizador) -->
-                    @if (Auth::id() === $event->organizer_id)
-                        <form action="{{ route('polls.destroy', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST" style="display:inline;">
+                @if (Auth::id() === $event->organizer_id)
+                    <div class="mt-3">
+                        <form action="{{ route('polls.destroy', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger btn-sm mt-2">Delete Poll</button>
+                            <button class="btn btn-danger">Delete Poll</button>
                         </form>
-                        <br>
-                    @endif
+                    </div>
                     <br>
-                </div>
+                @endif
             </div>
         @endforeach
     @endif
 
-    <br>
-
-    <!-- Botão para criar uma nova poll (apenas para o organizador) -->
     @if (Auth::id() === $event->organizer_id)
-        <a href="{{ route('polls.create', $event->event_id) }}" class="btn btn-success mt-3">Create a Poll</a>
+        <a href="{{ route('polls.create', $event->event_id) }}" class="btn btn-success mt-3">Create a Poll →</a>
     @endif
 </div>
 @endsection

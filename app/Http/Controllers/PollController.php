@@ -15,9 +15,13 @@ class PollController extends Controller
 {
     public function index($event_id)
     {
-        $event = Event::with('polls.options')->findOrFail($event_id);
+        $event = Event::with(['polls.options' => function ($query) {
+            $query->orderBy('option_id');
+        }])->findOrFail($event_id);
+
         return view('polls.index', compact('event'));
     }
+
 
     public function create($event_id)
     {
@@ -90,11 +94,6 @@ class PollController extends Controller
     }
 
 
-    
-
-
-
-
     public function destroy($event_id, $poll_id)
     {
         $poll = Poll::findOrFail($poll_id);
@@ -109,5 +108,30 @@ class PollController extends Controller
         return redirect()->route('polls.index', $event_id)
             ->with('success', 'Poll deleted successfully.');
     }
+
+    public function deleteVote($event_id, $poll_id)
+    {
+        $poll = Poll::findOrFail($poll_id);
+
+        $existingVote = PollVote::where('poll_id', $poll_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$existingVote) {
+            return redirect()->back()->with('error', 'You have not voted in this poll.');
+        }
+
+        // Decrement the vote count for the selected option
+        $option = PollOption::find($existingVote->option_id);
+        $option->decrement('votes');
+
+        // Delete the vote record
+        $existingVote->delete();
+
+        return redirect()->route('polls.index', $event_id)
+            ->with('success', 'Your vote has been removed.');
+    }
+
+
 
 }
