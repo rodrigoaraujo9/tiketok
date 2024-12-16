@@ -94,31 +94,36 @@ class EventController extends Controller
     /**
      * Invite a user to an event.
      */
-    public function invite(Request $request, $event_id)
+    public function invite(Request $request, Event $event)
     {
+        // Authorize the action
+        $this->authorize('invite', $event);
+    
+        // Validate the email input
         $validated = $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email|exists:users,email', // Ensure email exists in the database
         ]);
     
-        $user = User::where('email', $validated['email'])->firstOrFail();
-    
-        $existingInvite = Invite::where('event_id', $event_id)
-            ->where('user_id', $user->user_id)
+        // Check if the user has already been invited
+        $user = User::where('email', $validated['email'])->first();
+        $existingInvite = Invite::where('event_id', $event->event_id)
+            ->where('user_id', $user->id)
             ->first();
     
         if ($existingInvite) {
             return back()->withErrors(['email' => 'This user has already been invited.']);
         }
     
-        // Create the invite
+        // Create the invitation
         Invite::create([
-            'event_id' => $event_id,
-            'user_id' => $user->user_id,
+            'event_id' => $event->event_id,
+            'user_id' => $user->id,
             'status' => 'pending',
         ]);
     
-        return back()->with('success', 'Invitation sent!');
+        return back()->with('success', 'Invitation sent successfully!');
     }
+    
     
 
     /**
@@ -406,15 +411,14 @@ class EventController extends Controller
         return view('events.index', compact('events'));
     }
     
-    public function attendees($eventId)
+    public function attendees(Event $event)
     {
-        $event = Event::with('attendees')->findOrFail($eventId);
-        if (auth()->id() !== $event->organizer_id) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('events.attendees', compact('event'));
+        $this->authorize('viewAttendees', $event);
+    
+        $attendees = $event->attendees;
+        return view('events.attendees', compact('event', 'attendees'));
     }
+    
 
     public function removeAttendee(Request $request, $eventId)
     {
