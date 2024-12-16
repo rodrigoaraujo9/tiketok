@@ -15,9 +15,13 @@ class PollController extends Controller
 {
     public function index($event_id)
     {
-        $event = Event::with('polls.options')->findOrFail($event_id);
+        $event = Event::with(['polls.options' => function ($query) {
+            $query->orderBy('option_id');
+        }])->findOrFail($event_id);
+
         return view('polls.index', compact('event'));
     }
+
 
     public function create($event_id)
     {
@@ -90,11 +94,6 @@ class PollController extends Controller
     }
 
 
-    
-
-
-
-
     public function destroy($event_id, $poll_id)
     {
         $poll = Poll::findOrFail($poll_id);
@@ -108,39 +107,6 @@ class PollController extends Controller
 
         return redirect()->route('polls.index', $event_id)
             ->with('success', 'Poll deleted successfully.');
-    }
-
-    public function updateVote(Request $request, $event_id, $poll_id)
-    {
-        $request->validate([
-            'option_id' => 'required|exists:poll_options,option_id',
-        ]);
-
-        $poll = Poll::findOrFail($poll_id);
-
-        $existingVote = PollVote::where('poll_id', $poll_id)
-            ->where('user_id', Auth::id())
-            ->first();
-
-        if (!$existingVote) {
-            return redirect()->back()->with('error', 'You have not voted in this poll.');
-        }
-
-        // Decrement the vote count for the previously selected option
-        $oldOption = PollOption::find($existingVote->option_id);
-        $oldOption->decrement('votes');
-
-        // Update the vote to the new option
-        $existingVote->update([
-            'option_id' => $request->option_id,
-        ]);
-
-        // Increment the vote count for the new option
-        $newOption = PollOption::find($request->option_id);
-        $newOption->increment('votes');
-
-        return redirect()->route('polls.index', $event_id)
-            ->with('success', 'Your vote has been updated.');
     }
 
     public function deleteVote($event_id, $poll_id)
