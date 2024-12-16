@@ -100,8 +100,9 @@
 
     <a href="{{ route('polls.index', $event->event_id) }}" class="btn btn-info">Check polls for {{ $event->name }} →</a>
 
-
-
+    <br><br>
+    <h2>Messages</h2>
+    <a href="{{ route('message.show', $event->event_id) }}" class="btn btn-primary">Messages for {{ $event->name }} →</a>
 
 </div>
 @endsection

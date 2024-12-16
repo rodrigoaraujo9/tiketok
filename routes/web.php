@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MessageController;
 
 
 /*
@@ -153,3 +154,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+// event messages
+Route::get('/events/{event}/message', [MessageController::class, 'show'])->name('message.show');
+Route::post('/events/{event}/message', [MessageController::class, 'store'])->name('message.store');
