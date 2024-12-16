@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PollController;
+use App\Http\Controllers\ProfileController;
 
 
 /*
@@ -145,4 +146,9 @@ Route::middleware(['auth'])->prefix('events/{event_id}/polls')->group(function (
     Route::delete('/{poll_id}', [PollController::class, 'destroy'])->name('polls.destroy');
 });
 
-
+// profile
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+});

@@ -39,6 +39,13 @@
                     </a>
                 </li>
                 @endif
+                @if (Auth::check() && !Auth::user()->isAdmin())
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('profile.show') ? 'active' : '' }}" href="{{ route('profile.show') }}">
+                        Profile
+                    </a>
+                </li>
+                @endif
                 @if (Auth::check() && Auth::user()->isAdmin())
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('allReports') ? 'active' : '' }}" href="{{ route('allReports') }}">
