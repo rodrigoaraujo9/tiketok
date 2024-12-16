@@ -95,7 +95,7 @@
         @endif
     @endguest
 
-    <br><br>
+    <br>
     <h2>Polls</h2>
 
     <a href="{{ route('polls.index', $event->event_id) }}" class="btn btn-info">Check polls for {{ $event->name }} →</a>
