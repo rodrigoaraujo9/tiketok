@@ -180,11 +180,11 @@ CREATE TABLE reports (
 -- Messages table
 CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 -- Set schema

@@ -8,22 +8,22 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function show($eventId)
+    public function show($event_id)
     {
-        $messages = Message::where('event_id', $eventId)->with('user')->get();
-        return view('events.message', compact('messages', 'eventId'));
+        $messages = Message::where('event_id', $event_id)->with('user')->get();
+        return view('events.message', compact('messages', 'event_id'));
     }
 
-    public function store(Request $request, $eventId)
+    public function store(Request $request, $event_id)
     {
-        $request->validate([
-            'message' => 'required|string|max:255',
+        $validated = $request->validate([
+            'message' => 'required|string|max:1000',
         ]);
 
-        Message::create([
-            'event_id' => $eventId,
+        $message = Message::create([
+            'event_id' => $event_id,
             'user_id' => Auth::id(),
-            'message' => $request->message,
+            'message' => $validated['message'],
         ]);
 
         return redirect()->back();

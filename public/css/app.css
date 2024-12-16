@@ -314,6 +314,7 @@ button.logout-button:focus {
 .chat-messages {
     display: flex;
     flex-direction: column;
+    margin: 20px 0;
 }
 
 .chat-messages div {
@@ -323,10 +324,12 @@ button.logout-button:focus {
 
 .text-right {
     align-self: flex-end;
+    text-align: right;
 }
 
 .text-left {
     align-self: flex-start;
+    text-align: left;
 }
 
 .bg-primary {
@@ -348,4 +351,9 @@ button.logout-button:focus {
 .text-muted {
     margin-top: 2px;
     margin-bottom: 0;
+}
+
+.timestamp {
+    display: block;
+    font-size: 1rem;
 }
