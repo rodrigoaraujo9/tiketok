@@ -95,6 +95,7 @@
         @endif
     @endguest
 
+    @if (Auth::check() && (!Auth::user()->isAdmin() || !Auth::id() === $event->organizer_id))
     <br>
     <h2>Polls</h2>
 
@@ -103,6 +104,6 @@
     <br><br>
     <h2>Messages</h2>
     <a href="{{ route('message.show', $event->event_id) }}" class="btn btn-primary">Messages for {{ $event->name }} →</a>
-
+    @endif
 </div>
 @endsection
