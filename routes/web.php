@@ -156,5 +156,5 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // event messages
-Route::get('/events/{event}/message', [MessageController::class, 'show'])->name('message.show');
-Route::post('/events/{event}/message', [MessageController::class, 'store'])->name('message.store');
+Route::get('/events/{event}/message', [MessageController::class, 'show'])->name('message.show')->middleware('auth');
+Route::post('/events/{event}/message', [MessageController::class, 'store'])->name('message.store')->middleware('auth');
