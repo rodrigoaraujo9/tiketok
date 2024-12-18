@@ -42,7 +42,8 @@ CREATE TABLE users (
     profile_photo VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     is_deleted BOOLEAN DEFAULT FALSE,
-    role_id INT NOT NULL DEFAULT 2 REFERENCES roles(role_id) ON DELETE CASCADE
+    role_id INT NOT NULL DEFAULT 2 REFERENCES roles(role_id) ON DELETE CASCADE,
+    is_blocked BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE cards (
@@ -304,7 +305,7 @@ CREATE OR REPLACE FUNCTION cascade_delete_user_content()
 RETURNS TRIGGER AS $$
 BEGIN
     DELETE FROM comments WHERE user_id = OLD.user_id;
-    DELETE FROM tickets WHERE user_id = OLD.user_id;
+    --DELETE FROM tickets WHERE user_id = OLD.user_id;
     DELETE FROM polls WHERE user_id = OLD.user_id;
     DELETE FROM attends WHERE user_id = OLD.user_id;
     RETURN OLD;
@@ -486,33 +487,33 @@ BEGIN
 END $$;
 
 -- Insert an admin user with a hashed password
-INSERT INTO users (username, email, name, phone, profile_photo, password, is_deleted, role_id) 
-VALUES ('admin', 'admin@example.com', 'admin', '1234567890', 'admin_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 1),
-       ('user1', 'user1@example.com', 'User1', '1234567891', 'user1_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-       ('user2', 'user2@example.com', 'Maria Santos', '912345672', 'user2_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user3', 'user3@example.com', 'João Oliveira', '912345673', 'user3_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user4', 'user4@example.com', 'Ana Martins', '912345674', 'user4_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user5', 'user5@example.com', 'Pedro Silva', '912345675', 'user5_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user6', 'user6@example.com', 'Rita Costa', '912345676', 'user6_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user7', 'user7@example.com', 'Carlos Gonçalves', '912345677', 'user7_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user8', 'user8@example.com', 'Paula Almeida', '912345678', 'user8_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user9', 'user9@example.com', 'Miguel Fernandes', '912345679', 'user9_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user10', 'user10@example.com', 'Inês Correia', '912345680', 'user10_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user11', 'user11@example.com', 'André Rodrigues', '912345681', 'user11_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user12', 'user12@example.com', 'Cláudia Sousa', '912345682', 'user12_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user13', 'user13@example.com', 'Tiago Pinto', '912345683', 'user13_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user14', 'user14@example.com', 'Sara Melo', '912345684', 'user14_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user15', 'user15@example.com', 'José Neves', '912345685', 'user15_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user16', 'user16@example.com', 'Sofia Nunes', '912345686', 'user16_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user17', 'user17@example.com', 'Luís Carvalho', '912345687', 'user17_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user18', 'user18@example.com', 'Joana Moreira', '912345688', 'user18_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user19', 'user19@example.com', 'Manuel Teixeira', '912345689', 'user19_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user20', 'user20@example.com', 'Beatriz Figueiredo', '912345690', 'user20_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user21', 'user21@example.com', 'Ricardo Antunes', '912345691', 'user21_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user22', 'user22@example.com', 'Patrícia Araújo', '912345692', 'user22_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user23', 'user23@example.com', 'Hugo Ribeiro', '912345693', 'user23_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user24', 'user24@example.com', 'Carolina Mendes', '912345694', 'user24_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2),
-('user25', 'user25@example.com', 'Filipe Pires', '912345695', 'user25_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2);
+INSERT INTO users (username, email, name, phone, profile_photo, password, is_deleted, role_id, is_blocked) 
+VALUES ('admin', 'admin@example.com', 'admin', '1234567890', 'admin_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 1, FALSE),
+       ('user1', 'user1@example.com', 'User1', '1234567891', 'user1_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+       ('user2', 'user2@example.com', 'Maria Santos', '912345672', 'user2_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user3', 'user3@example.com', 'João Oliveira', '912345673', 'user3_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user4', 'user4@example.com', 'Ana Martins', '912345674', 'user4_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user5', 'user5@example.com', 'Pedro Silva', '912345675', 'user5_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user6', 'user6@example.com', 'Rita Costa', '912345676', 'user6_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user7', 'user7@example.com', 'Carlos Gonçalves', '912345677', 'user7_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user8', 'user8@example.com', 'Paula Almeida', '912345678', 'user8_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user9', 'user9@example.com', 'Miguel Fernandes', '912345679', 'user9_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user10', 'user10@example.com', 'Inês Correia', '912345680', 'user10_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user11', 'user11@example.com', 'André Rodrigues', '912345681', 'user11_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user12', 'user12@example.com', 'Cláudia Sousa', '912345682', 'user12_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user13', 'user13@example.com', 'Tiago Pinto', '912345683', 'user13_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user14', 'user14@example.com', 'Sara Melo', '912345684', 'user14_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user15', 'user15@example.com', 'José Neves', '912345685', 'user15_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user16', 'user16@example.com', 'Sofia Nunes', '912345686', 'user16_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user17', 'user17@example.com', 'Luís Carvalho', '912345687', 'user17_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user18', 'user18@example.com', 'Joana Moreira', '912345688', 'user18_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user19', 'user19@example.com', 'Manuel Teixeira', '912345689', 'user19_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user20', 'user20@example.com', 'Beatriz Figueiredo', '912345690', 'user20_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user21', 'user21@example.com', 'Ricardo Antunes', '912345691', 'user21_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user22', 'user22@example.com', 'Patrícia Araújo', '912345692', 'user22_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user23', 'user23@example.com', 'Hugo Ribeiro', '912345693', 'user23_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user24', 'user24@example.com', 'Carolina Mendes', '912345694', 'user24_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE),
+('user25', 'user25@example.com', 'Filipe Pires', '912345695', 'user25_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 2, FALSE);
 
 -- Insert 3 events from user1
 -- Events with future dates

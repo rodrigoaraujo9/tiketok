@@ -49,6 +49,15 @@ class LoginController extends Controller
             // Get authenticated user
             $user = Auth::user();
 
+            // Check if user is blocked
+            if ($user->is_blocked) {
+                // Log out the user immediately
+                Auth::logout();
+                return back()->withErrors([
+                    'login' => 'Your account is blocked. Please contact the administrator.',
+                ])->onlyInput('login');
+            }
+
             // Redirect based on user role
             return $this->redirectUserBasedOnRole($user);
         }
