@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -49,9 +51,8 @@ class LoginController extends Controller
             // Get authenticated user
             $user = Auth::user();
 
-            // Check if user is blocked
-            if ($user->is_blocked) {
-                // Log out the user immediately
+            // Check policy using Gate
+            if (!Gate::allows('access-user', $user)) {
                 Auth::logout();
                 return back()->withErrors([
                     'login' => 'Your account is blocked. Please contact the administrator.',
