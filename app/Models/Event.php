@@ -60,6 +60,15 @@ class Event extends Model
         return $this->hasMany(Poll::class, 'event_id', 'event_id');
     }
 
+ 
+   
+public function tag()
+{
+    return $this->belongsTo(Tag::class);
+}
+
+    
+
 
 
 }

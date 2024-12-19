@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Venue;
+use App\Models\Tag;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\Invite;
@@ -190,16 +191,33 @@ class EventController extends Controller
     /**
      * Display a listing of events.
      */
-    public function index()
-    {
-        // Retrieve only public events, including related venues and organizers
-        $events = Event::with(['venue', 'organizer'])
-            ->where('visibility', 'public') // Filter to only public events
-            ->get();
-    
-        // Return the view with the filtered events data
-        return view('events.index', compact('events'));
+    public function index(Request $request)
+{
+    // Verifica se há um filtro por tag
+    if ($request->has('tag')) {
+        // Filtra eventos com a tag escolhida
+        $tagName = $request->input('tag');
+        $tag = Tag::where('name', $tagName)->first();
+        
+        if ($tag) {
+            // Filtra eventos pela tag_id
+            $events = Event::where('tag_id', $tag->tag_id)->get();
+        } else {
+            // Se a tag não for encontrada, retorna um array vazio
+            $events = collect();
+        }
+    } else {
+        // Caso não haja filtro por tag, exibe todos os eventos
+        $events = Event::all();
     }
+
+    // Carrega todas as tags para o filtro
+    $tags = Tag::distinct()->get();
+
+    return view('events.index', compact('events', 'tags'));
+}
+    
+
     
     /**
      * Show details for a specific event.
@@ -393,18 +411,34 @@ class EventController extends Controller
     }
     
     public function search(Request $request)
-    {
-        $query = Event::query();
+{
+    $search = $request->input('search');
+    $tag = $request->input('tag');
 
-        if ($request->filled('search')) {
-            $searchTerm = $request->input('search');
-            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
-        }
+    // Query de eventos
+    $query = Event::query();
 
-        $events = $query->with('venue')->get();
-
-        return view('events.index', compact('events'));
+    if ($search) {
+        $query->where('name', 'LIKE', '%' . $search . '%');
     }
+
+    if ($tag) {
+        $query->whereHas('tags', function ($q) use ($tag) {
+            $q->where('name', $tag);
+        });
+    }
+
+    // Obter os eventos filtrados
+    $events = $query->get();
+
+    // Obter todas as tags para exibição
+    $tags = Tag::all();
+
+    return view('events.index', compact('events', 'tags'));
+}
+
+
+
     
     public function attendees($eventId)
     {

@@ -66,6 +66,12 @@ CREATE TABLE venues (
     max_capacity positive_integer
 );
 
+-- Tags table
+CREATE TABLE tags (
+    tag_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
 -- Events table
 CREATE TABLE events (
     event_id SERIAL PRIMARY KEY,
@@ -78,7 +84,8 @@ CREATE TABLE events (
     visibility visibility1 NOT NULL,
     is_deleted BOOLEAN DEFAULT FALSE,
     venue_id INT REFERENCES venues(venue_id) ON DELETE CASCADE,
-    organizer_id INT REFERENCES users(user_id) ON DELETE CASCADE
+    organizer_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    tag_id INT REFERENCES tags(tag_id) ON DELETE CASCADE
 );
 
 -- Tickets table
@@ -137,12 +144,7 @@ CREATE TABLE files (
     comment_id INT REFERENCES comments(comment_id) ON DELETE CASCADE
 );
 
--- Tags table
-CREATE TABLE tags (
-    tag_id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
-);
+
 
 -- Befriends table (Many-to-Many between Users)
 CREATE TABLE befriends (
@@ -247,9 +249,7 @@ CREATE INDEX idx_comments_content ON comments USING gin(to_tsvector('english', c
 -- Optimize lookups by comment (e.g., retrieving files attached to a comment)
 CREATE INDEX idx_files_comment_id ON files (comment_id);
 
--- Indexes for Tags
--- Optimize tag searches by event
-CREATE INDEX idx_tags_event_id ON tags (event_id);
+
 
 -- Indexes for Befriends
 -- Optimize lookups for friendships
@@ -495,6 +495,18 @@ BEGIN
     END IF;
 END $$;
 
+--Insert tags
+INSERT INTO tags (name) VALUES
+    ('Cultural'),
+    ('Sports'),
+    ('Music'),
+    ('Food'),
+    ('Cinema'),
+    ('Theatre'),
+    ('Tech'),
+    ('Misc');
+
+
 -- Insert an admin user with a hashed password
 INSERT INTO users (username, email, name, phone, profile_photo, password, is_deleted, role_id, is_blocked) 
 VALUES ('admin', 'admin@example.com', 'admin', '1234567890', 'admin_photo.jpg', '$2y$10$7il/L2fNfgE4mYKQ1BMsQ.Pi6Fo58o.WOSoMhiHbGObXbep4qYbSK', FALSE, 1, FALSE),
@@ -527,31 +539,31 @@ VALUES ('admin', 'admin@example.com', 'admin', '1234567890', 'admin_photo.jpg', 
 -- Insert 3 events from user1
 -- Events with future dates
 -- Insert events into the events table using only existing venues
-INSERT INTO events (description, date, postal_code, max_event_capacity, country, name, visibility, is_deleted, venue_id, organizer_id)
+INSERT INTO events (description, date, postal_code, max_event_capacity, country, name, visibility, is_deleted, venue_id, organizer_id, tag_id)
 VALUES 
-    ('Event 1 Description', '2030-12-01 10:00:00', '12345', 100, 'USA', 'Event 1', 'public', FALSE, 1, 2),
-    ('Event 2 Description', '2030-12-02 11:00:00', '12345', 200, 'USA', 'Event 2', 'public', FALSE, 2, 2),
-    ('Event 3 Description', '2030-12-03 12:00:00', '12345', 300, 'USA', 'Event 3', 'public', FALSE, 3, 2),
-    ('Concert at Altice Arena', '2030-12-30 20:00:00', '1990-001', 20000, 'Portugal', 'Rock Night', 'public', FALSE, 11, 2),
-    ('Art Exhibition at Casa da Música', '2030-11-25 15:00:00', '4099-002', 1300, 'Portugal', 'Abstract World', 'private', FALSE, 13, 2),
-    ('Stand-up Comedy Show at Coliseu dos Recreios', '2030-12-15 18:30:00', '1000-078', 4000, 'Portugal', 'Laugh Out Loud', 'public', FALSE, 12, 3),
-    ('Jazz Night at Pavilhão Rosa Mota', '2030-12-20 21:00:00', '4050-234', 8000, 'Portugal', 'Smooth Jazz Evening', 'public', FALSE, 16, 4),
-    ('Tech Conference at Fórum Braga', '2031-01-15 10:00:00', '4700-340', 3000, 'Portugal', 'Future of AI', 'public', FALSE, 22, 5),
-    ('Food Festival at Campo Pequeno', '2031-03-20 12:00:00', '1049-063', 9000, 'Portugal', 'Taste of Lisbon', 'public', FALSE, 19, 6),
-    ('Music Festival at Estádio da Luz', '2031-06-25 19:00:00', '1500-311', 65000, 'Portugal', 'Summer Vibes Festival', 'public', FALSE, 17, 2),
-    ('Book Fair at Centro Cultural de Belém', '2031-04-12 09:00:00', '1449-003', 1500, 'Portugal', 'Books and Beyond', 'public', FALSE, 15, 3),
-    ('Charity Gala at Estádio do Dragão', '2031-05-01 19:30:00', '4350-415', 52000, 'Portugal', 'Hope for Tomorrow', 'private', FALSE, 18, 4),
-    ('Sports Event at Pavilhão Rosa Mota', '2031-02-10 15:00:00', '4050-234', 8000, 'Portugal', 'Championship Finals', 'public', FALSE, 16, 5),
-    ('Theater Play at Teatro Nacional São João', '2031-01-18 20:00:00', '4000-295', 750, 'Portugal', 'Shakespeare Reimagined', 'public', FALSE, 14, 2),
-    ('Art Workshop at Centro de Artes e Espetáculos', '2031-02-22 14:00:00', '3080-073', 800, 'Portugal', 'Creative Minds', 'private', FALSE, 24, 6),
-    ('Film Screening at Teatro Municipal Rivoli', '2031-03-14 17:00:00', '4000-420', 1200, 'Portugal', 'Cinema Classics Night', 'public', FALSE, 20, 4),
-    ('Pop Concert at Super Bock Arena', '2031-07-10 20:00:00', '4050-378', 8000, 'Portugal', 'Pop Explosion', 'public', FALSE, 21, 3),
-    ('Jazz Evening at Casa da Música', '2031-05-05 21:00:00', '4099-002', 1300, 'Portugal', 'Night of Jazz', 'public', FALSE, 13, 5),
-    ('Dance Festival at Estádio da Luz', '2031-08-15 16:00:00', '8005-226', 30000, 'Portugal', 'Dance the Night Away', 'public', FALSE, 17, 6),
-    ('Wine Tasting Event at Casino Estoril', '2031-03-22 18:00:00', '2765-190', 1500, 'Portugal', 'A Taste of Excellence', 'private', FALSE, 30, 2),
-    ('Rock Concert at Coliseu do Porto', '2031-04-14 19:30:00', '4000-161', 3500, 'Portugal', 'Rock Legends', 'public', FALSE, 26, 4),
-    ('Charity Run at Altice Arena', '2031-09-20 09:00:00', '4700-035', 20000, 'Portugal', 'Run for a Cause', 'public', FALSE, 11, 3),
-    ('Historical Play at Coliseu dos Recreios', '2031-03-10 20:00:00', '4000-450', 1000, 'Portugal', 'History Comes Alive', 'private', FALSE, 12, 5);
+    ('Event 1 Description', '2030-12-01 10:00:00', '12345', 100, 'USA', 'Event 1', 'public', FALSE, 1, 2, 1), -- Cultural
+    ('Event 2 Description', '2030-12-02 11:00:00', '12345', 200, 'USA', 'Event 2', 'public', FALSE, 2, 2, 1), -- Cultural
+    ('Event 3 Description', '2030-12-03 12:00:00', '12345', 300, 'USA', 'Event 3', 'public', FALSE, 3, 2, 1), -- Cultural
+    ('Concert at Altice Arena', '2030-12-30 20:00:00', '1990-001', 20000, 'Portugal', 'Rock Night', 'public', FALSE, 11, 2, 3), -- Music
+    ('Art Exhibition at Casa da Música', '2030-11-25 15:00:00', '4099-002', 1300, 'Portugal', 'Abstract World', 'private', FALSE, 13, 2, 1), -- Cultural
+    ('Stand-up Comedy Show at Coliseu dos Recreios', '2030-12-15 18:30:00', '1000-078', 4000, 'Portugal', 'Laugh Out Loud', 'public', FALSE, 12, 3, 1), -- Cultural
+    ('Jazz Night at Pavilhão Rosa Mota', '2030-12-20 21:00:00', '4050-234', 8000, 'Portugal', 'Smooth Jazz Evening', 'public', FALSE, 16, 4, 3), -- Music
+    ('Tech Conference at Fórum Braga', '2031-01-15 10:00:00', '4700-340', 3000, 'Portugal', 'Future of AI', 'public', FALSE, 22, 5, 7), -- Tech
+    ('Food Festival at Campo Pequeno', '2031-03-20 12:00:00', '1049-063', 9000, 'Portugal', 'Taste of Lisbon', 'public', FALSE, 19, 6, 4), -- Food
+    ('Music Festival at Estádio da Luz', '2031-06-25 19:00:00', '1500-311', 65000, 'Portugal', 'Summer Vibes Festival', 'public', FALSE, 17, 2, 3), -- Music
+    ('Book Fair at Centro Cultural de Belém', '2031-04-12 09:00:00', '1449-003', 1500, 'Portugal', 'Books and Beyond', 'public', FALSE, 15, 3, 1), -- Cultural
+    ('Charity Gala at Estádio do Dragão', '2031-05-01 19:30:00', '4350-415', 52000, 'Portugal', 'Hope for Tomorrow', 'private', FALSE, 18, 4, 1), -- Cultural
+    ('Sports Event at Pavilhão Rosa Mota', '2031-02-10 15:00:00', '4050-234', 8000, 'Portugal', 'Championship Finals', 'public', FALSE, 16, 5, 2), -- Sports
+    ('Theater Play at Teatro Nacional São João', '2031-01-18 20:00:00', '4000-295', 750, 'Portugal', 'Shakespeare Reimagined', 'public', FALSE, 14, 2, 6), -- Theatre
+    ('Art Workshop at Centro de Artes e Espetáculos', '2031-02-22 14:00:00', '3080-073', 800, 'Portugal', 'Creative Minds', 'private', FALSE, 24, 6, 1), -- Cultural
+    ('Film Screening at Teatro Municipal Rivoli', '2031-03-14 17:00:00', '4000-420', 1200, 'Portugal', 'Cinema Classics Night', 'public', FALSE, 20, 4, 5), -- Cinema
+    ('Pop Concert at Super Bock Arena', '2031-07-10 20:00:00', '4050-378', 8000, 'Portugal', 'Pop Explosion', 'public', FALSE, 21, 3, 3), -- Music
+    ('Jazz Evening at Casa da Música', '2031-05-05 21:00:00', '4099-002', 1300, 'Portugal', 'Night of Jazz', 'public', FALSE, 13, 5, 3), -- Music
+    ('Dance Festival at Estádio da Luz', '2031-08-15 16:00:00', '8005-226', 30000, 'Portugal', 'Dance the Night Away', 'public', FALSE, 17, 6, 1), -- Cultural
+    ('Wine Tasting Event at Casino Estoril', '2031-03-22 18:00:00', '2765-190', 1500, 'Portugal', 'A Taste of Excellence', 'private', FALSE, 30, 2, 4), -- Food
+    ('Rock Concert at Coliseu do Porto', '2031-04-14 19:30:00', '4000-161', 3500, 'Portugal', 'Rock Legends', 'public', FALSE, 26, 4, 3), -- Music
+    ('Charity Run at Altice Arena', '2031-09-20 09:00:00', '4700-035', 20000, 'Portugal', 'Run for a Cause', 'public', FALSE, 11, 3, 2), -- Sports
+    ('Historical Play at Coliseu dos Recreios', '2031-03-10 20:00:00', '4000-450', 1000, 'Portugal', 'History Comes Alive', 'private', FALSE, 12, 5, 6); -- Theatre
 
 -- Comments with future dates
 INSERT INTO comments (content, date, user_id, event_id) 
@@ -594,3 +606,6 @@ INSERT INTO messages (event_id, user_id, message) VALUES
 (2, 3, 'Excited to see everyone there!'),
 (3, 2, 'What time does the event start?'),
 (3, 1, 'I heard it’s going to be amazing!');
+
+
+
