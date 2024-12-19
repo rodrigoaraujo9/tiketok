@@ -310,3 +310,50 @@ button.logout-button:focus {
     outline-offset: 2px;
 }
 
+/*Event Messages */
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+}
+
+.chat-messages div {
+    max-width: 70%;
+    margin: 5px 0;
+}
+
+.text-right {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.text-left {
+    align-self: flex-start;
+    text-align: left;
+}
+
+.bg-primary {
+    background-color: #84c9e9;
+}
+
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+.p-2 {
+    padding: 10px;
+}
+
+.rounded {
+    border-radius: 5px;
+}
+
+.text-muted {
+    margin-top: 2px;
+    margin-bottom: 0;
+}
+
+.timestamp {
+    display: block;
+    font-size: 1rem;
+}
