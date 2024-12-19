@@ -47,7 +47,12 @@ class ProfileController extends Controller
         $user->email = $request->input('email');
         $user->phone =$request->input('phone');
 
-        if($request->hasFile('profile_photo')) {
+        if ($request->hasFile('profile_photo')) {
+            // Delete old profile photo if it exists
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            
             $path = $request->file('profile_photo')->store('profile_photos', 'public');
             $user->profile_photo = $path;
         }

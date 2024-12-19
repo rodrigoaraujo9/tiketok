@@ -11,7 +11,7 @@ class CreatePollsTable extends Migration
         if (!Schema::hasTable('polls')) {
             Schema::create('polls', function (Blueprint $table) {
                 $table->id('poll_id');
-                $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
+                $table->foreignId('event_id')->constrained('events', 'event_id')->onDelete('cascade');
                 $table->string('question');
                 $table->timestamp('end_date')->nullable(); 
                 $table->timestamps();
@@ -24,5 +24,3 @@ class CreatePollsTable extends Migration
         Schema::dropIfExists('polls');
     }
 }
-
-

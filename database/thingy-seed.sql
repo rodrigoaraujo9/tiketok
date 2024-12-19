@@ -178,6 +178,15 @@ CREATE TABLE reports (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- When the report was last updated
 );
 
+-- Messages table
+CREATE TABLE messages (
+    message_id SERIAL PRIMARY KEY,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE
+);
 
 -- Set schema
 SET search_path TO lbaw2464;
@@ -577,3 +586,11 @@ VALUES
 -- Insert valid invitations aligned with the users provided
 
 -- Insert sample data into invites table MISSING
+
+INSERT INTO messages (event_id, user_id, message) VALUES
+(1, 1, 'Looking forward to this event!'),
+(1, 2, 'Can’t wait!'),
+(2, 1, 'Is there a dress code for the event?'),
+(2, 3, 'Excited to see everyone there!'),
+(3, 2, 'What time does the event start?'),
+(3, 1, 'I heard it’s going to be amazing!');
