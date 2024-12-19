@@ -47,6 +47,13 @@
                 </li>
                 @endif
                 @if (Auth::check() && Auth::user()->isAdmin())
+                <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('allUsers') ? 'active' : '' }}" href="{{ route('allUsers') }}">
+                            Users
+                        </a>
+                </li>
+           
+
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('allReports') ? 'active' : '' }}" href="{{ route('allReports') }}">
                             Admin Reports

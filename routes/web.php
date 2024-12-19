@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MessageController;
 
 
@@ -155,6 +156,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+//admin delete event
+Route::get('admin/users', [AdminController::class, 'allUsers'])->name('allUsers');
+Route::post('admin/users/{id}/block', [AdminController::class, 'blockUser'])->name('users.block');
+Route::post('admin/users/{id}/unblock', [AdminController::class, 'unblockUser'])->name('users.unblock');
+Route::delete('admin/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
+
 // event messages
 Route::get('/events/{event}/message', [MessageController::class, 'show'])->name('message.show')->middleware('auth');
 Route::post('/events/{event}/message', [MessageController::class, 'store'])->name('message.store')->middleware('auth');
+>>>>>>> routes/web.php
