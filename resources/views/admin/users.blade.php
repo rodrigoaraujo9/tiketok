@@ -26,14 +26,17 @@
                         <td>{{ $user->email }}</td>
                         <td>
                             <!-- Ações para bloquear, desbloquear ou excluir -->
+                            @if(!$user->is_blocked)
                             <form action="{{ route('users.block', $user->user_id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-warning btn-sm">Block</button>
                             </form>
                             <form action="{{ route('users.unblock', $user->user_id) }}" method="POST">
-                                @csrf
+                            @else    
+                            @csrf
                                 <button type="submit" class="btn btn-success btn-sm">Unblock</button>
                             </form>
+                            @endif
                             <form action="{{ route('users.delete', $user->user_id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
