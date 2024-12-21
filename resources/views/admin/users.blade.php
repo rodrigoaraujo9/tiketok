@@ -8,45 +8,40 @@
         <div class="alert alert-info">{{ session('message') }}</div>
     @endif
 
-    @if($users->isEmpty())
-        <p>No users found.</p>
-    @else
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($users as $user)
-                    <tr>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            <!-- Ações para bloquear, desbloquear ou excluir -->
-                            @if(!$user->is_blocked)
-                            <form action="{{ route('users.block', $user->user_id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-warning btn-sm">Block</button>
-                            </form>
-                            <form action="{{ route('users.unblock', $user->user_id) }}" method="POST">
-                            @else    
-                            @csrf
-                                <button type="submit" class="btn btn-success btn-sm">Unblock</button>
-                            </form>
-                            @endif
-                            <form action="{{ route('users.delete', $user->user_id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
+    @include('partials.users_table', ['users' => $users])
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle pagination click events
+        document.addEventListener('click', function (e) {
+            const target = e.target;
+
+            // Check if the clicked element is a pagination link
+            if (target.tagName === 'A' && target.closest('.pagination')) {
+                e.preventDefault();
+                const url = target.getAttribute('href');
+
+                // Fetch the new data via AJAX
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        // Update the users table and pagination
+                        document.getElementById('users-content').innerHTML = data.html;
+                    } else {
+                        console.error('No HTML content found in the response:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching paginated data:', error);
+                });
+            }
+        });
+    });
+</script>
 @endsection

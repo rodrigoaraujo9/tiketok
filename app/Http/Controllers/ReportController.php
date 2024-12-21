@@ -29,17 +29,21 @@ class ReportController extends Controller
         return view('admin.events', ['event' => $event, 'reports' => $reports]);
     }
 
-    public function allReports() {
-        if(!Auth::check()){ return redirect('/login'); }
-
-        if(Auth::user()->isAdmin()) {
-            $reports = Report::with(['event', 'user'])->get();
-            
-            return view('admin.reports', ['reports' => $reports, 'isAdmin' => true]);
-        } else {
-            return redirect('/');
+    public function allReports(Request $request)
+    {
+        // Fetch reports with pagination
+        $reports = Report::with(['event', 'user'])->paginate(10);
+    
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.admin_reports_table', compact('reports'))->render();
+            return response()->json(['html' => $html]);
         }
+    
+        // For regular requests, return the full view
+        return view('admin.reports', compact('reports'));
     }
+    
 
     public function createReportForm($event_id)
     {
@@ -97,12 +101,25 @@ class ReportController extends Controller
         }
     }
 
-    public function userReports()
+    public function userReports(Request $request)
     {
         if (!Auth::check()) return redirect('/login');
-
+    
         $user = Auth::user();
-        $reports = Report::where('user_id', $user->user_id)->with('event')->get();
+    
+        // Paginate reports
+        $reports = Report::where('user_id', $user->user_id)
+            ->with('event')
+            ->paginate(10);
+    
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.reports_table', compact('reports'))->render();
+            return response()->json(['html' => $html]);
+        }
+    
+        // For regular requests, return the full view
         return view('user.userReports', compact('reports'));
     }
+    
 }

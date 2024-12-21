@@ -4,41 +4,40 @@
 <div class="container">
     <h1>Your Invitations</h1>
 
-    @if ($invitations->isEmpty())
-        <p>You have no invitations.</p>
-    @else
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Event Name</th>
-                    <th>Date</th>
-                    <th>Organizer</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($invitations as $invite)
-                    <tr>
-                        <td>{{ $invite->event->name }}</td>
-                        <td>{{ $invite->event->date }}</td>
-                        <td>{{ $invite->event->organizer->name }}</td>
-                        <td>
-                            <!-- Accept Invitation -->
-                            <form action="{{ route('events.accept', $invite->event_id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                <button class="btn btn-success">Accept</button>
-                            </form>
-
-                            <!-- Reject Invitation -->
-                            <form action="{{ route('events.reject', $invite->event_id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                <button class="delete btn btn-danger">Decline</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
+    @include('partials.invitations_table', ['invitations' => $invitations])
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle pagination clicks
+        document.addEventListener('click', function (e) {
+            const target = e.target;
+
+            // Check if the clicked element is a pagination link
+            if (target.tagName === 'A' && target.closest('.pagination')) {
+                e.preventDefault();
+                const url = target.getAttribute('href');
+
+                // Fetch the new data via AJAX
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        // Update the invitations table and pagination
+                        document.getElementById('invitations-content').innerHTML = data.html;
+                    } else {
+                        console.error('No HTML content found in the response:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching paginated data:', error);
+                });
+            }
+        });
+    });
+</script>
 @endsection

@@ -2,36 +2,43 @@
 
 @section('content')
 <div class="container">
-    <h1> My Reports</h1>
+    <h1>My Reports</h1>
     <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
 
-    @if ($reports->count() == 0)
-        <p>You dont have any reports.</p>
-    @else
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Event</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Updated</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($reports as $report)
-                    <tr>
-                        <td>{{ $report->event->name }}</td>
-                        <td>{{ $report->r_status }}</td>
-                        <td>{{ $report->created_at }}</td>
-                        <td>{{ $report->updated_at }}</td>
-                        <td>
-                            <a href="{{ route('showReport', $report->report_id) }}" class="btn btn-primary">View</a>
-                        </td>
-                    </tr>    
-                @endforeach
-            </tbody>
-        </table>
-    @endif
+    @include('partials.reports_table', ['reports' => $reports])
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle pagination click events
+        document.addEventListener('click', function (e) {
+            const target = e.target;
+
+            // Check if the clicked element is a pagination link
+            if (target.tagName === 'A' && target.closest('.pagination')) {
+                e.preventDefault();
+                const url = target.getAttribute('href');
+
+                // Fetch the new data via AJAX
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        // Update the reports table and pagination
+                        document.getElementById('reports-content').innerHTML = data.html;
+                    } else {
+                        console.error('No HTML content found in the response:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching paginated data:', error);
+                });
+            }
+        });
+    });
+</script>
 @endsection
