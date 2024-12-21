@@ -83,14 +83,23 @@ class EventController extends Controller
    /**
      * Manage events created by the authenticated user.
      */
-    public function manage()
+    public function manage(Request $request)
     {
         $events = Event::where('organizer_id', auth()->id())
-                       ->where('is_deleted', false) // Exclude deleted events
-                       ->paginate(5); // 10 events per page
-        
+                       ->where('is_deleted', false)
+                       ->paginate(5);
+    
+        if ($request->ajax()) {
+            $html = view('partials.manage_table', compact('events'))->render();
+            return response()->json(['html' => $html]);
+        }
+    
         return view('events.manage', compact('events'));
     }
+    
+    
+    
+    
     
     
     /**
