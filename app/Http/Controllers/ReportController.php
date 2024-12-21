@@ -97,12 +97,25 @@ class ReportController extends Controller
         }
     }
 
-    public function userReports()
+    public function userReports(Request $request)
     {
         if (!Auth::check()) return redirect('/login');
-
+    
         $user = Auth::user();
-        $reports = Report::where('user_id', $user->user_id)->with('event')->get();
+    
+        // Paginate reports
+        $reports = Report::where('user_id', $user->user_id)
+            ->with('event')
+            ->paginate(10);
+    
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.reports_table', compact('reports'))->render();
+            return response()->json(['html' => $html]);
+        }
+    
+        // For regular requests, return the full view
         return view('user.userReports', compact('reports'));
     }
+    
 }
