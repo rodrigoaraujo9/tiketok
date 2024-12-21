@@ -32,6 +32,8 @@ CREATE TABLE roles (
     name VARCHAR(50) UNIQUE NOT NULL
 );
 
+
+
 -- Users table
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
@@ -189,6 +191,17 @@ CREATE TABLE messages (
     event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+-- notifications table
+CREATE TABLE notifications (
+    notification_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE, -- Usuário que receberá a notificação
+    type VARCHAR(50) NOT NULL, -- Tipo de notificação ('invite', 'report_update')
+    data JSONB NOT NULL, -- Dados adicionais (e.g., evento, status, mensagem)
+    is_read BOOLEAN DEFAULT FALSE, -- Indica se foi lida
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Data/hora da criação
+);
+
 
 -- Set schema
 SET search_path TO lbaw2464;

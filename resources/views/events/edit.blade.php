@@ -39,6 +39,13 @@
             @endforeach
         </select>
 
+        <label for="tag_id">Tag</label>
+        <select id="tag_id" name="tag_id" required>
+            @foreach($tags as $tag)
+                <option value="{{ $tag->tag_id }}" {{ old('tag_id', $tag->tag_id) == $tag->tag_id ? 'selected' : '' }}>{{ $tag->name }}</option>
+            @endforeach
+        </select>
+
         <button type="submit" class="btn btn-danger btn-sm">Update Event</button>
     </form>
 </div>

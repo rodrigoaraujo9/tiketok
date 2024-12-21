@@ -67,9 +67,15 @@
                         </a>
                     </li>
                 @endif
-            </ul>
-            <!-- User Options -->
-            <div class="nav-item">
+                <!--<li class="nav-item">
+                <a href="{{ route('notifications.index') }}" class="nav-link">
+                Notificações <span class="badge badge-danger">{{ $notifications->where('is_read', false)->count() }}</span>
+                </a>
+                </li> -->
+
+                </ul>
+                <!-- User Options -->
+                <div class="nav-item">
 
 </div>
         </div>

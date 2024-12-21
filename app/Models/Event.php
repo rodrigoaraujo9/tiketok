@@ -29,6 +29,7 @@ class Event extends Model
         'visibility',
         'venue_id',
         'organizer_id',
+        'tag_id',
     ];
 
     protected $casts = [
@@ -64,7 +65,7 @@ class Event extends Model
    
 public function tag()
 {
-    return $this->belongsTo(Tag::class);
+    return $this->belongsTo(Tag::class, 'tag_id');
 }
 
     

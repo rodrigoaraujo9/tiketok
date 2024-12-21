@@ -50,13 +50,12 @@
         </div>
 
         <div class="mb-3">
-    <label for="visibility" class="form-label">Visibility</label>
-    <select id="visibility" name="visibility" class="form-control" required>
-        <option value="public" {{ old('visibility') == 'public' ? 'selected' : '' }}>Public</option>
-        <option value="private" {{ old('visibility') == 'private' ? 'selected' : '' }}>Private</option>
-    </select>
-</div>
-
+            <label for="visibility" class="form-label">Visibility</label>
+            <select id="visibility" name="visibility" class="form-control" required>
+                <option value="public" {{ old('visibility') == 'public' ? 'selected' : '' }}>Public</option>
+                <option value="private" {{ old('visibility') == 'private' ? 'selected' : '' }}>Private</option>
+            </select>
+        </div>
 
         <div class="mb-3">
             <label for="venue_id" class="form-label">Venue</label>
@@ -68,11 +67,21 @@
                     </option>
                 @endforeach
             </select>
-            
         </div>
+        <div class="mb-3">
+    <label for="tag" class="form-label">Tag</label>
+    <select id="tag_id" name="tag_id" class="form-control" required>
+        <option value="">Select a Tag</option>
+        @foreach($tags as $tag)
+            <option value="{{ $tag->tag_id }}" {{ old('tag_id') == $tag->tag_id ? 'selected' : '' }}>
+                {{ $tag->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
         <button type="submit" class="btn btn-primary">Create Event</button>
-        
     </form>
 </div>
 @endsection

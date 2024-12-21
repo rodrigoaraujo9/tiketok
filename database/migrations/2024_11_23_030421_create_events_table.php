@@ -24,11 +24,14 @@ return new class extends Migration
                 $table->boolean('is_deleted')->default(false);
                 $table->unsignedBigInteger('venue_id');
                 $table->unsignedBigInteger('organizer_id');
+                $table->unsignedBigInteger('tag_id');
                 $table->timestamps();
 
                 // Foreign keys
                 $table->foreign('venue_id')->references('venue_id')->on('venues')->onDelete('cascade');
                 $table->foreign('organizer_id')->references('user_id')->on('users')->onDelete('cascade'); // Correct column
+                $table->foreign('tag_id')->references('tag_id')->on('tags')->onDelete('cascade'); // Correct column
+
             });
         }
     }

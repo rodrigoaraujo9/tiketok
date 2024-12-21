@@ -258,12 +258,13 @@ class EventController extends Controller
             'country' => 'required|string',
             'visibility' => 'required|in:public,private', // Validate visibility
             'venue_id' => 'required|exists:venues,venue_id',
+            'tag_id' => 'required|exists:tags,tag_id',
         ]);
     
         $validated['organizer_id'] = auth()->id();
     
         Event::create($validated);
-    
+        
         return redirect()->route('events.index')->with('success', 'Event created successfully!');
     }
     
@@ -278,6 +279,7 @@ class EventController extends Controller
             'country' => 'required|string',
             'visibility' => 'required|in:public,private', // Validate visibility
             'venue_id' => 'required|exists:venues,venue_id',
+            'tag_id' => 'required|exists:tags,tag_id',
         ]);
     
         $event = Event::findOrFail($event_id);
@@ -293,9 +295,11 @@ class EventController extends Controller
      */
     public function create()
     {
-        // Fetch all venues to populate the venue dropdown
+        // Fetch all venues and tags to populate the venue/tags dropdown
         $venues = Venue::all();
-        return view('events.create', compact('venues'));
+        $tags = Tag::all();
+
+        return view('events.create', compact('venues','tags'));
     }
 
     /**
@@ -307,8 +311,9 @@ class EventController extends Controller
         $event = Event::findOrFail($event_id);
         $event->date = Carbon::parse($event->date); 
     
-        $venues = Venue::all(); 
-        return view('events.edit', compact('event', 'venues'));
+        $venues = Venue::all();
+        $tags = Tag::all(); 
+        return view('events.edit', compact('event', 'venues', 'tags'));
     }
 
 
