@@ -157,9 +157,18 @@ class EventController extends Controller
     
     
     
-    public function attending()
+    public function attending(Request $request)
     {
-        $events = auth()->user()->attendingEvents()->with('venue', 'organizer')->get();
+        // Fetch paginated events with related data
+        $events = auth()->user()->attendingEvents()
+                     ->with('venue', 'organizer')
+                     ->paginate(10);
+    
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.attending_table', compact('events'))->render();
+            return response()->json(['html' => $html]);
+        }
     
         return view('events.attending', compact('events'));
     }
