@@ -3,7 +3,6 @@
 @section('content')
 <div class="container">
     <h1 class="text-center my-4">Manage Your Events</h1>
-    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">← Back to Dashboard</a>
 
     @if ($events->isEmpty())
         <div class="alert alert-info text-center">

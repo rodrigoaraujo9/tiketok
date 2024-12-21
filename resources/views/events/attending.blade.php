@@ -3,7 +3,6 @@
 @section('content')
 <div class="container">
     <h1>Events You Are Attending</h1>
-    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
 
     @include('partials.attending_table', ['events' => $events])
 </div>
