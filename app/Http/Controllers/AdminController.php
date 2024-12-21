@@ -6,18 +6,23 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function allUsers()
+    public function allUsers(Request $request)
     {
+        // Fetch users with pagination, excluding admins and deleted users
         $users = User::where('role_id', '!=', 1)
-        ->where('is_deleted', '!=', true)
-        ->get();  
+                     ->where('is_deleted', '!=', true)
+                     ->paginate(10);
     
-        if ($users->isEmpty()) {
-            return view('admin.users')->with('message', 'No users found.');
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.users_table', compact('users'))->render();
+            return response()->json(['html' => $html]);
         }
     
+        // For regular requests, return the full view
         return view('admin.users', compact('users'));
     }
+    
     
     public function blockUser($id)
     {
