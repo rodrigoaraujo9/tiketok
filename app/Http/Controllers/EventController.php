@@ -202,30 +202,36 @@ class EventController extends Controller
      * Display a listing of events.
      */
     public function index(Request $request)
-{
-    // Verifica se há um filtro por tag
-    if ($request->has('tag')) {
-        // Filtra eventos com a tag escolhida
-        $tagName = $request->input('tag');
-        $tag = Tag::where('name', $tagName)->first();
-        
-        if ($tag) {
-            // Filtra eventos pela tag_id
-            $events = Event::where('tag_id', $tag->tag_id)->get();
-        } else {
-            // Se a tag não for encontrada, retorna um array vazio
-            $events = collect();
+    {
+        $query = Event::query();
+    
+        // Filter by search
+        if ($request->filled('search')) {
+            $query->where('name', 'LIKE', '%' . $request->input('search') . '%');
         }
-    } else {
-        // Caso não haja filtro por tag, exibe todos os eventos
-        $events = Event::all();
+    
+        // Filter by tag
+        if ($request->filled('tag')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('name', $request->input('tag'));
+            });
+        }
+    
+        // Paginate events
+        $events = $query->with('venue')->paginate(10);
+    
+        // Fetch all tags for filter
+        $tags = Tag::all();
+    
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.events_table', compact('events'))->render();
+            return response()->json(['html' => $html]);
+        }
+    
+        return view('events.index', compact('events', 'tags'));
     }
-
-    // Carrega todas as tags para o filtro
-    $tags = Tag::distinct()->get();
-
-    return view('events.index', compact('events', 'tags'));
-}
+    
     
 
     
