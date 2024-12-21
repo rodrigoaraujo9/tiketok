@@ -93,6 +93,7 @@
                                     <a href="{{ route('profile.show') }}">Profile</a>
                                 @else
                                     <a href="{{ route('allReports') }}">Admin Reports</a>
+                                    <a  href="{{ route('allUsers') }}">Manage Users</a>
                                 @endif
                             </div>
                         </div>
@@ -103,7 +104,7 @@
                         <span style="color:#949494; font-size: 1.5rem; font-weight: light;">
                             Welcome, {{ Auth::user()->name }}
                         </span>
-                        <form action="{{ route('logout') }}" method="POST" style="display: inline; margin:0;">
+                        <form action="{{ route('logout') }}" method="GET" style="display: inline; margin:0;">
                             @csrf
                             <button class="logout-button">Logout</button>
                         </form>
