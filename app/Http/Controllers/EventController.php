@@ -87,10 +87,11 @@ class EventController extends Controller
     {
         $events = Event::where('organizer_id', auth()->id())
                        ->where('is_deleted', false) // Exclude deleted events
-                       ->get();
-    
+                       ->paginate(5); // 10 events per page
+        
         return view('events.manage', compact('events'));
     }
+    
     
     /**
      * Invite a user to an event.

@@ -357,3 +357,56 @@ button.logout-button:focus {
     display: block;
     font-size: 1rem;
 }
+
+
+.pagination-container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+}
+/* Style the pagination links */
+.pagination {
+    display: inline-flex; /* Make the pagination links inline and horizontal */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 10px; /* Add spacing between the items */
+}
+
+.pagination li {
+    display: inline; /* Ensure each list item is inline */
+}
+
+.pagination .page-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; /* Uniform size */
+    height: 40px;
+    font-size: 1.2rem;
+    border-radius: 20px;
+    background-color: #e0f3ff; /* Light blue background */
+    color: #005bb5; /* Dark blue text */
+    border: 1px solid #b3d9ff; /* Light border */
+    text-decoration: none; /* Remove underline */
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #d0e9ff; /* Hover background */
+    color: #003d80; /* Hover text color */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #84c9e9; /* Active background */
+    color: white; /* Active text color */
+    border-color: #84c9e9;
+    font-weight: bold;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f9fafb; /* Disabled background */
+    color: #c0c0c0; /* Disabled text color */
+    border-color: #e0e0e0; /* Disabled border */
+    cursor: not-allowed;
+}
