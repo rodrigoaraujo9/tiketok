@@ -221,25 +221,30 @@ class EventController extends Controller
     {
         $query = Event::query();
     
-        // Filter by search
+        // Filter by search term
         if ($request->filled('search')) {
             $query->where('name', 'LIKE', '%' . $request->input('search') . '%');
         }
     
         // Filter by tag
         if ($request->filled('tag')) {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('name', $request->input('tag'));
-            });
+            $tag = Tag::where('name', $request->input('tag'))->first();
+            if ($tag) {
+                $query->where('tag_id', $tag->tag_id);
+            } else {
+                // If the tag doesn't exist, return no events
+                $query->whereRaw('1 = 0');
+            }
         }
     
-        // Paginate events
+        // Paginate events and ensure query parameters are preserved
         $events = $query->with('venue')->paginate(10);
+        $events->appends($request->only('search', 'tag'));
     
-        // Fetch all tags for filter
+        // Fetch all tags for filtering
         $tags = Tag::all();
     
-        // For AJAX requests, return only the table HTML
+        // Handle AJAX requests
         if ($request->ajax()) {
             $html = view('partials.events_table', compact('events'))->render();
             return response()->json(['html' => $html]);
@@ -247,6 +252,8 @@ class EventController extends Controller
     
         return view('events.index', compact('events', 'tags'));
     }
+    
+      
     
     
 

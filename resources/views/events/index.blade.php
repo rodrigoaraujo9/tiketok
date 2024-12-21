@@ -22,12 +22,12 @@
     <div class="mb-3">
         <h5>Filter by Tag:</h5>
         <div>
-            @foreach($tags as $tagItem)
+            @foreach($tags as $tag)
                 <a 
-                    href="{{ route('events.index', ['tag' => $tagItem->name, 'search' => request('search')]) }}" 
-                    class="badge {{ request('tag') === $tagItem->name ? 'bg-primary' : 'bg-secondary' }} text-decoration-none p-2 w-100 text-center mb-2"
+                    href="{{ route('events.index', ['tag' => $tag->name, 'search' => request('search')]) }}" 
+                    class="badge {{ request('tag') === $tag->name ? 'bg-primary' : 'bg-secondary' }} text-decoration-none p-2 w-100 text-center mb-2"
                 >
-                    {{ $tagItem->name }}
+                    {{ $tag->name }}
                 </a>
             @endforeach
         </div>
@@ -36,6 +36,7 @@
     <br>
     <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
 
+    <!-- Events Table -->
     @if($events->isEmpty())
         <p>No events found.</p>
     @else
