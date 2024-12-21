@@ -187,12 +187,19 @@ class EventController extends Controller
     /**
      * List invitations for the authenticated user.
      */
-    public function listInvitations()
+    public function listInvitations(Request $request)
     {
+        // Fetch paginated invitations for the authenticated user
         $invitations = Invite::with('event.organizer')
             ->where('user_id', auth()->id())
             ->where('status', 'pending')
-            ->get();
+            ->paginate(10);
+    
+        // For AJAX requests, return only the table HTML
+        if ($request->ajax()) {
+            $html = view('partials.invitations_table', compact('invitations'))->render();
+            return response()->json(['html' => $html]);
+        }
     
         return view('events.invitations', compact('invitations'));
     }
