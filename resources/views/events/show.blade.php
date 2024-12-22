@@ -48,12 +48,15 @@
         <a href="{{ route('events.attendees.list', $event->event_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
             See other attendees :)
         </a>
+        <br>
     @endif
 
     <br>
     <h2>Comments</h2>
+    <a href="{{ route('comments.index', $event->event_id) }}" class="btn btn-info"> Check Comments for {{ $event->name }} →</a>
 
-    <br>
+
+    <br><br>
     <h2>Polls</h2>
 
     <a href="{{ route('polls.index', $event->event_id) }}" class="btn btn-info">Check polls for {{ $event->name }} →</a>
