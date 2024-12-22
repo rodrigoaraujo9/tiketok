@@ -67,6 +67,16 @@
                 font-size: 1rem;
                 text-decoration: underline;
             }
+
+            nav .badge {
+                background-color: red;
+                color: white;
+                padding: 0.2rem 0.5rem;
+                border-radius: 1rem;
+                font-size: 1rem;
+                margin-left: 0.5rem;
+            }
+
         </style>
     </head>
     <body>
@@ -82,14 +92,25 @@
 
                     <!-- Dashboard with Enhanced Usability -->
                     @if (Auth::check())
+                        @php
+                        $pendingInvitesCount = DB::table('invites')
+                        ->where('user_id', auth()->id())
+                        ->where('status', 'pending')
+                        ->count();
+                        @endphp
                         <div class="dropdown" id="dashboardDropdown">
                             <a href="#" style="text-decoration: none;">Dashboard</a>
+                            <span class="badge">{{ $pendingInvitesCount }}</span>
                             <div class="dropdown-menu">
                                 @if (!Auth::user()->isAdmin())
                                     <a href="{{ route('events.create') }}">Create Event</a>
                                     <a href="{{ route('events.manage') }}">Manage Events</a>
                                     <a href="{{ route('events.attending') }}">Attending</a>
                                     <a href="{{ route('events.invitations') }}">Invitations</a>
+                                    
+                                    @if ($pendingInvitesCount > 0)
+                                    <span class="badge">{{ $pendingInvitesCount }}</span>
+                                    @endif
                                     <a href="{{ route('profile.show') }}">Profile</a>
                                 @else
                                     <a href="{{ route('allReports') }}">Admin Reports</a>

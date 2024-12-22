@@ -212,6 +212,17 @@ class EventController extends Controller
     
         return view('events.invitations', compact('invitations'));
     }
+
+    public function countInv()
+{
+    // Conta os convites pendentes para o usuário logado
+    $pendingInvitesCount = Invite::where('user_id', auth()->id())
+                                 ->where('status', 'pending')
+                                 ->count();
+
+    // Passa a quantidade de convites pendentes para a view
+    return view('layout.app', compact('pendingInvitesCount'));
+}
     
     
     /**

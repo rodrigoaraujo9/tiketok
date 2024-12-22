@@ -74,7 +74,6 @@ Route::controller(EventController::class)->middleware('auth')->group(function ()
     Route::post('/events/{event_id}/reject', 'rejectInvitation')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
         ->name('events.reject'); // Reject invitation
-
     // Join and leave events
     Route::post('/events/{event_id}/join', 'joinEvent')
         ->where('event_id', '[0-9]+') // Only allow numeric event_id
