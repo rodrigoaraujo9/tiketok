@@ -107,6 +107,9 @@ Route::controller(ReportController::class)->group(function () {
     Route::delete('admin/report/{id}', 'deleteReport')->name('deleteReport');
 });
 
+// Comments Index Page
+Route::get('/events/{event_id}/comments', [EventController::class, 'showComments'])->name('comments.index');
+
 // Add Comment
 Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
 

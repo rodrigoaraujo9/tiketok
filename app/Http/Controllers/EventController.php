@@ -83,24 +83,14 @@ class EventController extends Controller
    /**
      * Manage events created by the authenticated user.
      */
-    public function manage(Request $request)
+    public function manage()
     {
         $events = Event::where('organizer_id', auth()->id())
-                       ->where('is_deleted', false)
-                       ->paginate(5);
-    
-        if ($request->ajax()) {
-            $html = view('partials.manage_table', compact('events'))->render();
-            return response()->json(['html' => $html]);
-        }
+                       ->where('is_deleted', false) // Exclude deleted events
+                       ->get();
     
         return view('events.manage', compact('events'));
     }
-    
-    
-    
-    
-    
     
     /**
      * Invite a user to an event.
@@ -157,18 +147,9 @@ class EventController extends Controller
     
     
     
-    public function attending(Request $request)
+    public function attending()
     {
-        // Fetch paginated events with related data
-        $events = auth()->user()->attendingEvents()
-                     ->with('venue', 'organizer')
-                     ->paginate(10);
-    
-        // For AJAX requests, return only the table HTML
-        if ($request->ajax()) {
-            $html = view('partials.attending_table', compact('events'))->render();
-            return response()->json(['html' => $html]);
-        }
+        $events = auth()->user()->attendingEvents()->with('venue', 'organizer')->get();
     
         return view('events.attending', compact('events'));
     }
@@ -196,19 +177,12 @@ class EventController extends Controller
     /**
      * List invitations for the authenticated user.
      */
-    public function listInvitations(Request $request)
+    public function listInvitations()
     {
-        // Fetch paginated invitations for the authenticated user
         $invitations = Invite::with('event.organizer')
             ->where('user_id', auth()->id())
             ->where('status', 'pending')
-            ->paginate(10);
-    
-        // For AJAX requests, return only the table HTML
-        if ($request->ajax()) {
-            $html = view('partials.invitations_table', compact('invitations'))->render();
-            return response()->json(['html' => $html]);
-        }
+            ->get();
     
         return view('events.invitations', compact('invitations'));
     }
@@ -218,43 +192,25 @@ class EventController extends Controller
      * Display a listing of events.
      */
     public function index(Request $request)
-    {
-        $query = Event::query();
-    
-        // Filter by search term
-        if ($request->filled('search')) {
-            $query->where('name', 'LIKE', '%' . $request->input('search') . '%');
+{
+    if ($request->has('tag')) {
+        $tagName = $request->input('tag');
+        $tag = Tag::where('name', $tagName)->first();
+        
+        if ($tag) {
+            $events = Event::where('tag_id', $tag->tag_id)->paginate(10);
+        } else {
+            $events = collect(); // Retorna coleção vazia se não encontrar tag
         }
-    
-        // Filter by tag
-        if ($request->filled('tag')) {
-            $tag = Tag::where('name', $request->input('tag'))->first();
-            if ($tag) {
-                $query->where('tag_id', $tag->tag_id);
-            } else {
-                // If the tag doesn't exist, return no events
-                $query->whereRaw('1 = 0');
-            }
-        }
-    
-        // Paginate events and ensure query parameters are preserved
-        $events = $query->with('venue')->paginate(10);
-        $events->appends($request->only('search', 'tag'));
-    
-        // Fetch all tags for filtering
-        $tags = Tag::all();
-    
-        // Handle AJAX requests
-        if ($request->ajax()) {
-            $html = view('partials.events_table', compact('events'))->render();
-            return response()->json(['html' => $html]);
-        }
-    
-        return view('events.index', compact('events', 'tags'));
+    } else {
+        $events = Event::paginate(10); // Usa paginação
     }
-    
-      
-    
+
+    $tags = Tag::distinct()->get();
+
+    return view('events.index', compact('events', 'tags'));
+}
+
     
 
     
@@ -297,13 +253,12 @@ class EventController extends Controller
             'country' => 'required|string',
             'visibility' => 'required|in:public,private', // Validate visibility
             'venue_id' => 'required|exists:venues,venue_id',
-            'tag_id' => 'required|exists:tags,tag_id',
         ]);
     
         $validated['organizer_id'] = auth()->id();
     
         Event::create($validated);
-        
+    
         return redirect()->route('events.index')->with('success', 'Event created successfully!');
     }
     
@@ -318,7 +273,6 @@ class EventController extends Controller
             'country' => 'required|string',
             'visibility' => 'required|in:public,private', // Validate visibility
             'venue_id' => 'required|exists:venues,venue_id',
-            'tag_id' => 'required|exists:tags,tag_id',
         ]);
     
         $event = Event::findOrFail($event_id);
@@ -334,11 +288,9 @@ class EventController extends Controller
      */
     public function create()
     {
-        // Fetch all venues and tags to populate the venue/tags dropdown
+        // Fetch all venues to populate the venue dropdown
         $venues = Venue::all();
-        $tags = Tag::all();
-
-        return view('events.create', compact('venues','tags'));
+        return view('events.create', compact('venues'));
     }
 
     /**
@@ -350,9 +302,8 @@ class EventController extends Controller
         $event = Event::findOrFail($event_id);
         $event->date = Carbon::parse($event->date); 
     
-        $venues = Venue::all();
-        $tags = Tag::all(); 
-        return view('events.edit', compact('event', 'venues', 'tags'));
+        $venues = Venue::all(); 
+        return view('events.edit', compact('event', 'venues'));
     }
 
 
@@ -368,6 +319,14 @@ class EventController extends Controller
         return redirect()->route('events.index')
             ->with('success', 'Event deleted successfully!');
     }
+
+    public function showComments($event_id)
+    {
+        $event = Event::with(['comments.user'])->findOrFail($event_id);
+
+        return view('comments.index', compact('event'));
+    }
+
 
     public function addComment(Request $request, $event_id)
     {
