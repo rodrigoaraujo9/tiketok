@@ -3,18 +3,30 @@
 @section('content')
 <div class="container">
     <h1>Comments for {{ $event->name }}</h1>
-    <p><strong>Event ID:</strong> {{ $event->event_id }}</p>
-    <p><strong>Date:</strong> {{ $event->date }}</p>
-    <p><strong>Venue:</strong> {{ $event->venue->name }}</p>
 
     <a href="{{ route('events.show', $event->event_id) }}" class="btn btn-secondary">Back to Event</a>
-
-    <hr>
+    <br>
+    <!-- Add new comment -->
+    @guest
+        <p class="text-info">You need to <a href="{{ route('login') }}">log in</a> to add a comment.</p>
+    @else
+        <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
+            @csrf
+            <br>
+            <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
+            <div class="text-center mb-2">
+                <a href="{{ route('comments.createWithPoll', $event->event_id) }}" class="btn btn-info">
+                    Create Comment with a Poll →
+                </a>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+    @endguest
 
     <!-- Display existing comments -->
-    <h2>Comments</h2>
     <div id="commentsContainer">
         @foreach ($event->comments as $comment)
+            <hr class="comment-divider">
             <div class="card mb-2" id="comment-card-{{ $comment->comment_id }}">
                 <div class="card-body">
                     <p id="comment-{{ $comment->comment_id }}" class="comment-content">{{ $comment->content }}</p>
@@ -49,16 +61,6 @@
 
     <hr>
 
-    <!-- Add new comment -->
-    @guest
-        <p class="text-info">You need to <a href="{{ route('login') }}">log in</a> to add a comment.</p>
-    @else
-        <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
-            @csrf
-            <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
-            <button type="submit" class="btn btn-primary">Add Comment</button>
-        </form>
-    @endguest
 </div>
 
 <script>
@@ -67,4 +69,13 @@
         form.style.display = form.style.display === "none" ? "block" : "none";
     }
 </script>
+
+<style>
+    .comment-divider {
+        border: none;
+        height: 1px;
+        background-color: #ccc;
+        margin: 20px 0;
+    }
+</style>
 @endsection

@@ -112,6 +112,10 @@ Route::get('/events/{event_id}/comments', [EventController::class, 'showComments
 
 // Add Comment
 Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
+Route::post('/comments/{event_id}/store-poll', [EventController::class, 'storeCommentWithPoll'])->name('comments.storePoll');
+
+// add comment with poll
+Route::get('/comments/{event_id}/create-with-poll', [EventController::class, 'createCommentWithPoll'])->name('comments.createWithPoll');
 
 // Edit Comment
 Route::put('/comments/{comment_id}', [EventController::class, 'editComment'])->name('comments.edit');

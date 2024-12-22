@@ -345,7 +345,7 @@ class EventController extends Controller
             return response()->json(['success' => 'Comment added successfully!', 'comment' => $comment]);
         }
 
-        return redirect()->route('events.show', $event_id)
+        return redirect()->route('comments.index', $event_id)
             ->with('success', 'Comment added successfully!');
     }
 
@@ -371,7 +371,7 @@ class EventController extends Controller
             return response()->json(['success' => 'Comment updated successfully!', 'comment' => $comment]);
         }
 
-        return redirect()->route('events.show', $comment->event_id)
+        return redirect()->route('comments.index', $comment->event_id)
             ->with('success', 'Comment updated successfully!');
     }
 
@@ -393,7 +393,7 @@ class EventController extends Controller
             return response()->json(['success' => 'Comment deleted successfully!', 'comment_id' => $comment_id]);
         }
 
-        return redirect()->route('events.show', $comment->event_id)
+        return redirect()->route('comments.index', $comment->event_id)
             ->with('success', 'Comment deleted successfully!');
     }
 
@@ -479,5 +479,47 @@ class EventController extends Controller
 
         return view('events.attendees_list', compact('event'));
     }
+
+    public function createCommentWithPoll($event_id)
+    {
+        $event = Event::findOrFail($event_id);
+
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'You must be logged in to create a comment with a poll.');
+        }
+
+        return view('comments.create_poll', compact('event'));
+    }
+
+    public function storeCommentWithPoll(Request $request, $event_id)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+            'question' => 'required|string|max:255',
+            'options' => 'required|string',
+        ]);
+
+        $comment = Comment::create([
+            'content' => $validated['content'],
+            'date' => now(),
+            'event_id' => $event_id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $poll = $comment->poll()->create([
+            'event_id' => $event_id,
+            'question' => $validated['question'],
+            'user_id' => Auth::id(),
+        ]);
+
+        $options = explode(',', $validated['options']);
+        foreach ($options as $option) {
+            $poll->options()->create(['option_text' => trim($option)]);
+        }
+
+        return redirect()->route('comments.index', $event_id)->with('success', 'Comment with Poll created successfully!');
+    }
+
+
 
 }
