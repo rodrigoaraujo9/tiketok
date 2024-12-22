@@ -140,22 +140,17 @@ class CommentController extends Controller
     // vote on poll in a comment
     public function voteOnCommentPoll(Request $request, $event_id, $comment_id, $poll_id)
     {
-        // Validação dos parâmetros recebidos
+        // Valida se a opção existe
         $validated = $request->validate([
             'option_id' => 'required|exists:poll_options,option_id',
         ]);
 
-        // Garantir que a poll está associada ao comentário correto
+        // Garantir que a Poll pertence ao Comentário correto
         $poll = Poll::where('poll_id', $poll_id)
             ->where('comment_id', $comment_id)
             ->firstOrFail();
 
-        // Garantir que o comentário está associado ao evento correto
-        $comment = Comment::where('comment_id', $comment_id)
-            ->where('event_id', $event_id)
-            ->firstOrFail();
-
-        // Verificar se o usuário já votou na poll
+        // Verifica se o usuário já votou
         $alreadyVoted = PollVote::where('poll_id', $poll_id)
             ->where('user_id', Auth::id())
             ->exists();
@@ -164,26 +159,27 @@ class CommentController extends Controller
             return redirect()->back()->with('error', 'You have already voted in this poll.');
         }
 
-        // Validar a opção de votação
+        // Verifica se a opção pertence à poll
         $option = PollOption::where('poll_id', $poll_id)
             ->where('option_id', $validated['option_id'])
             ->firstOrFail();
 
-        // Registrar o voto
+        // Registra o voto
         PollVote::create([
             'poll_id' => $poll_id,
             'option_id' => $option->option_id,
             'user_id' => Auth::id(),
         ]);
 
-        // Incrementar o contador de votos para a opção
+        // Incrementa os votos para a opção
         $option->increment('votes');
 
-        // Redirecionar para a página de comentários com a âncora correta
+        // Redireciona para a página de comentários com âncora no comentário específico
         return redirect()->route('comments.index', ['event_id' => $event_id])
             ->with('success', 'Your vote has been recorded.')
             ->withFragment('comment-' . $comment_id);
     }
+
 
 
     // delete vote from poll in a comment
