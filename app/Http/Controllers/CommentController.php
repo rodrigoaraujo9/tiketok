@@ -222,25 +222,36 @@ class CommentController extends Controller
 
 
     // delete poll from comment
-    public function deleteCommentPoll($comment_id, $poll_id)
-    {
-        $poll = Poll::where('poll_id', $poll_id)
-            ->where('comment_id', $comment_id)
-            ->firstOrFail();
+    public function deleteCommentPoll($event_id, $comment_id, $poll_id)
+{
+    // Buscar o comentário com a poll associada
+    $comment = Comment::with('poll')->where('comment_id', $comment_id)->firstOrFail();
 
-        if ($poll->comment_id !== $comment_id) {
-            return redirect()->back()->with('error', 'The poll does not belong to this comment.');
-        }
-
-        if (Auth::id() !== $poll->user_id) {
-            return redirect()->back()->with('error', 'You are not authorized to delete this poll.');
-        }
-
-        $poll->delete();
-
-        return redirect()->route('comments.index', $poll->comment->event_id)
-            ->with('success', 'Poll deleted successfully.');
+    // Verificar se a poll pertence ao comentário
+    if ($comment->poll->poll_id !== $poll_id) {
+        return redirect()->back()->with('error', 'The poll does not belong to this comment.');
     }
+
+    // Verificar se o usuário tem permissão para deletar
+    if (Auth::id() !== $comment->user_id) {
+        return redirect()->back()->with('error', 'You are not authorized to delete this poll or comment.');
+    }
+
+    // Deletar a poll (incluindo opções e votos)
+    $comment->poll->options()->each(function ($option) {
+        $option->votes()->delete();
+        $option->delete();
+    });
+    $comment->poll->delete();
+
+    // Deletar o comentário
+    $comment->delete();
+
+    // Redirecionar com sucesso
+    return redirect()->route('comments.index', ['event_id' => $event_id])
+        ->with('success', 'Comment and associated poll have been deleted successfully.');
+}
+
 
 
 }
