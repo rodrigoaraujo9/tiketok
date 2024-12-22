@@ -459,6 +459,8 @@ BEFORE UPDATE ON reports
 FOR EACH ROW
 EXECUTE FUNCTION update_report_timestamp();
 
+--FTS 
+CREATE INDEX events_name_fulltext_index ON events USING gin(to_tsvector('english', name));
 
 
 -- Populate venues with sample data

@@ -57,6 +57,7 @@ class User extends Authenticatable
     /**
      * Get the cards for a user.
      */
+    
     public function cards(): HasMany
     {
         return $this->hasMany(Card::class);
@@ -66,6 +67,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id')
             ->withPivot('joined_at');
     }
+
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id');
+    }
+
     public function attendees()
     {
         return $this->belongsToMany(Event::class, 'attends', 'user_id', 'event_id')

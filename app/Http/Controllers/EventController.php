@@ -212,17 +212,6 @@ class EventController extends Controller
     
         return view('events.invitations', compact('invitations'));
     }
-
-    public function countInv()
-{
-    // Conta os convites pendentes para o usuário logado
-    $pendingInvitesCount = Invite::where('user_id', auth()->id())
-                                 ->where('status', 'pending')
-                                 ->count();
-
-    // Passa a quantidade de convites pendentes para a view
-    return view('layout.app', compact('pendingInvitesCount'));
-}
     
     
     /**
@@ -234,7 +223,7 @@ class EventController extends Controller
     
         // Filter by search term
         if ($request->filled('search')) {
-            $query->where('name', 'LIKE', '%' . $request->input('search') . '%');
+            $query->where('name', 'MATCH', '%' . $request->input('search') . '%');
         }
     
         // Filter by tag
@@ -378,6 +367,75 @@ class EventController extends Controller
 
         return redirect()->route('events.index')
             ->with('success', 'Event deleted successfully!');
+    }
+
+    public function addComment(Request $request, $event_id)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $comment = Comment::create([
+            'content' => $validated['content'],
+            'date' => now(),
+            'event_id' => $event_id,
+            'user_id' => Auth::id(),
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Comment added successfully!', 'comment' => $comment]);
+        }
+
+        return redirect()->route('events.show', $event_id)
+            ->with('success', 'Comment added successfully!');
+    }
+
+    public function editComment(Request $request, $comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+    
+        // Ensure only the author can edit the comment
+        if ($comment->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized action.'], 403);
+        }
+    
+        // Validate request
+        $validated = $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+    
+        // Update comment
+        $comment->update(['content' => $validated['content']]);
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment updated successfully!',
+            'comment' => $comment,
+        ]);
+    }
+    
+    
+
+    public function deleteComment(Request $request, $comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+
+        // Ensure only the author can delete the comment
+        if ($comment->user_id !== Auth::id()) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Unauthorized action.'], 403);
+            }
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $comment->delete();
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Comment deleted successfully!', 'comment_id' => $comment_id]);
+        }
+
+        return redirect()->route('events.show', $comment->event_id)
+            ->with('success', 'Comment deleted successfully!');
     }
 
     public function adminDestroy($event_id)
