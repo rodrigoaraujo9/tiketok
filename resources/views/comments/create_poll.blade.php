@@ -48,6 +48,9 @@
         input.placeholder = `Option ${container.querySelectorAll('input').length + 1}`;
         input.required = true;
         container.appendChild(input);
+        const separator = document.createElement('hr');
+        container.appendChild(separator);
+        container.appendChild(input);
     }
 </script>
 @endsection

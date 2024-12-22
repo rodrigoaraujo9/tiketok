@@ -16,7 +16,7 @@ class CommentController extends Controller
      */
     public function index($event_id)
     {
-        $event = Event::with(['comments.user'])->findOrFail($event_id);
+        $event = Event::with(['comments.user', 'comments.poll.options'])->findOrFail($event_id);
 
         return view('comments.index', compact('event'));
     }
@@ -78,17 +78,19 @@ class CommentController extends Controller
             'user_id' => Auth::id(),
         ]);
 
+        $comment->refresh();
+
         $poll = Poll::create([
-            'event_id' => $event_id,
+            'comment_id' => $comment->comment_id, 
             'question' => $validated['question'],
             'user_id' => Auth::id(),
+            'end_date' => now()->addDays(30)
         ]);
 
         foreach ($validated['options'] as $option) {
             PollOption::create([
                 'poll_id' => $poll->poll_id,
                 'option_text' => $option,
-                'votes' => 0,
             ]);
         }
 
@@ -133,4 +135,95 @@ class CommentController extends Controller
         return redirect()->route('comments.index', $comment->event_id)
             ->with('success', 'Comment deleted successfully!');
     }
+
+    // vote on poll in a comment
+    public function voteOnCommentPoll(Request $request, $comment_id, $poll_id)
+    {
+        $validated = $request->validate([
+            'option_id' => 'required|exists:poll_options,option_id',
+        ]);
+
+        $poll = Poll::where('poll_id', $poll_id)
+            ->where('comment_id', $comment_id)
+            ->firstOrFail();
+
+        if ($poll->comment_id !== $comment_id) {
+            return redirect()->back()->with('error', 'The poll does not belong to this comment.');
+        }
+
+        $alreadyVoted = PollVote::where('poll_id', $poll_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        if ($alreadyVoted) {
+            return redirect()->back()->with('error', 'You have already voted in this poll.');
+        }
+
+        $option = PollOption::where('poll_id', $poll_id)
+            ->where('option_id', $validated['option_id'])
+            ->firstOrFail();
+
+        PollVote::create([
+            'poll_id' => $poll_id,
+            'option_id' => $option->option_id,
+            'user_id' => Auth::id(),
+        ]);
+
+        $option->increment('votes');
+
+        return redirect()->route('comments.index', $poll->comment->event_id . '#comment-' . $comment_id)
+            ->with('success', 'Your vote has been recorded.');
+    }
+
+    // delete vote from poll in a comment
+    public function deleteCommentPollVote($comment_id, $poll_id)
+    {
+        $poll = Poll::where('poll_id', $poll_id)
+            ->where('comment_id', $comment_id)
+            ->firstOrFail();
+
+        if ($poll->comment_id !== $comment_id) {
+            return redirect()->back()->with('error', 'The poll does not belong to this comment.');
+        }
+            
+        $existingVote = PollVote::where('poll_id', $poll_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$existingVote) {
+            return redirect()->back()->with('error', 'You have not voted in this poll.');
+        }
+
+        $option = PollOption::find($existingVote->option_id);
+        $option->decrement('votes');
+        $existingVote->delete();
+
+        return redirect()->route('comments.index', $poll->comment->event_id)
+            ->with('success', 'Your vote has been removed.');
+    }
+
+
+
+    // delete poll from comment
+    public function deleteCommentPoll($comment_id, $poll_id)
+    {
+        $poll = Poll::where('poll_id', $poll_id)
+            ->where('comment_id', $comment_id)
+            ->firstOrFail();
+
+        if ($poll->comment_id !== $comment_id) {
+            return redirect()->back()->with('error', 'The poll does not belong to this comment.');
+        }
+
+        if (Auth::id() !== $poll->user_id) {
+            return redirect()->back()->with('error', 'You are not authorized to delete this poll.');
+        }
+
+        $poll->delete();
+
+        return redirect()->route('comments.index', $poll->comment->event_id)
+            ->with('success', 'Poll deleted successfully.');
+    }
+
+
 }

@@ -98,16 +98,28 @@ CREATE TABLE tickets (
     quantity positive_integer NOT NULL
 );
 
+-- Comments table
+CREATE TABLE comments (
+    comment_id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+);
+
 -- Polls table
 CREATE TABLE polls (
     poll_id SERIAL PRIMARY KEY,
     question TEXT NOT NULL,
     end_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP + interval '30 days',
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the report was created
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the poll was created
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    comment_id INT NULL,
+    CONSTRAINT fk_polls_comment_id FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
 );
+
 
 -- Poll options table
 CREATE TABLE poll_options (
@@ -127,16 +139,6 @@ CREATE TABLE poll_votes (
     option_id INT REFERENCES poll_options(option_id) ON DELETE CASCADE,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT unique_user_vote_per_poll UNIQUE (poll_id, user_id) -- Garante que um usuário só pode votar uma vez por enquete
-);
-
-
--- Comments table
-CREATE TABLE comments (
-    comment_id SERIAL PRIMARY KEY,
-    content TEXT NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE
 );
 
 -- Files table
