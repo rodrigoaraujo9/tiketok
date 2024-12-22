@@ -34,14 +34,21 @@
             <!-- Exibir Poll Associada -->
             @if ($comment->poll)
                 <h5 class="fw-bold">Poll: {{ $comment->poll->question }}</h5>
-                    <ul>
-                        @foreach ($comment->poll->options as $option)
-                            <li>{{ $option->option_text }}</li>
-                        @endforeach
-                    </ul>
-            @else
-                <p>No poll associated with this comment.</p>
+                <ul>
+                    @foreach ($comment->poll->options as $option)
+                        <li>
+                            {{ $option->option_text }}
+                            <form action="{{ route('comments.votePoll', ['event_id' => $event->event_id, 'comment_id' => $comment->comment_id, 'poll_id' => $comment->poll->poll_id]) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="option_id" value="{{ $option->option_id }}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Vote</button>
+                            </form>
+
+                        </li>
+                    @endforeach
+                </ul>
             @endif
+
 
 
             @if ($comment->user_id === Auth::id())
