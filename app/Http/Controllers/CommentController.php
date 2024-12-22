@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Event;
 use App\Models\Poll;
+use App\Models\PollOption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,7 +67,8 @@ class CommentController extends Controller
         $validated = $request->validate([
             'content' => 'required|string|max:1000',
             'question' => 'required|string|max:255',
-            'options' => 'required|string',
+            'options' => 'required|array|min:2',
+            'options.*' => 'required|string|max:255',
         ]);
 
         $comment = Comment::create([
@@ -82,9 +84,12 @@ class CommentController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        $options = explode(',', $validated['options']);
-        foreach ($options as $option) {
-            $poll->options()->create(['option_text' => trim($option)]);
+        foreach ($validated['options'] as $option) {
+            PollOption::create([
+                'poll_id' => $poll->poll_id,
+                'option_text' => $option,
+                'votes' => 0,
+            ]);
         }
 
         return redirect()->route('comments.index', $event_id)

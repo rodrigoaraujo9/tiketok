@@ -38,6 +38,11 @@ class Poll extends Model
         return $this->hasMany(PollVote::class, 'poll_id', 'poll_id');
     }
 
+    public function comment()
+    {
+        return $this->belongsTo(Comment::class, 'comment_id', 'comment_id');
+    }
+
 
 }
 

@@ -33,9 +33,4 @@ class Comment extends Model
     {
         return $this->hasOne(Poll::class, 'comment_id', 'comment_id');
     }
-
-    public function comment()
-    {
-        return $this->belongsTo(Comment::class, 'comment_id', 'comment_id');
-    }
 }

@@ -12,9 +12,8 @@ class CreatePollOptionsTable extends Migration
             Schema::create('poll_options', function (Blueprint $table) {
                 $table->id('option_id');
                 $table->foreignId('poll_id')->constrained('polls', 'poll_id')->onDelete('cascade');
-                $table->string('option');
-                $table->unsignedInteger('votes')->default(0);
-                $table->timestamps();
+                $table->string('option_text'); 
+                $table->integer('votes')->default(0);
             });
         }
     }
@@ -24,4 +23,3 @@ class CreatePollOptionsTable extends Migration
         Schema::dropIfExists('poll_options');
     }
 }
-
