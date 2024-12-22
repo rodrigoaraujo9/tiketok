@@ -8,6 +8,8 @@ use App\Http\Controllers\PollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\CommentController;
+
 
 
 /*
@@ -108,20 +110,22 @@ Route::controller(ReportController::class)->group(function () {
 });
 
 // Comments Index Page
-Route::get('/events/{event_id}/comments', [EventController::class, 'showComments'])->name('comments.index');
+Route::get('/events/{event_id}/comments', [CommentController::class, 'index'])->name('comments.index');
 
 // Add Comment
-Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
-Route::post('/comments/{event_id}/store-poll', [EventController::class, 'storeCommentWithPoll'])->name('comments.storePoll');
+Route::post('/events/{event_id}/comments', [CommentController::class, 'addComment'])->name('comments.add');
 
-// add comment with poll
-Route::get('/comments/{event_id}/create-with-poll', [EventController::class, 'createCommentWithPoll'])->name('comments.createWithPoll');
+// Create Comment with Poll
+Route::get('/events/{event_id}/comments/create-with-poll', [CommentController::class, 'createCommentWithPoll'])->name('comments.createWithPoll');
+
+// Store Comment with Poll
+Route::post('/events/{event_id}/comments/store-poll', [CommentController::class, 'storeCommentWithPoll'])->name('comments.storePoll');
 
 // Edit Comment
-Route::put('/comments/{comment_id}', [EventController::class, 'editComment'])->name('comments.edit');
+Route::put('/comments/{comment_id}', [CommentController::class, 'editComment'])->name('comments.edit');
 
 // Delete Comment
-Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'])->name('comments.delete');
+Route::delete('/comments/{comment_id}', [CommentController::class, 'deleteComment'])->name('comments.delete');
 
 //Edit Event
 Route::get('/events/{event_id}/edit', [EventController::class, 'edit'])->name('events.edit');

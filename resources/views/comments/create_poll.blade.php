@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="container">
-    <h1>Create a Comment with a Poll</h1>
+    <h1>Create comment with poll</h1>
+    <br>
 
     <form action="{{ route('comments.storePoll', $event->event_id) }}" method="POST">
         @csrf
@@ -12,12 +13,14 @@
             <label for="content" class="form-label">Comment Content</label>
             <textarea name="content" id="content" class="form-control" rows="3" required></textarea>
         </div>
+        <br>
 
         <!-- Poll Question -->
         <div class="mb-3">
             <label for="question" class="form-label">Poll Question</label>
             <input type="text" name="question" id="question" class="form-control" placeholder="Enter your poll question" required>
         </div>
+        <br>
 
         <!-- Poll Options -->
         <div id="poll-options">
@@ -28,6 +31,7 @@
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="addPollOption()">Add another option</button>
         </div>
+        <br>
 
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary mt-3">Create Comment with Poll</button>
