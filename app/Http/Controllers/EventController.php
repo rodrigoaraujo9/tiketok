@@ -236,7 +236,7 @@ class EventController extends Controller
                 $query->whereRaw('1 = 0');
             }
         }
-    
+        $query->where('visibility', 'public');
         // Paginate events and ensure query parameters are preserved
         $events = $query->with('venue')->paginate(10);
         $events->appends($request->only('search', 'tag'));
