@@ -38,7 +38,7 @@
                     @foreach ($comment->poll->options as $option)
                         <li>
                             {{ $option->option_text }}
-                            <form action="{{ route('comments.votePoll', ['event_id' => $event->event_id, 'comment_id' => $comment->comment_id, 'poll_id' => $comment->poll->poll_id]) }}" method="POST" style="display: inline;">
+                            <form action="{{ route('comments.votePoll', ['event_id' => $comment->event_id ?? $event->event_id, 'comment_id' => $comment->comment_id, 'poll_id' => $comment->poll->poll_id]) }}" method="POST" style="display: inline;">
                                 @csrf
                                 <input type="hidden" name="option_id" value="{{ $option->option_id }}">
                                 <button type="submit" class="btn btn-sm btn-outline-primary">Vote</button>
