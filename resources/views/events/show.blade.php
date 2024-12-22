@@ -50,52 +50,9 @@
         </a>
     @endif
 
-    <br><br>
+    <br>
     <h2>Comments</h2>
-    @foreach ($event->comments as $comment)
-        <div class="card mb-2">
-            <div class="card-body">
-                <p id="comment-{{ $comment->comment_id }}" class="comment-content">{{ $comment->content }}</p>
-                <p class="text-muted">By {{ $comment->user->name }} on {{ $comment->date }}</p>
 
-                @if ($comment->user_id === Auth::id())
-                    <button class="btn btn-warning btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Edit</button>
-
-                    <form action="{{ route('comments.edit', $comment->comment_id) }}" method="POST" id="edit-form-{{ $comment->comment_id }}" class="edit-form" style="display: none;">
-                        @csrf
-                        @method('PUT')
-                        <textarea name="content" class="form-control mb-2" rows="3" required>{{ $comment->content }}</textarea>
-                        <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditForm({{ $comment->comment_id }})">Cancel</button>
-                    </form>
-                @endif
-                @if (Auth::id() === $comment->user_id) 
-                    <form action="{{ route('comments.delete', $comment->comment_id) }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm confirmation-button" data-confirm="Are you sure you want to delete this comment?">
-                            Delete
-                        </button>
-                    </form>
-                @endif
-            </div>
-        </div>
-        <br><br>
-    @endforeach
-
-    @guest
-        <p class="text-info">You need to <a href="{{ route('login') }}">log in</a> to add a comment.</p>
-    @else
-        @if (!Auth::user()->isAdmin())
-            <form action="{{ route('comments.add', $event->event_id) }}" method="POST">
-                @csrf
-                <textarea name="content" class="form-control mb-2" rows="3" required></textarea>
-                <button type="submit" class="btn btn-primary">Add Comment</button>
-            </form>
-        @endif
-    @endguest
-
-    @if (Auth::check() && (!Auth::user()->isAdmin() || !Auth::id() === $event->organizer_id))
     <br>
     <h2>Polls</h2>
 
@@ -104,6 +61,5 @@
     <br><br>
     <h2>Messages</h2>
     <a href="{{ route('message.show', $event->event_id) }}" class="btn btn-primary">Messages for {{ $event->name }} →</a>
-    @endif
 </div>
 @endsection
