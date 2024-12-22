@@ -189,3 +189,6 @@ Route::delete('admin/users/{id}', [AdminController::class, 'deleteUser'])->name(
 // event messages
 Route::get('/events/{event}/message', [MessageController::class, 'show'])->name('message.show')->middleware('auth');
 Route::post('/events/{event}/message', [MessageController::class, 'store'])->name('message.store')->middleware('auth');
+
+// Contact page route
+Route::view('/contact', 'contact')->name('contact');

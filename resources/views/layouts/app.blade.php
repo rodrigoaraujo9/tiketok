@@ -80,6 +80,8 @@
                     <!-- About Us -->
                     <a href="{{ route('about') }}" style="text-decoration: none;">About Us</a>
 
+                    <a href="{{ route('contact') }}" style="text-decoration: none;">Contact Us</a>
+
                     <!-- Dashboard with Enhanced Usability -->
                     @if (Auth::check())
                         <div class="dropdown" id="dashboardDropdown">
