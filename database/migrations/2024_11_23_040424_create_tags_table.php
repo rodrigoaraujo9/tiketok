@@ -16,7 +16,6 @@ return new class extends Migration
                 $table->id('tag_id');
                 $table->string('name')->unique();
                 $table->unsignedBigInteger('event_id'); // Use unsignedBigInteger for consistency
-                $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
                 $table->timestamps();
             });
         }
