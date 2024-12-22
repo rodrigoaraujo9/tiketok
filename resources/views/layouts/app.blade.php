@@ -102,7 +102,7 @@
                         @endphp
                         <div class="dropdown" id="dashboardDropdown">
                             <a href="#" style="text-decoration: none;">Dashboard</a>
-                            <span class="badge">{{ $pendingInvitesCount }}</span>
+                            @if ($pendingInvitesCount > 0)<span class="badge">{{ $pendingInvitesCount }}</span>@endif
                             <div class="dropdown-menu">
                                 @if (!Auth::user()->isAdmin())
                                     <a href="{{ route('events.create') }}">Create Event</a>
