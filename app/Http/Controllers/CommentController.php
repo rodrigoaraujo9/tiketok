@@ -17,7 +17,12 @@ class CommentController extends Controller
      */
     public function index($event_id)
     {
-        $event = Event::with(['comments.user', 'comments.poll.options'])->findOrFail($event_id);
+        $event = Event::with([
+            'comments.user',
+            'comments.poll.options' => function ($query) {
+                $query->orderBy('option_id'); 
+            }
+        ])->findOrFail($event_id);
 
         return view('comments.index', compact('event'));
     }
