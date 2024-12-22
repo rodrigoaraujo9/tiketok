@@ -9,7 +9,29 @@ class Poll extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['event_id', 'question'];
+    protected $fillable = [
+        'event_id',
+        'comment_id',
+        'question',
+        'user_id',
+        'end_date'
+    ];
+    
+    protected static function boot()
+    {
+        parent::boot();
+    
+        static::saving(function ($poll) {
+            if ($poll->event_id && $poll->comment_id) {
+                throw new \Exception('A poll cannot be associated with both an event and a comment.');
+            }
+    
+            if (!$poll->event_id && !$poll->comment_id) {
+                throw new \Exception('A poll must be associated with either an event or a comment.');
+            }
+        });
+    }
+    
 
     protected $primaryKey = 'poll_id'; 
 
@@ -36,6 +58,11 @@ class Poll extends Model
     public function votes()
     {
         return $this->hasMany(PollVote::class, 'poll_id', 'poll_id');
+    }
+
+    public function comment()
+    {
+        return $this->belongsTo(Comment::class, 'comment_id', 'comment_id');
     }
 
 

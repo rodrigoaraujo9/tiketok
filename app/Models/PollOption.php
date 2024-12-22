@@ -18,8 +18,9 @@ class PollOption extends Model
 
     public function poll()
     {
-        return $this->belongsTo(Poll::class, 'poll_id');
+        return $this->belongsTo(Poll::class, 'poll_id', 'poll_id');
     }
+
 
     public function votes()
     {

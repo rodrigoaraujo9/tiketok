@@ -8,6 +8,8 @@ use App\Http\Controllers\PollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\CommentController;
+
 
 
 /*
@@ -106,15 +108,37 @@ Route::controller(ReportController::class)->group(function () {
     Route::delete('admin/report/{id}', 'deleteReport')->name('deleteReport');
 });
 
+// Comments Index Page
+Route::get('/events/{event_id}/comments', [CommentController::class, 'index'])->name('comments.index');
+
 // Add Comment
-Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
+Route::post('/events/{event_id}/comments', [CommentController::class, 'addComment'])->name('comments.add');
+
+// Create Comment with Poll
+Route::get('/events/{event_id}/comments/create-with-poll', [CommentController::class, 'createCommentWithPoll'])->name('comments.createWithPoll');
+
+// Store Comment with Poll
+Route::post('/events/{event_id}/comments/store-poll', [CommentController::class, 'storeCommentWithPoll'])->name('comments.storePoll');
+
+// Vote on poll in a comment
+Route::post('/events/{event_id}/comments/{comment_id}/polls/{poll_id}/vote', [CommentController::class, 'voteOnCommentPoll'])
+    ->name('comments.votePoll');
+
+// Delete comment and poll
+Route::delete('/events/{event_id}/comments/{comment_id}/polls/{poll_id}', 
+    [CommentController::class, 'deleteCommentPoll']
+)->name('comments.deletePoll');
+
+
+// Delete vote from poll in a comment
+Route::delete('/events/{event_id}/comments/{comment_id}/polls/{poll_id}/vote', [CommentController::class, 'deleteCommentPollVote'])
+    ->name('comments.deletePollVote');
 
 // Edit Comment
 Route::put('/comments/{comment_id}', [CommentController::class, 'editComment'])->name('comments.edit');
 
-
 // Delete Comment
-Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'])->name('comments.delete');
+Route::delete('/comments/{comment_id}', [CommentController::class, 'deleteComment'])->name('comments.delete');
 
 //Edit Event
 Route::get('/events/{event_id}/edit', [EventController::class, 'edit'])->name('events.edit');
@@ -164,3 +188,6 @@ Route::delete('admin/users/{id}', [AdminController::class, 'deleteUser'])->name(
 // event messages
 Route::get('/events/{event}/message', [MessageController::class, 'show'])->name('message.show')->middleware('auth');
 Route::post('/events/{event}/message', [MessageController::class, 'store'])->name('message.store')->middleware('auth');
+
+// Contact page route
+Route::view('/contact', 'contact')->name('contact');

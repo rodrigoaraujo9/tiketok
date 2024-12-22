@@ -20,18 +20,22 @@ return new class extends Migration
                 $table->unsignedBigInteger('event_id');
                 $table->timestamps();
 
-                $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-                $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
+                $table->foreign('user_id')
+                    ->references('user_id')->on('users')
+                    ->onDelete('cascade');
+                    
+                $table->foreign('event_id')
+                    ->references('event_id')->on('events')
+                    ->onDelete('cascade');
             });
         }
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
- 
+        Schema::dropIfExists('comments');
     }
 };

@@ -90,6 +90,8 @@
                     <!-- About Us -->
                     <a href="{{ route('about') }}" style="text-decoration: none;">About Us</a>
 
+                    <a href="{{ route('contact') }}" style="text-decoration: none;">Contact Us</a>
+
                     <!-- Dashboard with Enhanced Usability -->
                     @if (Auth::check())
                         @php
@@ -112,6 +114,14 @@
                                     <span class="badge">{{ $pendingInvitesCount }}</span>
                                     @endif
                                     <a href="{{ route('profile.show') }}">Profile</a>
+                                    </a>
+                    <a class="dropdown-item {{ request()->routeIs('profile.show') ? 'active' : '' }}" href="{{ route('profile.show') }}">
+                        Profile
+                    </a>
+                    <a class="dropdown-item {{ request()->routeIs('userReports') ? 'active' : '' }}" href="{{ route('userReports') }}">
+                        My Reports
+                    </a>
+                                    
                                 @else
                                     <a href="{{ route('allReports') }}">Admin Reports</a>
                                     <a  href="{{ route('allUsers') }}">Manage Users</a>

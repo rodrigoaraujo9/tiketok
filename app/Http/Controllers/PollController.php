@@ -26,11 +26,24 @@ class PollController extends Controller
     public function create($event_id)
     {
         $event = Event::findOrFail($event_id);
+
+        if (Auth::id() !== $event->organizer_id) {
+            return redirect()->route('polls.index', $event_id)
+                ->with('error', 'You are not authorized to create polls for this event.');
+        }
+
         return view('polls.create_poll', compact('event'));
     }
 
     public function store(Request $request, $event_id)
     {
+        $event = Event::findOrFail($event_id);
+
+        if (Auth::id() !== $event->organizer_id) {
+            return redirect()->route('polls.index', $event_id)
+                ->with('error', 'You are not authorized to create polls for this event.');
+        }
+
         $request->validate([
             'question' => 'required|string|max:255',
             'options' => 'required|array|min:2', // At least 2 options
