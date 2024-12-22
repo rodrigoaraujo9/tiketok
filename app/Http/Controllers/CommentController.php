@@ -183,31 +183,41 @@ class CommentController extends Controller
 
 
     // delete vote from poll in a comment
-    public function deleteCommentPollVote($comment_id, $poll_id)
+    public function deleteCommentPollVote($event_id, $comment_id, $poll_id)
     {
+        // Buscar a poll associada ao comentário
         $poll = Poll::where('poll_id', $poll_id)
             ->where('comment_id', $comment_id)
-            ->firstOrFail();
-
-        if ($poll->comment_id !== $comment_id) {
-            return redirect()->back()->with('error', 'The poll does not belong to this comment.');
+            ->first();
+    
+        if (!$poll) {
+            return redirect()->back()->with('error', 'The poll does not exist or does not belong to this comment.');
         }
-            
+    
+        // Buscar o voto do usuário
         $existingVote = PollVote::where('poll_id', $poll_id)
             ->where('user_id', Auth::id())
             ->first();
-
+    
         if (!$existingVote) {
             return redirect()->back()->with('error', 'You have not voted in this poll.');
         }
-
+    
+        // Decrementar os votos da opção selecionada
         $option = PollOption::find($existingVote->option_id);
-        $option->decrement('votes');
+        if ($option) {
+            $option->decrement('votes');
+        }
+    
+        // Remover o registro do voto
         $existingVote->delete();
-
-        return redirect()->route('comments.index', $poll->comment->event_id)
-            ->with('success', 'Your vote has been removed.');
+    
+        // Redirecionar com sucesso
+        return redirect()->route('comments.index', ['event_id' => $event_id])
+            ->with('success', 'Your vote has been removed.')
+            ->withFragment('comment-' . $comment_id);
     }
+    
 
 
 

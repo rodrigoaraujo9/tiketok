@@ -69,11 +69,12 @@
                                                 'event_id' => $event->event_id,
                                                 'comment_id' => $comment->comment_id,
                                                 'poll_id' => $comment->poll->poll_id
-                                            ]) }}" method="POST" class="d-inline">
+                                            ]) }}" method="POST" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm">Remove Vote</button>
                                             </form>
+
 
                                             @endif
                                         </td>
