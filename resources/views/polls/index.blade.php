@@ -42,7 +42,9 @@
                                         <form action="{{ route('polls.deleteVote', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Remove Vote</button>
+                                            <button type="submit" class="btn btn-danger btn-sm confirmation-button" data-confirm="Are you sure you want to remove your vote?">
+                                                Remove Vote
+                                            </button>
                                         </form>
                                     @endif
                                 </td>
@@ -62,7 +64,9 @@
                         <form action="{{ route('polls.destroy', ['event_id' => $event->event_id, 'poll_id' => $poll->poll_id]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger">Delete Poll</button>
+                            <button type="submit" class="btn btn-danger confirmation-button" data-confirm="Are you sure you want to delete this poll?">
+                                Delete Poll
+                            </button>
                         </form>
                     </div>
                     <br>
