@@ -617,12 +617,116 @@ VALUES
 -- Insert sample data into invites table MISSING
 
 INSERT INTO messages (event_id, user_id, message) VALUES
-(1, 1, 'Looking forward to this event!'),
+    (1, 2, 'This event looks awesome!'),
+    (2, 3, 'Is there a guest speaker for the AI session?'),
+    (3, 4, 'Looking forward to the charity concert!'),
+    (4, 5, 'Excited for the food expo!'),
+    (5, 6, 'Can’t wait for the music festival!'),
+    (6, 7, 'The art exhibition sounds interesting.'),
+    (7, 8, 'Looking forward to the stand-up comedy show!'),
+    (8, 9, 'Excited for the jazz night!'),
 (1, 2, 'Can’t wait!'),
 (2, 1, 'Is there a dress code for the event?'),
 (2, 3, 'Excited to see everyone there!'),
 (3, 2, 'What time does the event start?'),
 (3, 1, 'I heard it’s going to be amazing!');
 
+
+-- Populate users (user1 and user2 already exist)
+-- Adding extra venues, events, comments, etc., specifically for these users
+
+-- Populate events organized by user1 and user2
+INSERT INTO events (description, date, postal_code, max_event_capacity, country, name, visibility, is_deleted, venue_id, organizer_id, tag_id)
+VALUES
+    ('Music Night at Grand Hall', '2031-04-05 20:00:00', '1000-001', 500, 'USA', 'Jazz Vibes', 'public', FALSE, 1, 2, 3),
+    ('Tech Meetup at Skyline Plaza', '2031-06-10 10:00:00', '3030-003', 300, 'USA', 'AI Revolution', 'public', FALSE, 9, 2, 7),
+    ('Charity Concert', '2031-07-15 19:30:00', '12345', 1000, 'USA', 'Save the World', 'private', FALSE, 3, 3, 1),
+    ('Food Expo', '2031-08-20 13:00:00', '54321', 200, 'Portugal', 'Taste of Lisbon', 'public', FALSE, 19, 2, 4);
+
+-- Populate tickets for events attended by user1 and user2
+INSERT INTO tickets (event_id, type, quantity)
+VALUES 
+    (1, 'regular', 2),
+    (1, 'vip', 1),
+    (2, 'student', 1),
+    (3, 'regular', 1),
+    (4, 'vip', 2);
+
+-- Populate attends table
+INSERT INTO attends (user_id, event_id, joined_at)
+VALUES
+    (2, 1, '2030-12-01 15:00:00'),
+    (2, 2, '2030-12-02 15:00:00'),
+    (3, 1, '2030-12-01 16:00:00'),
+    (3, 4, '2031-08-20 13:30:00');
+
+-- Populate comments for events
+INSERT INTO comments (content, date, user_id, event_id)
+VALUES
+    ('Looking forward to this amazing concert!', '2030-12-01 14:00:00', 2, 1),
+    ('This tech meetup looks exciting!', '2031-06-09 20:00:00', 2, 2),
+    ('The food was fantastic!', '2031-08-20 15:00:00', 3, 4),
+    ('Great venue and organization.', '2030-12-02 17:00:00', 3, 2);
+
+-- Populate befriends table for user friendships
+INSERT INTO befriends (user_id_1, user_id_2)
+VALUES
+    (2, 3),
+    (2, 4),
+    (3, 5);
+
+-- Populate invites for events
+INSERT INTO invites (event_id, user_id, sent_at, status)
+VALUES
+    (1, 3, '2030-11-01 10:00:00', 'accepted'),
+    (2, 4, '2030-11-02 12:00:00', 'pending'),
+    (3, 5, '2030-11-03 14:00:00', 'declined');
+
+-- Populate reports related to events attended by user1 and user2
+INSERT INTO reports (event_id, user_id, reason, r_status)
+VALUES
+    (1, 2, 'Overcrowded event.', 'reviewed'),
+    (2, 3, 'Technical issues with sound.', 'resolved');
+
+-- Populate messages for user1 and user2
+INSERT INTO messages (event_id, user_id, message)
+VALUES
+    (1, 2, 'This event looks awesome!'),
+    (2, 3, 'Is there a guest speaker for the AI session?');
+
+-- Populate poll options and votes related to events
+INSERT INTO polls (question, end_date, user_id, event_id)
+VALUES
+    ('What genre should we explore next?', '2031-06-15 10:00:00', 2, 1);
+
+INSERT INTO poll_options (poll_id, option_text)
+VALUES
+    (1, 'Rock'),
+    (1, 'Classical'),
+    (1, 'Jazz');
+
+INSERT INTO poll_votes (poll_id, option_id, user_id)
+VALUES
+    (1, 1, 2),
+    (1, 3, 3);
+
+-- Populate files for comments related to events
+INSERT INTO files (url, comment_id)
+VALUES
+    ('https://example.com/file1.jpg', 1),
+    ('https://example.com/file2.jpg', 2);
+
+-- Populate cards and items (tasks for user1 and user2)
+INSERT INTO cards (name, user_id)
+VALUES
+    ('Task List 1', 2),
+    ('Event Prep', 2);
+
+INSERT INTO items (card_id, description, done)
+VALUES
+    (1, 'Book venue for concert', TRUE),
+    (1, 'Arrange catering', FALSE),
+    (2, 'Send invites', TRUE),
+    (2, 'Prepare stage setup', FALSE);
 
 
