@@ -113,8 +113,6 @@
                                     @if ($pendingInvitesCount > 0)
                                     <span class="badge">{{ $pendingInvitesCount }}</span>
                                     @endif
-                                    <a href="{{ route('profile.show') }}">Profile</a>
-                                    </a>
                     <a class="dropdown-item {{ request()->routeIs('profile.show') ? 'active' : '' }}" href="{{ route('profile.show') }}">
                         Profile
                     </a>
