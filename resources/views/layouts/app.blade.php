@@ -91,6 +91,14 @@
                                     <a href="{{ route('events.attending') }}">Attending</a>
                                     <a href="{{ route('events.invitations') }}">Invitations</a>
                                     <a href="{{ route('profile.show') }}">Profile</a>
+                                    </a>
+                    <a class="dropdown-item {{ request()->routeIs('profile.show') ? 'active' : '' }}" href="{{ route('profile.show') }}">
+                        Profile
+                    </a>
+                    <a class="dropdown-item {{ request()->routeIs('userReports') ? 'active' : '' }}" href="{{ route('userReports') }}">
+                        My Reports
+                    </a>
+                                    
                                 @else
                                     <a href="{{ route('allReports') }}">Admin Reports</a>
                                     <a  href="{{ route('allUsers') }}">Manage Users</a>
