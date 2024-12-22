@@ -30,7 +30,7 @@
                 @endif
             </form>
         @else
-            <button class="logout-button" style="margin-top: 1rem;" disabled>AT FULL CAPACITY</button>
+            <button class="btn btn-secondary" style="margin-top: 1rem;" disabled>AT FULL CAPACITY</button>
         @endif
     @else
         <p class="text-success" style="margin-top:2rem;">You are already part of this event.</p>
@@ -40,7 +40,7 @@
         <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" style="display:inline;">
             @csrf
             @method('DELETE')
-            <button class="delete btn btn-danger btn-sm" style="margin-bottom:2rem;">Delete</button>
+            <button type="submit" class="btn btn-danger btn-sm confirmation-button" data-confirm="Are you sure you want to delete this event?" style="margin-bottom:2rem;">Delete</button>
         </form>
     @endif
 
@@ -73,7 +73,7 @@
                     <form action="{{ route('comments.delete', $comment->comment_id) }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this comment?')">
+                        <button type="submit" class="btn btn-danger btn-sm confirmation-button" data-confirm="Are you sure you want to delete this comment?">
                             Delete
                         </button>
                     </form>

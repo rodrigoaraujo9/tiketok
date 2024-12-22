@@ -8,8 +8,8 @@
     @if ($event->attendees->isEmpty())
         <p>No attendees found for this event.</p>
     @else
-        <table class="table">
-            <thead>
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
@@ -26,12 +26,14 @@
         </table>
     @endif
 
-    <!-- Botão para sair do evento (apenas para o próprio utilizador) -->
+    <!-- Button to leave the event (only for the current user) -->
     @if ($event->attendees->contains(auth()->id()))
         <form action="{{ route('events.leave', $event->event_id) }}" method="POST" class="mt-3">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn btn-warning">Leave Event</button>
+            <button type="submit" class="btn btn-warning confirmation-button delete" data-confirm="Are you sure you want to leave this event?">
+                Leave Event
+            </button>
         </form>
     @endif
 </div>

@@ -46,7 +46,10 @@
             @endforeach
         </select>
 
-        <button type="submit" class="btn btn-danger btn-sm">Update Event</button>
+        <!-- Add confirmation dialog -->
+        <button type="submit" class="btn btn-danger btn-sm confirmation-button" data-confirm="Are you sure you want to update this event?">
+            Update Event
+        </button>
     </form>
 </div>
 @endsection

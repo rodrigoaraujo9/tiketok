@@ -26,7 +26,10 @@
             </div>
         @endif
 
-        <button type="submit" class="btn btn-danger">Update Report</button>
+        <!-- Add confirmation-button class and data-confirm message -->
+        <button type="submit" class="btn btn-danger confirmation-button" data-confirm="Are you sure you want to update this report?">
+            Update Report
+        </button>
     </form>
 
     <a href="{{ route('showReport', $report->report_id) }}" class="btn btn-secondary">Back to Report</a>

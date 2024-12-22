@@ -393,28 +393,28 @@ class EventController extends Controller
     public function editComment(Request $request, $comment_id)
     {
         $comment = Comment::findOrFail($comment_id);
-
+    
         // Ensure only the author can edit the comment
         if ($comment->user_id !== Auth::id()) {
-            if ($request->ajax()) {
-                return response()->json(['error' => 'Unauthorized action.'], 403);
-            }
-            return redirect()->back()->with('error', 'Unauthorized action.');
+            return response()->json(['error' => 'Unauthorized action.'], 403);
         }
-
+    
+        // Validate request
         $validated = $request->validate([
             'content' => 'required|string|max:1000',
         ]);
-
+    
+        // Update comment
         $comment->update(['content' => $validated['content']]);
-
-        if ($request->ajax()) {
-            return response()->json(['success' => 'Comment updated successfully!', 'comment' => $comment]);
-        }
-
-        return redirect()->route('events.show', $comment->event_id)
-            ->with('success', 'Comment updated successfully!');
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment updated successfully!',
+            'comment' => $comment,
+        ]);
     }
+    
+    
 
     public function deleteComment(Request $request, $comment_id)
     {

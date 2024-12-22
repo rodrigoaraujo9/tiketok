@@ -134,6 +134,14 @@
                         dropdown.classList.remove('show');
                     }, 300); // Delay in milliseconds before hiding the menu
                 });
+                document.querySelectorAll('.confirmation-button').forEach(button => {
+            button.addEventListener('click', function (event) {
+                const message = button.getAttribute('data-confirm') || 'Are you sure you want to perform this action?';
+                if (!confirm(message)) {
+                    event.preventDefault(); // Prevent the form submission
+                }
+            });
+        });
             });
         </script>
     </body>

@@ -111,7 +111,8 @@ Route::controller(ReportController::class)->group(function () {
 Route::post('/events/{event_id}/comments', [EventController::class, 'addComment'])->name('comments.add');
 
 // Edit Comment
-Route::put('/comments/{comment_id}', [EventController::class, 'editComment'])->name('comments.edit');
+Route::put('/comments/{comment_id}', [CommentController::class, 'editComment'])->name('comments.edit');
+
 
 // Delete Comment
 Route::delete('/comments/{comment_id}', [EventController::class, 'deleteComment'])->name('comments.delete');

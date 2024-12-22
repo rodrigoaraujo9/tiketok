@@ -24,6 +24,14 @@
                         <a href="{{ route('events.edit', $event->event_id) }}" class="btn btn-outline-success btn-sm mt-2">
                             Edit Event
                         </a>
+                        <!-- Delete Event Button -->
+                        <form action="{{ route('events.destroy', $event->event_id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm mt-2 confirmation-button delete" data-confirm="Are you sure you want to delete this event?">
+                                Delete Event
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

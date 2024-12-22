@@ -8,12 +8,12 @@
     @if ($event->attendees->isEmpty())
         <p>No attendees found for this event.</p>
     @else
-        <table class="table">
-            <thead>
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Actions</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,11 +21,13 @@
                     <tr>
                         <td>{{ $attendee->name }}</td>
                         <td>{{ $attendee->email }}</td>
-                        <td>
-                            <form action="{{ route('events.attendees.remove', $event->event_id) }}" method="POST">
+                        <td class="text-center">
+                            <form action="{{ route('events.attendees.remove', $event->event_id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ $attendee->user_id }}">
-                                <button type="submit" class="btn btn-danger">Remove</button>
+                                <button type="submit" class="btn btn-danger btn-sm confirmation-button" data-confirm="Are you sure you want to remove this attendee?">
+                                    Remove
+                                </button>
                             </form>
                         </td>
                     </tr>

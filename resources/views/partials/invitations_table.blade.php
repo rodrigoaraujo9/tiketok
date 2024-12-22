@@ -2,13 +2,13 @@
     @if ($invitations->isEmpty())
         <p>You have no invitations.</p>
     @else
-        <table class="table">
-            <thead>
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
                     <th>Event Name</th>
                     <th>Date</th>
                     <th>Organizer</th>
-                    <th>Actions</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,17 +17,19 @@
                         <td>{{ $invite->event->name }}</td>
                         <td>{{ $invite->event->date }}</td>
                         <td>{{ $invite->event->organizer->name }}</td>
-                        <td>
+                        <td class="text-center">
                             <!-- Accept Invitation -->
                             <form action="{{ route('events.accept', $invite->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                <button class="btn btn-success">Accept</button>
+                                <button class="btn btn-success btn-sm">Accept</button>
                             </form>
 
-                            <!-- Reject Invitation -->
+                            <!-- Decline Invitation with Confirmation -->
                             <form action="{{ route('events.reject', $invite->event_id) }}" method="POST" style="display:inline;">
                                 @csrf
-                                <button class="delete btn btn-danger">Decline</button>
+                                <button type="submit" class="btn btn-danger btn-sm confirmation-button delete" data-confirm="Are you sure you want to decline this invitation?">
+                                    Decline
+                                </button>
                             </form>
                         </td>
                     </tr>

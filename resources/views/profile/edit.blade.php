@@ -48,8 +48,8 @@
             {{ session('status') }}
         </div>
         @endif
-        <button type="submit" class="btn btn-success">Update Profile</button>
-
+        <!-- Add a confirmation button -->
+        <button type="submit" class="btn btn-success confirmation-button" data-confirm="Are you sure you want to update your profile?">Update Profile</button>
     </form>
 </div>
 @endsection
