@@ -125,9 +125,11 @@ Route::post('/events/{event_id}/comments/store-poll', [CommentController::class,
 Route::post('/events/{event_id}/comments/{comment_id}/polls/{poll_id}/vote', [CommentController::class, 'voteOnCommentPoll'])
     ->name('comments.votePoll');
 
-// Delete poll from comment
-Route::delete('/events/{event_id}/comments/{comment_id}/polls/{poll_id}', [CommentController::class, 'deleteCommentPoll'])
-    ->name('comments.deletePoll');
+// Delete comment and poll
+Route::delete('/events/{event_id}/comments/{comment_id}/polls/{poll_id}', 
+    [CommentController::class, 'deleteCommentPoll']
+)->name('comments.deletePoll');
+
 
 // Delete vote from poll in a comment
 Route::delete('/events/{event_id}/comments/{comment_id}/polls/{poll_id}/vote', [CommentController::class, 'deleteCommentPollVote'])

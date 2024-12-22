@@ -140,6 +140,10 @@ class CommentController extends Controller
     // vote on poll in a comment
     public function voteOnCommentPoll(Request $request, $event_id, $comment_id, $poll_id)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'You must be logged in to vote on polls.');
+        }
+    
         // Valida se a opção existe
         $validated = $request->validate([
             'option_id' => 'required|exists:poll_options,option_id',
@@ -221,36 +225,39 @@ class CommentController extends Controller
 
 
 
-    // delete poll from comment
-    public function deleteCommentPoll($event_id, $comment_id, $poll_id)
+    /**
+     * Deletar Poll and Comment
+     */
+    
+public function deleteCommentPoll($event_id, $comment_id, $poll_id)
 {
-    // Buscar o comentário com a poll associada
-    $comment = Comment::with('poll')->where('comment_id', $comment_id)->firstOrFail();
+    // Buscar a Poll associada ao comentário e evento
+    $poll = Poll::where('poll_id', $poll_id)
+                ->where('comment_id', $comment_id)
+                ->firstOrFail();
 
-    // Verificar se a poll pertence ao comentário
-    if ($comment->poll->poll_id !== $poll_id) {
-        return redirect()->back()->with('error', 'The poll does not belong to this comment.');
+    // Verificar se o utilizador tem permissão
+    if (Auth::id() !== $poll->user_id) {
+        return redirect()->back()->with('error', 'You are not authorized to delete this poll.');
     }
 
-    // Verificar se o usuário tem permissão para deletar
-    if (Auth::id() !== $comment->user_id) {
-        return redirect()->back()->with('error', 'You are not authorized to delete this poll or comment.');
-    }
+    // Deletar os votos associados à Poll
+    PollVote::where('poll_id', $poll->poll_id)->delete();
 
-    // Deletar a poll (incluindo opções e votos)
-    $comment->poll->options()->each(function ($option) {
-        $option->votes()->delete();
-        $option->delete();
-    });
-    $comment->poll->delete();
+    // Deletar as opções associadas à Poll
+    PollOption::where('poll_id', $poll->poll_id)->delete();
 
-    // Deletar o comentário
+    // Deletar a Poll
+    $poll->delete();
+
+    // Deletar o Comentário associado
+    $comment = Comment::findOrFail($comment_id);
     $comment->delete();
 
-    // Redirecionar com sucesso
-    return redirect()->route('comments.index', ['event_id' => $event_id])
-        ->with('success', 'Comment and associated poll have been deleted successfully.');
+    return redirect()->route('comments.index', $event_id)
+        ->with('success', 'Comment and Poll deleted successfully.');
 }
+
 
 
 

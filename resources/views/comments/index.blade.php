@@ -33,7 +33,7 @@
                     <br>
                     <!-- Exibir Poll Associada -->
                     @if ($comment->poll)
-                        <h5 class="card mb-2">Poll: {{ $comment->poll->question }}</h5>
+                        <h5 class="card mb-2">→ {{ $comment->poll->question }}</h5>
                         <table class="table table-bordered text-center align-middle">
                             <thead>
                                 <tr>
@@ -96,21 +96,31 @@
                             </tbody>
                         </table>
 
+                        @if ($userVote)
+                            <div class="alert alert-info text-center mt-3">
+                                <th class="text-start">Your vote: <span class="text-primary">{{ $userVote->option->option_text }}</span></th>
+                            </div>
+                        @endif
+
+
                         
                         @if (Auth::id() === $comment->user_id)
                             <div class="mt-3">
-                                <form action="{{ route('comments.deletePoll', [
-                                    'event_id' => $event->event_id,
-                                    'comment_id' => $comment->comment_id,
-                                    'poll_id' => $comment->poll->poll_id
-                                ]) }}" method="POST">
+                                <form id="delete-poll-comment-{{ $comment->comment_id }}"
+                                    action="{{ route('comments.deletePoll', [
+                                        'event_id' => $event->event_id,
+                                        'comment_id' => $comment->comment_id,
+                                        'poll_id' => $comment->poll->poll_id
+                                    ]) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this comment and its poll?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-danger">Delete Comment & Poll</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete Comment & Poll</button>
                                 </form>
                             </div>
-                            <br>
                         @endif
+
                     @else
                         <!-- Comentários Normais: Editar e Deletar -->
                         @if ($comment->user_id === Auth::id())

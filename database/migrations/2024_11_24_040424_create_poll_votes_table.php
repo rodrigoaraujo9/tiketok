@@ -17,9 +17,17 @@ return new class extends Migration
                 $table->timestamps();
 
                 // Foreign keys
-                $table->foreign('poll_id')->references('poll_id')->on('polls')->cascadeOnDelete();
-                $table->foreign('option_id')->references('option_id')->on('poll_options')->cascadeOnDelete();
-                $table->foreign('user_id')->references('user_id')->on('users')->cascadeOnDelete();
+                $table->foreign('poll_id')
+                    ->references('poll_id')->on('polls')
+                    ->onDelete('cascade');
+                    
+                $table->foreign('option_id')
+                    ->references('option_id')->on('poll_options')
+                    ->onDelete('cascade');
+                    
+                $table->foreign('user_id')
+                    ->references('user_id')->on('users')
+                    ->onDelete('cascade');
 
                 $table->unique(['poll_id', 'user_id'], 'unique_user_vote_per_poll');
             });
