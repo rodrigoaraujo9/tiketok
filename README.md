@@ -1,93 +1,98 @@
-# lbaw2464
+# TIKETOK - Event Management System
 
+Event management platform for concerts, theater performances, and cultural gatherings. Users can create events, manage attendees, facilitate discussions, and organize polls.
 
+## Quick Start
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.up.pt/lbaw/lbaw2425/lbaw2464.git
-git branch -M main
-git push -uf origin main
+```bash
+docker run -d --name lbaw2464 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2425/lbaw2464
 ```
 
-## Integrate with your tools
+Access: http://localhost:8001
 
-- [ ] [Set up project integrations](https://gitlab.up.pt/lbaw/lbaw2425/lbaw2464/-/settings/integrations)
+## Credentials
 
-## Collaborate with your team
+| Role  | Email               | Password |
+|-------|---------------------|----------|
+| Admin | admin@example.com   | 12345678 |
+| User  | user1@example.com   | 12345678 |
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Core Features
 
-## Test and Deploy
+- **Authentication**: Login/logout, registration, profile management
+- **Event Management**: Create, edit, delete, join/leave events
+- **Event Discovery**: Browse public events, search, filter by tags
+- **Interaction**: Comments, polls, file sharing, attendee lists
+- **Administration**: User management, event reports, moderation
+- **Invitations**: Send/receive event invitations
 
-Use the built-in continuous integration in GitLab.
+## Planning & Development Phases
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### A1-A3: Requirements Specification (ER)
+- **A1**: Project presentation, goals, motivation, main features
+- **A2**: Actors definition (Public User, Authenticated User, Event Organizer, Admin) and 35 user stories
+- **A3**: Information architecture with sitemap and wireframes (Home Page, Event Details)
 
-***
+### A4-A6: Database Specification (EBD) 
+- **A4**: UML class diagram and conceptual data model
+- **A5**: Relational schema with 14 tables, functional dependencies, BCNF validation
+- **A6**: Performance indexes, 10 triggers, 25+ transactions for data integrity
 
-# Editing this README
+### A7-A8: Architecture Specification (EAP)
+- **A7**: Web resources specification with OpenAPI documentation, 5 modules (M01-M05)
+- **A8**: Vertical prototype with 18 implemented user stories and 33 web resources
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### A9-A10: Product & Presentation (PA)
+- **A9**: Final product with accessibility/usability validation, HTML/CSS validation
+- **A10**: Product presentation and video demo
 
-## Suggestions for a good README
+## Technology Stack
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+- **Backend**: PHP, PostgreSQL 11+
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Database**: PostgreSQL with indexes, triggers, transactions
+- **Deployment**: Docker
 
-## Name
-Choose a self-explaining name for your project.
+## Database Schema
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Key tables: `User`, `Event`, `Venue`, `Comment`, `Poll`, `Ticket`, `Notification`
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+**Setup files:**
+- `database_schema.sql` - Database creation script
+- `database_population.sql` - Sample data
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Project Structure
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```
+├── app/                    # PHP application code
+├── database/              # SQL scripts
+├── public/                # Web assets (CSS, JS, images)
+├── resources/             # Views and templates
+├── routes/                # Web routes
+└── docker/                # Docker configuration
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## User Stories Implementation
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+**High Priority (100% Complete):**
+- US01: View Home Page
+- US02-04: Browse/Search Events  
+- US07-09: Authentication
+- US10-13: Event Management
+- US17-20: Comments & Interaction
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+**Medium Priority (100% Complete):**
+- US15-16: Polls
+- US21-22: Attendee Management
+- US25-26: Admin Functions
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## Development Team
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+- Rodrigo Gomes de Araújo (up202205515@up.pt)
+- Luna Gomes da Cunha (up202205714@up.pt)  
+- Afonso Montenegro Gonçalves Ribeiro da Cruz (up202006020@up.pt)
+- Miguel Gomes Fernandes (up202207547@up.pt)
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Repository
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+GitLab: https://gitlab.up.pt/lbaw/lbaw2425/lbaw2464
